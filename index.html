@@ -2045,7 +2045,9 @@ function markManual(matchId){
   if(results.sc?.[matchId]) results.sc[matchId].auto=false;
 }
 
+let _savingRes=false;
 function saveGRes(g){
+  if(_savingRes){toast('Espera, guardando...');return;}
   if(!results.sc) results.sc={};
   if(!results.groups) results.groups={};
   GM[g].forEach(m=>{
@@ -2059,16 +2061,21 @@ function saveGRes(g){
     }
   });
   results.groups[g]=standings(g,results.sc).map(r=>r.team);
-  // Guardar resultados en el backend
+  _savingRes=true;
+  const btn=document.querySelector(`[onclick="saveGRes('${g}')"]`);
+  if(btn){btn.disabled=true;btn.textContent='Guardando...';}
   api('POST','/api/results',{data:results})
     .then(()=>{
       renderRanking();
       toast(`Grupo ${g} guardado ✓`);
-      const btn=document.querySelector(`[onclick="saveGRes('${g}')"]`);
-      if(btn){btn.classList.add('ok');setTimeout(()=>btn.classList.remove('ok'),2000);}
+      if(btn){btn.classList.add('ok');btn.textContent=`Guardar Grupo ${g}`;btn.disabled=false;setTimeout(()=>btn.classList.remove('ok'),2000);}
       renderChangelog();
     })
-    .catch(e=>toast('Error guardando resultados: '+e.message));
+    .catch(e=>{
+      toast('Error guardando: '+e.message);
+      if(btn){btn.textContent=`Guardar Grupo ${g}`;btn.disabled=false;}
+    })
+    .finally(()=>{ _savingRes=false; });
 }
 
 // ══════════════════════════════════════════════════════
