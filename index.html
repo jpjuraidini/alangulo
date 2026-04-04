@@ -2948,6 +2948,7 @@ function initDark(){
 // ══════════════════════════════════════════════════════
 let mqFilter = 'all'; // all | correct | exact | wrong | pending
 let mqStage  = 'all'; // all | grupos | r32 | r16 | qf | sf | f
+let mqGroup  = 'all'; // all | A | B | C | D | E | F | G | H | I | J | K | L
 
 function renderMiQuiniela(){
   const wrap = document.getElementById('mq-wrap');
@@ -3067,7 +3068,11 @@ function renderMiQuiniela(){
       <button class="mq-f-btn ${mqStage==='qf'?'active':''}"    onclick="setMqStage('qf')">Cuartos</button>
       <button class="mq-f-btn ${mqStage==='sf'?'active':''}"    onclick="setMqStage('sf')">Semis</button>
       <button class="mq-f-btn ${mqStage==='f'?'active':''}"     onclick="setMqStage('f')">Final</button>
-    </div>`;
+    </div>
+    ${mqStage==='grupos'?`<div class="mq-filter" style="margin-top:.4rem">
+      <button class="mq-f-btn ${mqGroup==='all'?'active':''}" onclick="setMqGroup('all')">Todos</button>
+      ${'ABCDEFGHIJKL'.split('').map(g=>`<button class="mq-f-btn ${mqGroup===g?'active':''}" onclick="setMqGroup('${g}')">Grupo ${g}</button>`).join('')}
+    </div>`:''}`;
 
   // ── Group sections ──
   // Group stage
@@ -3077,7 +3082,10 @@ function renderMiQuiniela(){
 
   const groupPts = groupMatches.reduce((s,m)=>s+m.pts,0);
   const showGroups = mqStage==='all'||mqStage==='grupos';
-  const filteredGroup = groupMatches.filter(m=>(mqFilter==='all'||m.status===mqFilter||(mqFilter==='correct'&&(m.status==='correct'||m.status==='exact'))));
+  const filteredGroup = groupMatches.filter(m=>
+    (mqFilter==='all'||m.status===mqFilter||(mqFilter==='correct'&&(m.status==='correct'||m.status==='exact'))) &&
+    (mqGroup==='all'||m.group===mqGroup)
+  );
 
   if(showGroups && filteredGroup.length){
     html+=`<div class="mq-section">
@@ -3139,7 +3147,8 @@ function renderMiQuiniela(){
 }
 
 function setMqFilter(f){ mqFilter=f; renderMiQuiniela(); }
-function setMqStage(s){ mqStage=s; renderMiQuiniela(); }
+function setMqStage(s){ mqStage=s; mqGroup='all'; renderMiQuiniela(); }
+function setMqGroup(g){ mqGroup=g; renderMiQuiniela(); }
 
 // ══════════════════════════════════════════════════════
 //  NAV
