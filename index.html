@@ -1163,30 +1163,64 @@ const SIM_PTS=[
 ];
 
 // ══════════════════════════════════════════════════════
+//  API
+// ══════════════════════════════════════════════════════
+const API='https://alangulo-backend-production.up.railway.app';
+
+async function api(method, path, body){
+  const opts={ method, headers:{'Content-Type':'application/json'} };
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch(API+path, opts);
+  if(!r.ok){ const e=await r.json().catch(()=>({error:'Error'})); throw new Error(e.error||'Error'); }
+  return r.json();
+}
+
+// ══════════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════════
 let CU=null;
 let picks={};
 let results={};
-let refs={};  // refs[referrerCode] = [list of usernames they referred]
-let dynUsers=[]; // users created via admin panel (persisted separately)
+let refs={};
+let dynUsers=[];
 
 function load(){
-  picks   =JSON.parse(localStorage.getItem('q26p')||'{}');
-  results =JSON.parse(localStorage.getItem('q26r')||'{}');
-  refs    =JSON.parse(localStorage.getItem('q26refs')||'{}');
-  dynUsers=JSON.parse(localStorage.getItem('q26users')||'[]');
-  CU      =JSON.parse(localStorage.getItem('q26u')||'null');
+  // Solo cargamos CU de localStorage (sesión local)
+  CU=JSON.parse(localStorage.getItem('q26u')||'null');
 }
-function persist(){
-  localStorage.setItem('q26p',JSON.stringify(picks));
-  localStorage.setItem('q26r',JSON.stringify(results));
-  localStorage.setItem('q26refs',JSON.stringify(refs));
-  localStorage.setItem('q26users',JSON.stringify(dynUsers));
+
+async function loadAllData(){
+  try {
+    // Cargar picks de todos los usuarios (para ranking)
+    picks = await api('GET','/api/picks');
+    // Asegurar que el usuario actual tiene entrada
+    if(CU && !picks[CU.u]) picks[CU.u]={sc:{},br:{}};
+    // Cargar resultados
+    results = await api('GET','/api/results');
+  } catch(e){ console.error('Error cargando datos:',e); }
+}
+
+async function loadMyPicks(){
+  if(!CU) return;
+  try {
+    const data = await api('GET',`/api/picks/${CU.u}`);
+    picks[CU.u] = data;
+  } catch(e){ picks[CU.u]={sc:{},br:{}}; }
+}
+
+async function persist(){
+  // Guardar sesión local
   localStorage.setItem('q26u',JSON.stringify(CU));
+  // Guardar picks del usuario en el backend
+  if(CU && picks[CU.u]){
+    try { await api('POST',`/api/picks/${CU.u}`,{data:picks[CU.u]}); }
+    catch(e){ console.error('Error guardando picks:',e); }
+  }
 }
-// All users = hardcoded base + dynamic
+
+// All users — ahora viene del backend, dynUsers es cache local
 function allUsers(){ return [...USERS,...dynUsers]; }
+
 function ensure(u){
   if(!picks[u]) picks[u]={sc:{},br:{}};
   if(!picks[u].sc) picks[u].sc={};
@@ -1208,33 +1242,24 @@ function doLogin(){
   const u=document.getElementById('lu').value.trim().toLowerCase();
   const p=document.getElementById('lp').value.trim();
   const refCode=document.getElementById('lref').value.trim().toUpperCase();
+  const errEl=document.getElementById('lerr');
+  errEl.textContent='';
 
-  // Check deleted list
-  const deleted=JSON.parse(localStorage.getItem('q26deleted')||'[]');
-  if(deleted.includes(u)){document.getElementById('lerr').textContent='Usuario o PIN incorrecto.';return;}
-
-  // Check PIN overrides (admin can reset PINs)
-  const pinOverrides=JSON.parse(localStorage.getItem('q26pins')||'{}');
-  const usr=allUsers().find(x=>x.u===u);
-  if(!usr){document.getElementById('lerr').textContent='Usuario o PIN incorrecto.';return;}
-  const effectivePin=pinOverrides[u]||usr.p;
-  if(effectivePin!==p){document.getElementById('lerr').textContent='Usuario o PIN incorrecto.';return;}
-
-  if(refCode && refCode.length===3){
-    const referrer=allUsers().find(x=>(x.code||genCode(x.u))===refCode);
-    if(referrer && referrer.u!==u){
-      if(!refs[refCode]) refs[refCode]=[];
-      if(!refs[refCode].includes(u)) refs[refCode].push(u);
-    }
-  }
-
-  CU={u,admin:usr.admin,code:genCode(u)};
-  ensure(u);persist();boot();
+  api('POST','/api/login',{username:u, pin:p, refCode})
+    .then(user=>{
+      CU={u:user.username, admin:user.is_admin, code:user.code};
+      localStorage.setItem('q26u',JSON.stringify(CU));
+      boot();
+    })
+    .catch(e=>{
+      errEl.textContent=e.message||'Usuario o PIN incorrecto.';
+    });
 }
 function logout(){
-  CU=null;persist();
+  CU=null;
+  localStorage.removeItem('q26u');
+  picks={};results={};refs={};dynUsers=[];
   closeDrawer();
-  // Hide all admin-only elements
   document.querySelectorAll('.admin-only').forEach(e=>e.style.display='none');
   document.getElementById('app').style.display='none';
   document.getElementById('auth').style.display='flex';
@@ -1271,15 +1296,36 @@ function boot(){
   // Draw static logo on the small canvas
   drawStaticLogo(document.getElementById('login-trans-canvas'), 80);
 
-  // After 1.2s — fade out auth, show app
+  // After 1.2s — load data then show app
   setTimeout(()=>{
     auth.style.transition = 'opacity .35s ease';
     auth.style.opacity = '0';
-    setTimeout(()=>{
+    setTimeout(async ()=>{
       auth.style.display = 'none';
       auth.style.opacity = '';
       auth.style.transition = '';
       card.innerHTML = originalContent;
+
+      // Load all data from backend
+      await loadAllData();
+      ensure(CU.u);
+
+      // Load refs for current user
+      try {
+        const myRefs = await api('GET',`/api/refs/${CU.code}`);
+        refs[CU.code] = myRefs;
+      } catch(e){}
+
+      // Load users list if admin
+      if(CU.admin){
+        try {
+          const users = await api('GET','/api/users');
+          dynUsers = users
+            .filter(u=>!USERS.find(x=>x.u===u.username))
+            .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
+        } catch(e){}
+      }
+
       document.getElementById('app').style.display = 'block';
       document.getElementById('nav-u').textContent = CU.u;
       if(CU.admin) document.querySelectorAll('.admin-only').forEach(e=>e.style.display='');
@@ -1909,25 +1955,23 @@ function createUser(){
   const p=document.getElementById('cu-p').value.trim();
   const c=document.getElementById('cu-c').value.trim().toUpperCase();
   const err=document.getElementById('cu-err');
-
   if(!u){err.textContent='El usuario no puede estar vacío.';return;}
   if(!p){err.textContent='El PIN no puede estar vacío.';return;}
   if(c.length!==3){err.textContent='El código debe tener exactamente 3 letras.';return;}
-  if(allUsers().find(x=>x.u===u)){err.textContent=`El usuario "${u}" ya existe.`;return;}
-  if(allUsers().find(x=>(x.code||genCode(x.u))===c)){err.textContent=`El código "${c}" ya está en uso.`;return;}
-
   err.textContent='';
-  dynUsers.push({u,p,admin:false,code:c});
-  ensure(u);
-  persist();
-  // Clear form
-  document.getElementById('cu-u').value='';
-  document.getElementById('cu-p').value='';
-  document.getElementById('cu-c').value='';
-  delete document.getElementById('cu-c').dataset.manual;
-  renderUsersTable();
-  renderPremios(); // update user count in prizes
-  toast(`Usuario "${u}" creado ✓ · Código: ${c}`);
+  api('POST','/api/users',{username:u,pin:p,code:c})
+    .then(()=>api('GET','/api/users'))
+    .then(users=>{
+      dynUsers=users.filter(x=>!USERS.find(y=>y.u===x.username))
+        .map(x=>({u:x.username,p:'',admin:x.is_admin,code:x.code}));
+      document.getElementById('cu-u').value='';
+      document.getElementById('cu-p').value='';
+      document.getElementById('cu-c').value='';
+      delete document.getElementById('cu-c').dataset.manual;
+      renderUsersTable();renderPremios();
+      toast(`Usuario "${u}" creado ✓ · Código: ${c}`);
+    })
+    .catch(e=>{err.textContent=e.message;});
 }
 
 // ── ADMIN ACTION MODAL HELPERS ──
@@ -1952,51 +1996,36 @@ document.getElementById('adm-modal').addEventListener('click', e=>{
 });
 
 function deleteUser(u){
-  const usr=allUsers().find(x=>x.u===u);
-  if(!usr||usr.admin||u===CU.u) return;
+  if(u===CU.u) return;
   openAdmModal(
     `Eliminar a "${u}"`,
-    `Se borrarán todas sus predicciones y no podrá volver a entrar a la quiniela. Esta acción no se puede deshacer.`,
-    'Eliminar', 'danger', false, '',
+    `Se borrarán todas sus predicciones y no podrá volver a entrar. Esta acción no se puede deshacer.`,
+    'Eliminar','danger',false,'',
     function(){
-      dynUsers=dynUsers.filter(x=>x.u!==u);
-      const del=JSON.parse(localStorage.getItem('q26deleted')||'[]');
-      if(!del.includes(u)) del.push(u);
-      localStorage.setItem('q26deleted',JSON.stringify(del));
-      delete picks[u];
-      Object.keys(refs).forEach(k=>{ refs[k]=refs[k].filter(r=>r!==u); });
-      persist();
-      renderUsersTable();
-      renderPremios();
-      renderRanking();
-      toast(`Usuario "${u}" eliminado ✓`);
+      api('DELETE',`/api/users/${u}`)
+        .then(()=>api('GET','/api/users'))
+        .then(users=>{
+          dynUsers=users.filter(x=>!USERS.find(y=>y.u===x.username))
+            .map(x=>({u:x.username,p:'',admin:x.is_admin,code:x.code}));
+          delete picks[u];
+          renderUsersTable();renderPremios();renderRanking();
+          toast(`Usuario "${u}" eliminado ✓`);
+        })
+        .catch(e=>toast('Error: '+e.message));
     }
   );
 }
 
 function editPin(u){
-  const usr=allUsers().find(x=>x.u===u);
-  if(!usr||usr.admin) return;
-  const pins=JSON.parse(localStorage.getItem('q26pins')||'{}');
-  const current=pins[u]||usr.p;
   openAdmModal(
     `Cambiar PIN de "${u}"`,
-    'Ingresa el nuevo PIN (4 a 6 caracteres). El usuario deberá usar este PIN la próxima vez que entre.',
-    'Guardar PIN', 'confirm', true, current,
+    'Ingresa el nuevo PIN (4 a 6 caracteres).',
+    'Guardar PIN','confirm',true,'',
     function(newPin){
-      if(!newPin){toast('El PIN no puede estar vacío');return;}
-      if(newPin.length<4||newPin.length>6){toast('El PIN debe tener entre 4 y 6 caracteres');return;}
-      const dynIdx=dynUsers.findIndex(x=>x.u===u);
-      if(dynIdx>=0){
-        dynUsers[dynIdx].p=newPin;
-      } else {
-        const pins=JSON.parse(localStorage.getItem('q26pins')||'{}');
-        pins[u]=newPin;
-        localStorage.setItem('q26pins',JSON.stringify(pins));
-      }
-      persist();
-      renderUsersTable();
-      toast(`PIN de "${u}" actualizado ✓`);
+      if(!newPin||newPin.length<4||newPin.length>6){toast('PIN inválido');return;}
+      api('PATCH',`/api/users/${u}/pin`,{pin:newPin})
+        .then(()=>{renderUsersTable();toast(`PIN de "${u}" actualizado ✓`);})
+        .catch(e=>toast('Error: '+e.message));
     }
   );
 }
@@ -2437,55 +2466,58 @@ function manualRefresh(){
 // ══════════════════════════════════════════════════════
 //  CHAT
 // ══════════════════════════════════════════════════════
-let chatMsgs = []; // [{user, text, ts}]
+let chatMsgs = [];
 
 function loadChat(){
-  chatMsgs = JSON.parse(localStorage.getItem('q26chat') || '[]');
+  // Chat now comes from API — called in renderChat
 }
-function saveChat(){
-  localStorage.setItem('q26chat', JSON.stringify(chatMsgs));
-}
+function saveChat(){ /* no-op — API handles persistence */ }
 
 function renderChat(){
   const box = document.getElementById('chat-messages');
   const countEl = document.getElementById('chat-count');
   if (!box) return;
-  loadChat();
-  if (!chatMsgs.length){
-    box.innerHTML = '<div class="chat-empty">Sé el primero en escribir algo ⚽</div>';
-    if (countEl) countEl.textContent = '0 mensajes';
-    return;
-  }
-  if (countEl) countEl.textContent = `${chatMsgs.length} mensaje${chatMsgs.length!==1?'s':''}`;
-  box.innerHTML = '';
-  chatMsgs.forEach((m,idx) => {
-    const mine = m.user === CU.u;
-    const initials = m.user.slice(0,2).toUpperCase();
-    const time = new Date(m.ts).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
-    const dateStr = new Date(m.ts).toLocaleDateString('es-MX',{day:'numeric',month:'short'});
-    const el = document.createElement('div');
-    el.className = `chat-msg${mine?' mine':''}`;
-    const canDelete = CU.admin || mine;
-    el.innerHTML = `
-      <div class="chat-avatar${mine?' mine-av':''}">${initials}</div>
-      <div class="chat-bubble">
-        ${!mine?`<div class="chat-bubble-name">${m.user}</div>`:''}
-        <div class="chat-bubble-text">${escHtml(m.text)}</div>
-        <div class="chat-bubble-time" style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
-          <span>${dateStr} · ${time}</span>
-          ${canDelete?`<button onclick="deleteChatMsg(${idx})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.65rem;padding:0;line-height:1;transition:color .15s" title="Eliminar">✕</button>`:''}
-        </div>
-      </div>`;
-    box.appendChild(el);
+  box.innerHTML = '<div class="chat-empty" style="color:var(--ink3);font-style:italic;padding:1rem">Cargando mensajes...</div>';
+
+  api('GET','/api/chat').then(msgs => {
+    chatMsgs = msgs;
+    if (!msgs.length){
+      box.innerHTML = '<div class="chat-empty">Sé el primero en escribir algo ⚽</div>';
+      if (countEl) countEl.textContent = '0 mensajes';
+      return;
+    }
+    if (countEl) countEl.textContent = `${msgs.length} mensaje${msgs.length!==1?'s':''}`;
+    box.innerHTML = '';
+    msgs.forEach(m => {
+      const mine = m.username === CU.u;
+      const initials = m.username.slice(0,2).toUpperCase();
+      const time = new Date(m.created_at).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+      const dateStr = new Date(m.created_at).toLocaleDateString('es-MX',{day:'numeric',month:'short'});
+      const el = document.createElement('div');
+      el.className = `chat-msg${mine?' mine':''}`;
+      const canDelete = CU.admin || mine;
+      el.innerHTML = `
+        <div class="chat-avatar${mine?' mine-av':''}">${initials}</div>
+        <div class="chat-bubble">
+          ${!mine?`<div class="chat-bubble-name">${m.username}</div>`:''}
+          <div class="chat-bubble-text">${escHtml(m.message)}</div>
+          <div class="chat-bubble-time" style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
+            <span>${dateStr} · ${time}</span>
+            ${canDelete?`<button onclick="deleteChatMsg(${m.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.65rem;padding:0;line-height:1" title="Eliminar">✕</button>`:''}
+          </div>
+        </div>`;
+      box.appendChild(el);
+    });
+    box.scrollTop = box.scrollHeight;
+  }).catch(()=>{
+    box.innerHTML = '<div class="chat-empty">Error cargando mensajes.</div>';
   });
-  box.scrollTop = box.scrollHeight;
 }
 
-function deleteChatMsg(idx){
-  loadChat();
-  chatMsgs.splice(idx,1);
-  saveChat();
-  renderChat();
+function deleteChatMsg(id){
+  api('DELETE',`/api/chat/${id}`)
+    .then(()=>renderChat())
+    .catch(e=>toast('Error: '+e.message));
   toast('Mensaje eliminado');
 }
 
@@ -2494,11 +2526,10 @@ function sendChat(){
   const text = inp.value.trim();
   if (!text) return;
   if (text.length > 280){ toast('Máximo 280 caracteres'); return; }
-  loadChat();
-  chatMsgs.push({ user: CU.u, text, ts: Date.now() });
-  saveChat();
   inp.value = '';
-  renderChat();
+  api('POST','/api/chat',{username:CU.u, message:text})
+    .then(()=>renderChat())
+    .catch(e=>{ toast('Error enviando mensaje'); inp.value=text; });
 }
 
 function escHtml(s){
