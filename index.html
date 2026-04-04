@@ -615,6 +615,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 }
 #adm-modal.open{display:flex}
 #welcome-modal.open{display:flex}
+#ref-modal.open{display:flex}
 .adm-modal-box{
   background:var(--surface);border-radius:16px;padding:1.75rem;
   width:100%;max-width:320px;box-shadow:0 24px 60px rgba(0,0,0,.25);
@@ -765,24 +766,21 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 <body>
 
 <!-- ADMIN ACTION MODAL -->
-<!-- WELCOME MODAL -->
-<div id="welcome-modal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,14,26,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem">
+<!-- REFERRAL MODAL -->
+<div id="ref-modal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,14,26,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem">
   <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:2rem 1.75rem;max-width:360px;width:100%;box-shadow:var(--sh2);text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:.75rem">🎉</div>
-    <div style="font-weight:800;font-size:1.2rem;color:var(--ink);margin-bottom:.5rem">¡Bienvenido a Al Ángulo!</div>
-    <div style="font-size:.82rem;color:var(--ink2);line-height:1.6;margin-bottom:1.25rem">Este es tu <b>código de referido</b> único. Compártelo — si tu invitado gana el torneo, te caen <b>$500 MXN</b>.</div>
-    <div style="background:var(--g-bg);border:2px solid var(--green2);border-radius:12px;padding:1rem;margin-bottom:1.25rem">
-      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);margin-bottom:4px">Tu código</div>
-      <div id="welcome-code" style="font-weight:800;font-size:2rem;color:var(--green);letter-spacing:6px">···</div>
-    </div>
-    <div style="background:var(--bg);border:1.5px dashed var(--border2);border-radius:10px;padding:1rem;margin-bottom:1.25rem;text-align:left">
-      <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">¿Te invitó alguien? (opcional)</div>
-      <input id="welcome-ref" type="text" maxlength="3" placeholder="Código de quien te invitó"
-        style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:3px;box-sizing:border-box"
-        oninput="this.value=this.value.toUpperCase()">
-    </div>
-    <button onclick="saveWelcomeRef();copyMyCode();closeWelcomeModal()" style="width:100%;padding:11px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:.75rem">Copiar mi código y entrar</button>
-    <button onclick="saveWelcomeRef();closeWelcomeModal()" style="width:100%;padding:10px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">Entrar sin copiar</button>
+    <div style="font-size:2.5rem;margin-bottom:.75rem">🔗</div>
+    <div style="font-weight:800;font-size:1.2rem;color:var(--ink);margin-bottom:.5rem">¿Alguien te invitó?</div>
+    <div style="font-size:.82rem;color:var(--ink2);line-height:1.6;margin-bottom:1.25rem">Si alguien te compartió su código de 3 letras, ingrésalo aquí para quedar vinculados.</div>
+    <input id="ref-modal-input" type="text" maxlength="3" placeholder="Ej. ABC"
+      style="width:100%;padding:14px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.4rem;text-transform:uppercase;letter-spacing:6px;text-align:center;box-sizing:border-box;margin-bottom:1rem;outline:none;transition:border-color .2s"
+      oninput="this.value=this.value.toUpperCase();document.getElementById('ref-modal-input').style.borderColor=this.value.length===3?'var(--green)':'var(--border)'">
+    <button onclick="submitRefModal()" style="width:100%;padding:12px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:.75rem">Confirmar código</button>
+    <button onclick="skipRefModal()" style="width:100%;padding:10px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;margin-bottom:.75rem">No, saltar</button>
+    <label id="ref-skip-label" style="display:none;align-items:center;justify-content:center;gap:8px;font-size:.78rem;color:var(--ink3);cursor:pointer">
+      <input type="checkbox" id="ref-no-show" style="cursor:pointer">
+      No volver a mostrar
+    </label>
   </div>
 </div>
 
@@ -1338,11 +1336,9 @@ function boot(){
       if(CU.admin) document.querySelectorAll('.admin-only').forEach(e=>e.style.display='');
       renderGroups();renderBracket();renderRanking();renderPremios();
       if(CU.admin) renderAdmin();
-      // Show welcome modal on first login
-      const welcomeKey=`q26welcomed_${CU.u}`;
-      if(!localStorage.getItem(welcomeKey)){
-        localStorage.setItem(welcomeKey,'1');
-        setTimeout(()=>showWelcomeModal(),600);
+      // Show referral modal if needed
+      if(shouldShowRefModal()){
+        setTimeout(()=>showRefModal(), 600);
       }
       go(lastPage);
       setTimeout(()=>{
@@ -2565,20 +2561,57 @@ function sendChat(){
     .catch(e=>{ toast('Error enviando mensaje'); inp.value=text; });
 }
 
-function showWelcomeModal(){
-  const code=CU.code||genCode(CU.u);
-  document.getElementById('welcome-code').textContent=code;
-  document.getElementById('welcome-modal').classList.add('open');
+function shouldShowRefModal(){
+  const noShow=localStorage.getItem(`q26ref_noshow_${CU.u}`);
+  const hasRef=localStorage.getItem(`q26ref_done_${CU.u}`);
+  if(hasRef) return false;       // ya puso código
+  if(noShow) return false;       // dijo no volver a mostrar
+  return true;                   // primera vez o aún no ha puesto código
 }
-function closeWelcomeModal(){
-  document.getElementById('welcome-modal').classList.remove('open');
+
+function showRefModal(){
+  document.getElementById('ref-modal-input').value='';
+  document.getElementById('ref-modal-input').style.borderColor='var(--border)';
+  document.getElementById('ref-skip-label').style.display='none';
+  document.getElementById('ref-no-show').checked=false;
+  document.getElementById('ref-modal').classList.add('open');
 }
-function saveWelcomeRef(){
-  const refCode=document.getElementById('welcome-ref')?.value.trim().toUpperCase();
-  if(refCode && refCode.length===3){
-    api('POST','/api/refs_register',{username:CU.u, refCode}).catch(()=>{});
+
+function closeRefModal(){
+  document.getElementById('ref-modal').classList.remove('open');
+}
+
+function submitRefModal(){
+  const code=document.getElementById('ref-modal-input').value.trim().toUpperCase();
+  if(!code||code.length!==3){
+    document.getElementById('ref-modal-input').style.borderColor='var(--red)';
+    document.getElementById('ref-modal-input').focus();
+    return;
   }
+  api('POST','/api/refs_register',{username:CU.u, refCode:code})
+    .then(()=>{
+      localStorage.setItem(`q26ref_done_${CU.u}`,'1');
+      toast('¡Código de referido registrado! ✓');
+      closeRefModal();
+    })
+    .catch(()=>toast('Código no válido, intenta de nuevo'));
 }
+
+function skipRefModal(){
+  // Show "no volver a mostrar" checkbox
+  const lbl=document.getElementById('ref-skip-label');
+  lbl.style.display='flex';
+  // If already visible and they click skip again, close
+  const cb=document.getElementById('ref-no-show');
+  if(cb.checked){
+    localStorage.setItem(`q26ref_noshow_${CU.u}`,'1');
+  }
+  closeRefModal();
+}
+
+function saveWelcomeRef(){ /* legacy no-op */ }
+function showWelcomeModal(){ /* legacy no-op */ }
+function closeWelcomeModal(){ /* legacy no-op */ }
 
 function escHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
