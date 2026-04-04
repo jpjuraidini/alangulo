@@ -1151,8 +1151,7 @@ const R32=[
 const USERS=[
   {u:'admin', p:'0000', admin:true,  code:'ADM'},
   {u:'demo',  p:'1234', admin:false, code:'DEM'},
-  {u:'jp',    p:'2026', admin:false, code:'JPJ'},
-  // In production these come from the DB. Each user has a unique 3-letter code.
+  // All other users come from the DB
 ];
 // ── SCORING SYSTEM: Opción D + Enfoque 2 ──
 // Grupos: +1 acertar W/E/L, +2 bonus marcador exacto
@@ -1864,6 +1863,8 @@ function buildRankingHTML(board,isDemo){
 //  ADMIN
 // ══════════════════════════════════════════════════════
 function renderAdmin(){
+  // Load all refs first so the users table shows correct counts
+  api('GET','/api/refs').then(allRefs=>{ refs=allRefs; renderUsersTable(); }).catch(()=>{});
   const w=document.getElementById('adm-wrap');
   let html='';
 
