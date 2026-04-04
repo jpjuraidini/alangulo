@@ -2622,7 +2622,9 @@ function showRefModal(){
 }
 
 function closeRefScreen(){
-  document.getElementById('ref-screen').classList.remove('open');
+  const scr=document.getElementById('ref-screen');
+  scr.classList.remove('open');
+  scr.style.display='none';
 }
 
 function submitRefScreen(){
