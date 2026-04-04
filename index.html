@@ -2153,7 +2153,7 @@ function usernameFromCode(code){
 
 function renderPremios(){
   const wrap=document.getElementById('premios-wrap');
-  const totalUsers=Math.max(Object.keys(picks).length,1);
+  const totalUsers=Math.max(Object.keys(picks).filter(u=>!isAdminUser(u)).length,1);
   const bolsa=totalUsers*PRICE_PER_USER;
   const myCode=CU.code||genCode(CU.u);
   const myRefs=refs[myCode]||[];
@@ -2829,6 +2829,12 @@ function exportRanking(){
   toast('Imagen del ranking descargada ✓');
 }
 
+function isAdminUser(u){
+  // Check if a username belongs to an admin
+  const found=allUsers().find(x=>x.u===u);
+  return found?.admin===true;
+}
+
 function buildBoard(){
   const hasReal = Object.keys(results.groups||{}).length > 0;
   if (!hasReal){
@@ -2838,10 +2844,12 @@ function buildBoard(){
       isMe: n.includes('(tú)')
     })).sort((a,b)=>b.total-a.total);
   }
-  return Object.keys(picks).map(u=>{
-    const sc = calcScore(u);
-    return { name:u, ...sc, isMe:u===CU.u };
-  }).sort((a,b)=>b.total-a.total);
+  return Object.keys(picks)
+    .filter(u=>!isAdminUser(u))  // exclude admins
+    .map(u=>{
+      const sc = calcScore(u);
+      return { name:u, ...sc, isMe:u===CU.u };
+    }).sort((a,b)=>b.total-a.total);
 }
 
 // ══════════════════════════════════════════════════════
