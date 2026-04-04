@@ -2828,12 +2828,12 @@ function exportRanking(){
 }
 
 function isAdminUser(u){
-  // Always exclude hardcoded admin users
+  // Hardcoded admin usernames always excluded
+  if(u==='admin') return true;
+  // Check hardcoded USERS array
   if(USERS.find(x=>x.u===u&&x.admin===true)) return true;
-  // Exclude DB admins if loaded
+  // Check DB-loaded users
   if(dynUsers.find(x=>x.u===u&&x.admin===true)) return true;
-  // Exclude current user if they are admin (edge case)
-  if(u===CU?.u&&CU?.admin) return true;
   return false;
 }
 
