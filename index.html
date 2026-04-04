@@ -651,6 +651,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 #welcome-modal.open{display:flex}
 #ref-modal.open{display:flex}
 #ref-screen.open{display:flex}
+#br-score-modal.open{display:flex}
 .adm-modal-box{
   background:var(--surface);border-radius:16px;padding:1.75rem;
   width:100%;max-width:320px;box-shadow:0 24px 60px rgba(0,0,0,.25);
@@ -843,6 +844,34 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       No volver a mostrar esta pantalla
     </label>
 
+  </div>
+</div>
+
+<!-- BRACKET SCORE MODAL -->
+<div id="br-score-modal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(10,14,26,.55);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem 1.25rem;max-width:320px;width:100%;box-shadow:var(--sh2)">
+    <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.25rem" id="br-sm-title">Marcador exacto</div>
+    <div style="font-size:.78rem;color:var(--ink3);margin-bottom:1.25rem">Opcional — suma puntos extra si aciertas el marcador exacto</div>
+    <div style="display:grid;grid-template-columns:1fr 32px 1fr;align-items:center;gap:.5rem;margin-bottom:1.25rem">
+      <div style="text-align:center">
+        <div style="font-size:.65rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px" id="br-sm-hname">Local</div>
+        <input id="br-sm-h" type="number" min="0" max="20" placeholder="0"
+          style="width:100%;padding:12px 6px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.5rem;text-align:center;box-sizing:border-box;outline:none"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+      <div style="font-weight:800;font-size:1.2rem;color:var(--ink3);text-align:center">-</div>
+      <div style="text-align:center">
+        <div style="font-size:.65rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px" id="br-sm-aname">Visitante</div>
+        <input id="br-sm-a" type="number" min="0" max="20" placeholder="0"
+          style="width:100%;padding:12px 6px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.5rem;text-align:center;box-sizing:border-box;outline:none"
+          onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem">
+      <button onclick="saveBrScore()" style="flex:1;padding:10px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer">Guardar</button>
+      <button onclick="skipBrScore()" style="flex:1;padding:10px;background:var(--surface);color:var(--ink3);border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">Solo ganador</button>
+    </div>
+    <button onclick="clearBrScore()" style="width:100%;margin-top:.5rem;padding:7px;background:transparent;color:var(--ink3);border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;cursor:pointer">Borrar marcador guardado</button>
   </div>
 </div>
 
@@ -1750,19 +1779,81 @@ function mkBrMatch(id,h,a,w){
 }
 function brT(id,side,team,winner){
   const isW=winner&&winner===team;
+  const sc=picks[CU.u]?.sc?.[id];
+  const hasScore=sc!=null&&sc.h!=null&&sc.a!=null;
   return `<div class="br-t ${isW?'W':''}" onclick="pickW('${id}','${side}','${team||''}')">
     <span class="btf">${team?FL[team]||'🏳':'❓'}</span>
     <span class="btn ${!team?'tbd':''}">${team?NM[team]||team:'Por definir'}</span>
-    ${isW?'<span class="br-check">✓</span>':''}
+    ${isW&&hasScore?`<span style="font-size:.6rem;color:var(--green);font-weight:700;flex-shrink:0">${sc.h}-${sc.a}</span>`:''}
+    ${isW&&!hasScore?'<span class="br-check">✓</span>':''}
   </div>`;
 }
+let _brScoreId=null, _brScoreTeam=null, _brScoreH=null, _brScoreA=null;
+
 function pickW(id,side,team){
   if(!team){toast('Completa los grupos primero');return;}
+  // Set winner
   picks[CU.u].br[id]=team;
-  persist(); // async — fires and continues
-  renderBracket();
-  toast(`✓ ${NM[team]||team} avanza`);
+  _brScoreId=id;
+  _brScoreTeam=team;
+  // Open score modal
+  const h=picks[CU.u].br[`${id}_h`];
+  const a=picks[CU.u].br[`${id}_a`];
+  const hTeam = side==='h' ? team : _getBrOpponent(id,side,team);
+  const aTeam = side==='a' ? team : _getBrOpponent(id,side,team);
+  document.getElementById('br-sm-title').textContent=`${MATCH_NUM[id]||id} · Marcador exacto`;
+  document.getElementById('br-sm-hname').textContent=NM[hTeam]||hTeam||'Local';
+  document.getElementById('br-sm-aname').textContent=NM[aTeam]||aTeam||'Visitante';
+  document.getElementById('br-sm-h').value = picks[CU.u].sc?.[id]?.h??'';
+  document.getElementById('br-sm-a').value = picks[CU.u].sc?.[id]?.a??'';
+  document.getElementById('br-score-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('br-sm-h').focus(),60);
 }
+
+function _getBrOpponent(id,side,team){
+  // Try to get the other team from the rendered bracket
+  const mu=buildR32Matchups();
+  if(mu[id]) return side==='h'?mu[id].away:mu[id].home;
+  const feed=BRACKET_FEEDS[id];
+  if(feed) return side==='h'?(picks[CU.u].br[feed[1]]||'?'):(picks[CU.u].br[feed[0]]||'?');
+  return '?';
+}
+
+function saveBrScore(){
+  const hv=document.getElementById('br-sm-h').value;
+  const av=document.getElementById('br-sm-a').value;
+  if(hv!==''&&av!==''){
+    if(!picks[CU.u].sc) picks[CU.u].sc={};
+    picks[CU.u].sc[_brScoreId]={h:+hv,a:+av};
+  }
+  closeBrScoreModal();
+  persist();
+  renderBracket();
+  toast(`✓ ${NM[_brScoreTeam]||_brScoreTeam} avanza${hv!==''&&av!==''?` · ${hv}-${av}`:''}`) ;
+}
+
+function skipBrScore(){
+  closeBrScoreModal();
+  persist();
+  renderBracket();
+  toast(`✓ ${NM[_brScoreTeam]||_brScoreTeam} avanza`);
+}
+
+function clearBrScore(){
+  if(picks[CU.u].sc) delete picks[CU.u].sc[_brScoreId];
+  closeBrScoreModal();
+  persist();
+  renderBracket();
+  toast('Marcador borrado');
+}
+
+function closeBrScoreModal(){
+  document.getElementById('br-score-modal').style.display='none';
+}
+
+document.getElementById('br-score-modal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('br-score-modal')) closeBrScoreModal();
+});
 
 // ══════════════════════════════════════════════════════
 //  RANKING — real users + simulated demo table
