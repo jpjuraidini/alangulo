@@ -894,7 +894,6 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       <button class="ntab"     onclick="go('bracket')"    data-p="bracket">Bracket</button>
       <button class="ntab"     onclick="go('miquiniela')" data-p="miquiniela">Mi Quiniela</button>
       <button class="ntab"     onclick="go('ranking')"    data-p="ranking">Ranking</button>
-      <button class="ntab"     onclick="go('fixture')"    data-p="fixture">Fixture</button>
     </div>
     <div class="nav-user">
       Hola, <b id="nav-u"></b>
@@ -984,15 +983,6 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <div class="ph"><div class="ph-left"><div class="ph-h">Notificaciones</div><div class="ph-s">Elige qué avisos quieres recibir</div></div></div>
     <div id="notif-wrap"></div>
   </div>
-
-  <!-- FIXTURE -->
-  <div class="page" id="page-fixture">
-    <div class="ph">
-      <div class="ph-left"><div class="ph-h">Fixture</div><div class="ph-s">Calendario completo · Copa Mundial FIFA 2026</div></div>
-    </div>
-    <div id="fixture-wrap"></div>
-  </div>
-
   <!-- COUNTDOWN -->
   <div class="page" id="page-countdown">
     <div class="ph">
@@ -3030,129 +3020,6 @@ function exportBracketPDF(){
 // ══════════════════════════════════════════════════════
 //  FIXTURE
 // ══════════════════════════════════════════════════════
-const FIXTURE_MATCHES=[
-  // ── JORNADA 1 ──
-  {date:'2026-06-11',time:'14:00',home:'MEX',away:'RSA', venue:'Estadio Azteca, Ciudad de México',group:'A'},
-  {date:'2026-06-11',time:'16:00',home:'CAN',away:'BIH', venue:'BMO Field, Toronto',group:'B'},
-  {date:'2026-06-12',time:'14:00',home:'KOR',away:'CZE', venue:'SoFi Stadium, Guadalajara',group:'A'},
-  {date:'2026-06-12',time:'17:00',home:'USA',away:'PAR', venue:'AT&T Stadium, Dallas',group:'D'},
-  {date:'2026-06-12',time:'20:00',home:'BRA',away:'MAR', venue:'MetLife Stadium, Nueva York/NJ',group:'C'},
-  {date:'2026-06-13',time:'14:00',home:'HAI',away:'SCO', venue:'Gillette Stadium, Boston',group:'C'},
-  {date:'2026-06-13',time:'15:00',home:'QAT',away:'SUI', venue:'Estadio Azteca, Ciudad de México',group:'B'},
-  {date:'2026-06-13',time:'19:00',home:'AUS',away:'TUR', venue:'Levi\'s Stadium, San Francisco',group:'D'},
-  {date:'2026-06-14',time:'14:00',home:'GER',away:'CUW', venue:'Hard Rock Stadium, Miami',group:'E'},
-  {date:'2026-06-14',time:'17:00',home:'SWE',away:'TUN', venue:'Estadio BBVA, Monterrey',group:'F'},
-  {date:'2026-06-14',time:'20:00',home:'NED',away:'JPN', venue:'Empower Field at Mile High, Denver',group:'F'},
-  {date:'2026-06-15',time:'14:00',home:'CIV',away:'ECU', venue:'BC Place, Vancouver',group:'E'},
-  {date:'2026-06-15',time:'17:00',home:'BEL',away:'EGY', venue:'Levi\'s Stadium, San Francisco',group:'G'},
-  {date:'2026-06-15',time:'20:00',home:'IRN',away:'NZL', venue:'AT&T Stadium, Dallas',group:'G'},
-  {date:'2026-06-16',time:'14:00',home:'ESP',away:'CPV', venue:'Hard Rock Stadium, Miami',group:'H'},
-  {date:'2026-06-16',time:'17:00',home:'FRA',away:'SEN', venue:'Estadio Akron, Guadalajara',group:'I'},
-  {date:'2026-06-16',time:'20:00',home:'NOR',away:'IRQ', venue:'Q2 Stadium, Dallas',group:'I'},
-  {date:'2026-06-17',time:'14:00',home:'GHA',away:'PAN', venue:'BMO Field, Toronto',group:'L'},
-  {date:'2026-06-17',time:'17:00',home:'ENG',away:'CRO', venue:'Empower Field at Mile High, Denver',group:'L'},
-  {date:'2026-06-17',time:'20:00',home:'POR',away:'COD', venue:'Estadio BBVA, Monterrey',group:'K'},
-  {date:'2026-06-18',time:'14:00',home:'UZB',away:'COL', venue:'BC Place, Vancouver',group:'K'},
-  {date:'2026-06-18',time:'17:00',home:'ARG',away:'ALG', venue:'Rose Bowl, Los Ángeles',group:'J'},
-  {date:'2026-06-18',time:'20:00',home:'KSA',away:'URU', venue:'MetLife Stadium, Nueva York/NJ',group:'H'},
-  // ── JORNADA 2 ──
-  {date:'2026-06-19',time:'14:00',home:'CAN',away:'QAT', venue:'Levi\'s Stadium, San Francisco',group:'B'},
-  {date:'2026-06-19',time:'17:00',home:'MEX',away:'KOR', venue:'SoFi Stadium, Los Ángeles',group:'A'},
-  {date:'2026-06-19',time:'20:00',home:'AUT',away:'JOR', venue:'MetLife Stadium, Nueva York/NJ',group:'J'},
-  {date:'2026-06-20',time:'14:00',home:'SCO',away:'MAR', venue:'Q2 Stadium, Austin',group:'C'},
-  {date:'2026-06-20',time:'17:00',home:'BRA',away:'HAI', venue:'Rose Bowl, Los Ángeles',group:'C'},
-  {date:'2026-06-20',time:'20:00',home:'USA',away:'AUS', venue:'Empower Field at Mile High, Denver',group:'D'},
-  {date:'2026-06-21',time:'14:00',home:'TUR',away:'PAR', venue:'BC Place, Vancouver',group:'D'},
-  {date:'2026-06-21',time:'17:00',home:'SUI',away:'BIH', venue:'Estadio Azteca, Ciudad de México',group:'B'},
-  {date:'2026-06-21',time:'20:00',home:'GER',away:'CIV', venue:'Gillette Stadium, Boston',group:'E'},
-  {date:'2026-06-22',time:'14:00',home:'ECU',away:'CUW', venue:'Hard Rock Stadium, Miami',group:'E'},
-  {date:'2026-06-22',time:'17:00',home:'JPN',away:'SWE', venue:'BMO Field, Toronto',group:'F'},
-  {date:'2026-06-22',time:'20:00',home:'TUN',away:'NED', venue:'Estadio BBVA, Monterrey',group:'F'},
-  {date:'2026-06-23',time:'14:00',home:'BEL',away:'IRN', venue:'Levi\'s Stadium, San Francisco',group:'G'},
-  {date:'2026-06-23',time:'17:00',home:'NZL',away:'EGY', venue:'AT&T Stadium, Dallas',group:'G'},
-  {date:'2026-06-23',time:'20:00',home:'ESP',away:'KSA', venue:'Hard Rock Stadium, Miami',group:'H'},
-  {date:'2026-06-24',time:'14:00',home:'URU',away:'CPV', venue:'MetLife Stadium, Nueva York/NJ',group:'H'},
-  {date:'2026-06-24',time:'17:00',home:'FRA',away:'NOR', venue:'Empower Field at Mile High, Denver',group:'I'},
-  {date:'2026-06-24',time:'20:00',home:'SEN',away:'IRQ', venue:'Q2 Stadium, Austin',group:'I'},
-  {date:'2026-06-25',time:'14:00',home:'ARG',away:'AUT', venue:'Rose Bowl, Los Ángeles',group:'J'},
-  {date:'2026-06-25',time:'17:00',home:'JOR',away:'ALG', venue:'Levi\'s Stadium, San Francisco',group:'J'},
-  {date:'2026-06-25',time:'20:00',home:'ENG',away:'GHA', venue:'BC Place, Vancouver',group:'L'},
-  {date:'2026-06-26',time:'14:00',home:'PAN',away:'CRO', venue:'BMO Field, Toronto',group:'L'},
-  {date:'2026-06-26',time:'17:00',home:'POR',away:'UZB', venue:'Gillette Stadium, Boston',group:'K'},
-  {date:'2026-06-26',time:'20:00',home:'COL',away:'COD', venue:'Estadio Akron, Guadalajara',group:'K'},
-  // ── JORNADA 3 ──
-  {date:'2026-06-27',time:'16:00',home:'CZE',away:'MEX', venue:'SoFi Stadium, Los Ángeles',group:'A'},
-  {date:'2026-06-27',time:'16:00',home:'RSA',away:'KOR', venue:'Estadio BBVA, Monterrey',group:'A'},
-  {date:'2026-06-28',time:'16:00',home:'BIH',away:'QAT', venue:'Q2 Stadium, Austin',group:'B'},
-  {date:'2026-06-28',time:'16:00',home:'SUI',away:'CAN', venue:'BC Place, Vancouver',group:'B'},
-  {date:'2026-06-28',time:'20:00',home:'MAR',away:'HAI', venue:'Empower Field at Mile High, Denver',group:'C'},
-  {date:'2026-06-28',time:'20:00',home:'SCO',away:'BRA', venue:'Estadio Azteca, Ciudad de México',group:'C'},
-  {date:'2026-06-29',time:'16:00',home:'PAR',away:'AUS', venue:'AT&T Stadium, Dallas',group:'D'},
-  {date:'2026-06-29',time:'16:00',home:'TUR',away:'USA', venue:'Levi\'s Stadium, San Francisco',group:'D'},
-  {date:'2026-06-29',time:'20:00',home:'CUW',away:'CIV', venue:'Hard Rock Stadium, Miami',group:'E'},
-  {date:'2026-06-29',time:'20:00',home:'ECU',away:'GER', venue:'Rose Bowl, Los Ángeles',group:'E'},
-  {date:'2026-06-30',time:'16:00',home:'NED',away:'SWE', venue:'Estadio Akron, Guadalajara',group:'F'},
-  {date:'2026-06-30',time:'16:00',home:'JPN',away:'TUN', venue:'MetLife Stadium, Nueva York/NJ',group:'F'},
-  {date:'2026-06-30',time:'20:00',home:'EGY',away:'IRN', venue:'Gillette Stadium, Boston',group:'G'},
-  {date:'2026-06-30',time:'20:00',home:'NZL',away:'BEL', venue:'BMO Field, Toronto',group:'G'},
-  {date:'2026-07-01',time:'16:00',home:'CPV',away:'KSA', venue:'Estadio BBVA, Monterrey',group:'H'},
-  {date:'2026-07-01',time:'16:00',home:'URU',away:'ESP', venue:'Hard Rock Stadium, Miami',group:'H'},
-  {date:'2026-07-01',time:'20:00',home:'IRQ',away:'NOR', venue:'MetLife Stadium, Nueva York/NJ',group:'I'},
-  {date:'2026-07-01',time:'20:00',home:'SEN',away:'FRA', venue:'Levi\'s Stadium, San Francisco',group:'I'},
-  {date:'2026-07-02',time:'16:00',home:'ALG',away:'AUT', venue:'BC Place, Vancouver',group:'J'},
-  {date:'2026-07-02',time:'16:00',home:'JOR',away:'ARG', venue:'AT&T Stadium, Dallas',group:'J'},
-  {date:'2026-07-02',time:'20:00',home:'COD',away:'UZB', venue:'Q2 Stadium, Austin',group:'K'},
-  {date:'2026-07-02',time:'20:00',home:'COL',away:'POR', venue:'Rose Bowl, Los Ángeles',group:'K'},
-  {date:'2026-07-03',time:'16:00',home:'CRO',away:'GHA', venue:'Empower Field at Mile High, Denver',group:'L'},
-  {date:'2026-07-03',time:'16:00',home:'PAN',away:'ENG', venue:'Gillette Stadium, Boston',group:'L'},
-];
-
-function renderFixture(){
-  const wrap=document.getElementById('fixture-wrap');
-  if(!wrap) return;
-  const today=new Date().toISOString().slice(0,10);
-  // Group by date
-  const byDate={};
-  FIXTURE_MATCHES.forEach(m=>{
-    if(!byDate[m.date]) byDate[m.date]=[];
-    byDate[m.date].push(m);
-  });
-  let html='';
-  Object.entries(byDate).forEach(([date,matches])=>{
-    const d=new Date(date+'T12:00:00');
-    const label=d.toLocaleDateString('es-MX',{weekday:'long',day:'numeric',month:'long'});
-    const isToday=date===today;
-    html+=`<div style="margin-bottom:1.25rem">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:.6rem">
-        <div style="font-weight:800;font-size:.9rem;color:var(--ink);text-transform:capitalize">${label}</div>
-        ${isToday?`<span class="pill pg" style="font-size:.62rem">Hoy</span>`:''}
-      </div>
-      <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh)">`;
-    matches.forEach((m,i)=>{
-      const res=results.sc?.[Object.values(GM).flat().find(gm=>gm.h===m.home&&gm.a===m.away)?.id];
-      const scoreTxt=res!=null?`${res.h} – ${res.a}`:'vs';
-      const hasResult=res!=null;
-      html+=`
-        <div style="display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;padding:12px 16px;${i>0?'border-top:1px solid var(--border)':''}">
-          <div style="display:flex;align-items:center;gap:8px">
-            <span style="font-size:1.1rem">${FL[m.home]||'🏳'}</span>
-            <span style="font-weight:600;font-size:.85rem">${NM[m.home]||m.home}</span>
-          </div>
-          <div style="text-align:center">
-            <div style="font-weight:800;font-size:${hasResult?'1rem':'.8rem'};color:${hasResult?'var(--green)':'var(--ink3)'}">${scoreTxt}</div>
-            <div style="font-size:.65rem;color:var(--ink3);margin-top:2px">${m.time} CT · Grupo ${m.group}</div>
-          </div>
-          <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end">
-            <span style="font-weight:600;font-size:.85rem">${NM[m.away]||m.away}</span>
-            <span style="font-size:1.1rem">${FL[m.away]||'🏳'}</span>
-          </div>
-        </div>
-        <div style="padding:2px 16px 8px;font-size:.68rem;color:var(--ink3);${i>0?'border-top:none':''}">${m.venue}</div>`;
-    });
-    html+=`</div></div>`;
-  });
-  wrap.innerHTML=html||`<p style="color:var(--ink3);font-size:.85rem">Cargando fixture…</p>`;
-}
 
 // ══════════════════════════════════════════════════════
 //  CUENTA REGRESIVA
@@ -3246,7 +3113,6 @@ function go(name){
   if(name==='miquiniela')     renderMiQuiniela();
   if(name==='referidos')      renderReferidos();
   if(name==='notificaciones') renderNotificaciones();
-  if(name==='fixture')        renderFixture();
   if(name==='countdown')      renderCountdown();
   document.getElementById('fab').classList.toggle('vis',name==='grupos'||name==='bracket');
   localStorage.setItem('q26page', name);
