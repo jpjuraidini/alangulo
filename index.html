@@ -300,7 +300,7 @@ body{
   color:var(--ink2);font-size:.76rem;font-weight:600;
 }
 .btn.tbd{color:var(--ink3);font-style:italic;font-weight:400;font-size:.72rem}
-.br-check{font-size:.62rem;color:var(--green);font-weight:800;flex-shrink:0}
+.br-sm-winner-btn.active{background:var(--green)!important;color:#fff!important;border-color:var(--green)!important}
 
 /* RANKING */
 /* ── RANKING ── */
@@ -849,29 +849,50 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 
 <!-- BRACKET SCORE MODAL -->
 <div id="br-score-modal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(10,14,26,.55);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem 1.25rem;max-width:320px;width:100%;box-shadow:var(--sh2)">
-    <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.25rem" id="br-sm-title">Marcador exacto</div>
-    <div style="font-size:.78rem;color:var(--ink3);margin-bottom:1.25rem">Opcional — suma puntos extra si aciertas el marcador exacto</div>
-    <div style="display:grid;grid-template-columns:1fr 32px 1fr;align-items:center;gap:.5rem;margin-bottom:1.25rem">
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem 1.25rem;max-width:340px;width:100%;box-shadow:var(--sh2)">
+    <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.25rem" id="br-sm-title">Predecir resultado</div>
+    <div style="font-size:.75rem;color:var(--ink3);margin-bottom:1.25rem">El ganador se determina por el marcador a 90 minutos. Si hay empate, elige quién avanza (puede ser por tiempo extra o penales).</div>
+
+    <!-- Score inputs -->
+    <div style="display:grid;grid-template-columns:1fr 24px 1fr;align-items:center;gap:.4rem;margin-bottom:1rem">
       <div style="text-align:center">
-        <div style="font-size:.65rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px" id="br-sm-hname">Local</div>
+        <div style="font-size:.7rem;margin-bottom:3px" id="br-sm-hflag">🏳</div>
+        <div style="font-size:.65rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="br-sm-hname">Local</div>
         <input id="br-sm-h" type="number" min="0" max="20" placeholder="0"
-          style="width:100%;padding:12px 6px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.5rem;text-align:center;box-sizing:border-box;outline:none"
+          style="width:100%;padding:12px 4px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.6rem;text-align:center;box-sizing:border-box;outline:none;transition:border-color .2s"
+          oninput="updateBrTiebreaker()"
           onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
       </div>
-      <div style="font-weight:800;font-size:1.2rem;color:var(--ink3);text-align:center">-</div>
+      <div style="font-weight:800;font-size:1rem;color:var(--ink3);text-align:center;margin-top:28px">-</div>
       <div style="text-align:center">
-        <div style="font-size:.65rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px" id="br-sm-aname">Visitante</div>
+        <div style="font-size:.7rem;margin-bottom:3px" id="br-sm-aflag">🏳</div>
+        <div style="font-size:.65rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" id="br-sm-aname">Visitante</div>
         <input id="br-sm-a" type="number" min="0" max="20" placeholder="0"
-          style="width:100%;padding:12px 6px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.5rem;text-align:center;box-sizing:border-box;outline:none"
+          style="width:100%;padding:12px 4px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.6rem;text-align:center;box-sizing:border-box;outline:none;transition:border-color .2s"
+          oninput="updateBrTiebreaker()"
           onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
       </div>
     </div>
-    <div style="display:flex;gap:.5rem">
-      <button onclick="saveBrScore()" style="flex:1;padding:10px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer">Guardar</button>
-      <button onclick="skipBrScore()" style="flex:1;padding:10px;background:var(--surface);color:var(--ink3);border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">Solo ganador</button>
+
+    <!-- Tiebreaker (shown only on draw) -->
+    <div id="br-sm-tiebreaker" style="display:none;background:var(--b-bg);border:1.5px solid var(--b2);border-radius:10px;padding:10px 12px;margin-bottom:1rem">
+      <div style="font-size:.72rem;font-weight:700;color:var(--b2);margin-bottom:8px;text-align:center">⚽ Empate — ¿quién avanza?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+        <button class="br-sm-winner-btn" data-team="" id="br-sm-wb-h" onclick="selectBrWinner(_brH)"
+          style="padding:8px 6px;border:2px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;transition:all .15s;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">—</button>
+        <button class="br-sm-winner-btn" data-team="" id="br-sm-wb-a" onclick="selectBrWinner(_brA)"
+          style="padding:8px 6px;border:2px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.75rem;cursor:pointer;transition:all .15s;text-overflow:ellipsis;overflow:hidden;white-space:nowrap">—</button>
+      </div>
     </div>
-    <button onclick="clearBrScore()" style="width:100%;margin-top:.5rem;padding:7px;background:transparent;color:var(--ink3);border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;cursor:pointer">Borrar marcador guardado</button>
+
+    <!-- Winner auto-indicator (shown when no draw) -->
+    <div id="br-sm-auto-winner" style="display:none;background:var(--g-bg);border:1px solid var(--green2);border-radius:8px;padding:7px 12px;margin-bottom:1rem;font-size:.78rem;font-weight:600;color:var(--green);text-align:center"></div>
+
+    <div style="display:flex;gap:.5rem">
+      <button onclick="saveBrScore()" style="flex:1;padding:11px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer">Guardar ✓</button>
+      <button onclick="closeBrScoreModal()" style="padding:11px 14px;background:var(--surface);color:var(--ink3);border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">✕</button>
+    </div>
+    <button onclick="clearBrScore()" style="width:100%;margin-top:.5rem;padding:7px;background:transparent;color:var(--ink3);border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;cursor:pointer;opacity:.7">Borrar predicción</button>
   </div>
 </div>
 
@@ -1767,84 +1788,125 @@ function renderBracket(){
   });
 }
 function mkBrMatch(id,h,a,w){
-  const el=document.createElement('div');el.className='br-m';
+  const el=document.createElement('div');
+  el.className='br-m';
+  el.style.cursor='pointer';
+  el.title='Clic para predecir resultado';
   const label=MATCH_NUM[id]||id;
+  const sc=picks[CU.u]?.sc?.[id];
+  const hasScore=sc!=null&&sc.h!=null;
   el.innerHTML=`
     <div class="br-mid">${label}</div>
     <div class="br-teams">
-      ${brT(id,'h',h,w)}
-      ${brT(id,'a',a,w)}
+      ${brT(id,'h',h,w,sc)}
+      ${brT(id,'a',a,w,sc)}
     </div>`;
+  // Click on the whole card opens the modal
+  el.addEventListener('click', ()=>openBrModal(id,h,a));
   return el;
 }
-function brT(id,side,team,winner){
+
+function brT(id,side,team,winner,sc){
   const isW=winner&&winner===team;
-  const sc=picks[CU.u]?.sc?.[id];
   const hasScore=sc!=null&&sc.h!=null&&sc.a!=null;
-  return `<div class="br-t ${isW?'W':''}" onclick="pickW('${id}','${side}','${team||''}')">
+  return `<div class="br-t ${isW?'W':''}">
     <span class="btf">${team?FL[team]||'🏳':'❓'}</span>
     <span class="btn ${!team?'tbd':''}">${team?NM[team]||team:'Por definir'}</span>
-    ${isW&&hasScore?`<span style="font-size:.6rem;color:var(--green);font-weight:700;flex-shrink:0">${sc.h}-${sc.a}</span>`:''}
+    ${isW&&hasScore?`<span style="font-size:.62rem;color:var(--green);font-weight:700;flex-shrink:0;background:var(--g-bg);padding:1px 5px;border-radius:4px">${sc.h}-${sc.a}</span>`:''}
     ${isW&&!hasScore?'<span class="br-check">✓</span>':''}
   </div>`;
 }
-let _brScoreId=null, _brScoreTeam=null, _brScoreH=null, _brScoreA=null;
 
-function pickW(id,side,team){
-  if(!team){toast('Completa los grupos primero');return;}
-  // Set winner
-  picks[CU.u].br[id]=team;
-  _brScoreId=id;
-  _brScoreTeam=team;
-  // Open score modal
-  const h=picks[CU.u].br[`${id}_h`];
-  const a=picks[CU.u].br[`${id}_a`];
-  const hTeam = side==='h' ? team : _getBrOpponent(id,side,team);
-  const aTeam = side==='a' ? team : _getBrOpponent(id,side,team);
-  document.getElementById('br-sm-title').textContent=`${MATCH_NUM[id]||id} · Marcador exacto`;
-  document.getElementById('br-sm-hname').textContent=NM[hTeam]||hTeam||'Local';
-  document.getElementById('br-sm-aname').textContent=NM[aTeam]||aTeam||'Visitante';
-  document.getElementById('br-sm-h').value = picks[CU.u].sc?.[id]?.h??'';
-  document.getElementById('br-sm-a').value = picks[CU.u].sc?.[id]?.a??'';
+let _brId=null, _brH=null, _brA=null;
+
+function openBrModal(id,h,a){
+  if(!h&&!a){toast('Completa la fase de grupos primero');return;}
+  _brId=id; _brH=h; _brA=a;
+  const sc=picks[CU.u]?.sc?.[id];
+  const w=picks[CU.u]?.br?.[id];
+  // Reset modal state
+  document.getElementById('br-sm-title').textContent=`${MATCH_NUM[id]||id} · Predecir resultado`;
+  document.getElementById('br-sm-hname').textContent=NM[h]||h||'Local';
+  document.getElementById('br-sm-aname').textContent=NM[a]||a||'Visitante';
+  document.getElementById('br-sm-hflag').textContent=FL[h]||'🏳';
+  document.getElementById('br-sm-aflag').textContent=FL[a]||'🏳';
+  document.getElementById('br-sm-h').value=sc?.h??'';
+  document.getElementById('br-sm-a').value=sc?.a??'';
+  // Show/hide tie-breaker based on current score
+  updateBrTiebreaker();
+  // Pre-select winner if already set
+  document.querySelectorAll('.br-sm-winner-btn').forEach(b=>{
+    b.classList.toggle('active', b.dataset.team===w);
+  });
   document.getElementById('br-score-modal').style.display='flex';
   setTimeout(()=>document.getElementById('br-sm-h').focus(),60);
 }
 
-function _getBrOpponent(id,side,team){
-  // Try to get the other team from the rendered bracket
-  const mu=buildR32Matchups();
-  if(mu[id]) return side==='h'?mu[id].away:mu[id].home;
-  const feed=BRACKET_FEEDS[id];
-  if(feed) return side==='h'?(picks[CU.u].br[feed[1]]||'?'):(picks[CU.u].br[feed[0]]||'?');
-  return '?';
+function updateBrTiebreaker(){
+  const hv=document.getElementById('br-sm-h').value;
+  const av=document.getElementById('br-sm-a').value;
+  const tie=document.getElementById('br-sm-tiebreaker');
+  const autoEl=document.getElementById('br-sm-auto-winner');
+  const wbH=document.getElementById('br-sm-wb-h');
+  const wbA=document.getElementById('br-sm-wb-a');
+
+  if(hv!==''&&av!==''){
+    if(+hv===+av){
+      // Empate — mostrar selector de ganador
+      tie.style.display='block';
+      autoEl.style.display='none';
+      wbH.textContent=`${FL[_brH]||'🏳'} ${NM[_brH]||_brH}`;
+      wbA.textContent=`${FL[_brA]||'🏳'} ${NM[_brA]||_brA}`;
+      wbH.dataset.team=_brH||'';
+      wbA.dataset.team=_brA||'';
+      // Mantener selección previa si existe
+      const w=picks[CU.u]?.br?.[_brId];
+      document.querySelectorAll('.br-sm-winner-btn').forEach(b=>b.classList.toggle('active',b.dataset.team===w));
+    } else {
+      // Ganador automático por marcador
+      tie.style.display='none';
+      const auto=+hv>+av?_brH:_brA;
+      if(auto){
+        picks[CU.u].br[_brId]=auto;
+        autoEl.style.display='block';
+        autoEl.textContent=`✓ ${FL[auto]||'🏳'} ${NM[auto]||auto} avanza`;
+      }
+    }
+  } else {
+    tie.style.display='none';
+    autoEl.style.display='none';
+  }
+}
+
+function selectBrWinner(team){
+  picks[CU.u].br[_brId]=team;
+  document.querySelectorAll('.br-sm-winner-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.team===team);
+  });
 }
 
 function saveBrScore(){
   const hv=document.getElementById('br-sm-h').value;
   const av=document.getElementById('br-sm-a').value;
+  const w=picks[CU.u]?.br?.[_brId];
+  if(!w){toast('Selecciona quién avanza');return;}
   if(hv!==''&&av!==''){
     if(!picks[CU.u].sc) picks[CU.u].sc={};
-    picks[CU.u].sc[_brScoreId]={h:+hv,a:+av};
+    picks[CU.u].sc[_brId]={h:+hv,a:+av};
   }
   closeBrScoreModal();
   persist();
   renderBracket();
-  toast(`✓ ${NM[_brScoreTeam]||_brScoreTeam} avanza${hv!==''&&av!==''?` · ${hv}-${av}`:''}`) ;
-}
-
-function skipBrScore(){
-  closeBrScoreModal();
-  persist();
-  renderBracket();
-  toast(`✓ ${NM[_brScoreTeam]||_brScoreTeam} avanza`);
+  toast(`✓ ${NM[w]||w} avanza${hv!==''&&av!==''?` · ${hv}-${av}`:''}` );
 }
 
 function clearBrScore(){
-  if(picks[CU.u].sc) delete picks[CU.u].sc[_brScoreId];
+  if(picks[CU.u].sc) delete picks[CU.u].sc[_brId];
+  if(picks[CU.u].br) delete picks[CU.u].br[_brId];
   closeBrScoreModal();
   persist();
   renderBracket();
-  toast('Marcador borrado');
+  toast('Predicción borrada');
 }
 
 function closeBrScoreModal(){
@@ -2480,6 +2542,7 @@ function renderReglas(){
       <p><b>¿Cómo se eligen los 8 mejores terceros?</b> Se ordenan todos los terceros lugares según: puntos obtenidos → diferencia de goles → goles a favor → Fair Play (tarjetas). Los 8 mejores pasan.</p>
       <p><b>Los cruces de Dieciseisavos</b> siguen el calendario oficial de FIFA publicado el 27 de marzo de 2026. Los enfrentamientos están preasignados según la combinación de grupos cuyos terceros clasificaron, garantizando que ningún equipo se enfrente a alguien de su mismo grupo en primera ronda.</p>
       <p>A partir de Octavos, el bracket es lineal: el ganador de cada partido avanza al siguiente encuentro en el orden establecido.</p>
+      <p><b>Marcador exacto en eliminatoria:</b> El marcador que predices corresponde al resultado a <b>90 minutos</b> (tiempo reglamentario). Si predices un empate, deberás indicar quién avanza — ya sea por tiempo extra o penales. El bonus de marcador exacto se otorga únicamente si aciertas el marcador a 90 minutos <i>y</i> al equipo que avanza.</p>
     </div>
   </div>
 
