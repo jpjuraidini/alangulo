@@ -1204,11 +1204,11 @@ const PTS={
   grpResult: 1,   // acertar resultado (W/E/L)
   grpExact:  2,   // bonus marcador exacto en grupos
   // Eliminatoria: [ganador, bonus_exacto]
-  r32: [1, 2],
-  r16: [2, 3],
-  qf:  [3, 5],
-  sf:  [5, 8],
-  f:   [10,15],
+  r32: [2,  4],   // Dieciseisavos
+  r16: [3,  6],   // Octavos
+  qf:  [5,  10],  // Cuartos
+  sf:  [7,  14],  // Semis
+  f:   [10, 20],  // Final
 };
 
 // ── SIMULATED USERS for ranking demo ──
@@ -2373,11 +2373,11 @@ function renderReglas(){
 
       <p style="margin:1rem 0 .5rem;font-weight:700;color:var(--ink)">Fase Eliminatoria</p>
       <div class="rules-pts-grid">
-        <div class="rpt"><div class="rpt-num">+1</div><div class="rpt-label">Ganador Dieciseisavos <span style="font-size:.7rem;color:var(--ink3)">(+2 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+2</div><div class="rpt-label">Ganador Octavos <span style="font-size:.7rem;color:var(--ink3)">(+3 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+3</div><div class="rpt-label">Ganador Cuartos <span style="font-size:.7rem;color:var(--ink3)">(+5 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+5</div><div class="rpt-label">Ganador Semis <span style="font-size:.7rem;color:var(--ink3)">(+8 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+10</div><div class="rpt-label">Ganador Final (campeón) <span style="font-size:.7rem;color:var(--ink3)">(+15 si exacto)</span></div></div>
+        <div class="rpt"><div class="rpt-num">+2</div><div class="rpt-label">Ganador Dieciseisavos <span style="font-size:.7rem;color:var(--ink3)">(+4 si exacto)</span></div></div>
+        <div class="rpt"><div class="rpt-num">+3</div><div class="rpt-label">Ganador Octavos <span style="font-size:.7rem;color:var(--ink3)">(+6 si exacto)</span></div></div>
+        <div class="rpt"><div class="rpt-num">+5</div><div class="rpt-label">Ganador Cuartos <span style="font-size:.7rem;color:var(--ink3)">(+10 si exacto)</span></div></div>
+        <div class="rpt"><div class="rpt-num">+7</div><div class="rpt-label">Ganador Semis <span style="font-size:.7rem;color:var(--ink3)">(+14 si exacto)</span></div></div>
+        <div class="rpt"><div class="rpt-num">+10</div><div class="rpt-label">Ganador Final (campeón) <span style="font-size:.7rem;color:var(--ink3)">(+20 si exacto)</span></div></div>
       </div>
     </div>
   </div>
