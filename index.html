@@ -1219,11 +1219,12 @@ function load(){
 
 async function loadAllData(){
   try {
-    // Cargar picks de todos los usuarios (para ranking)
     picks = await api('GET','/api/picks');
-    // Asegurar que el usuario actual tiene entrada
-    if(CU && !picks[CU.u]) picks[CU.u]={sc:{},br:{}};
-    // Cargar resultados
+    // Remove admin picks from memory so admins never appear in ranking
+    Object.keys(picks).forEach(u=>{
+      if(USERS.find(x=>x.u===u&&x.admin===true)||u==='admin') delete picks[u];
+    });
+    if(CU && !picks[CU.u] && !CU.admin) picks[CU.u]={sc:{},br:{}};
     results = await api('GET','/api/results');
   } catch(e){ console.error('Error cargando datos:',e); }
 }
