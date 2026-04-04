@@ -1348,15 +1348,13 @@ function boot(){
         refs[CU.code] = myRefs;
       } catch(e){}
 
-      // Load users list if admin
-      if(CU.admin){
-        try {
-          const users = await api('GET','/api/users');
-          dynUsers = users
-            .filter(u=>!USERS.find(x=>x.u===u.username))
-            .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
-        } catch(e){}
-      }
+      // Load users list (needed to filter admins from ranking)
+      try {
+        const users = await api('GET','/api/users');
+        dynUsers = users
+          .filter(u=>!USERS.find(x=>x.u===u.username))
+          .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
+      } catch(e){}
 
       document.getElementById('app').style.display = 'block';
       document.getElementById('nav-u').textContent = CU.u;
@@ -2830,9 +2828,13 @@ function exportRanking(){
 }
 
 function isAdminUser(u){
-  // Check if a username belongs to an admin
-  const found=allUsers().find(x=>x.u===u);
-  return found?.admin===true;
+  // Always exclude hardcoded admin users
+  if(USERS.find(x=>x.u===u&&x.admin===true)) return true;
+  // Exclude DB admins if loaded
+  if(dynUsers.find(x=>x.u===u&&x.admin===true)) return true;
+  // Exclude current user if they are admin (edge case)
+  if(u===CU?.u&&CU?.admin) return true;
+  return false;
 }
 
 function buildBoard(){
