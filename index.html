@@ -616,6 +616,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 #adm-modal.open{display:flex}
 #welcome-modal.open{display:flex}
 #ref-modal.open{display:flex}
+#ref-screen.open{display:flex}
 .adm-modal-box{
   background:var(--surface);border-radius:16px;padding:1.75rem;
   width:100%;max-width:320px;box-shadow:0 24px 60px rgba(0,0,0,.25);
@@ -765,22 +766,49 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 </head>
 <body>
 
-<!-- ADMIN ACTION MODAL -->
-<!-- REFERRAL MODAL -->
-<div id="ref-modal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,14,26,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem">
-  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:2rem 1.75rem;max-width:360px;width:100%;box-shadow:var(--sh2);text-align:center">
-    <div style="font-size:2.5rem;margin-bottom:.75rem">🔗</div>
-    <div style="font-weight:800;font-size:1.2rem;color:var(--ink);margin-bottom:.5rem">¿Alguien te invitó?</div>
-    <div style="font-size:.82rem;color:var(--ink2);line-height:1.6;margin-bottom:1.25rem">Si alguien te compartió su código de 3 letras, ingrésalo aquí para quedar vinculados.</div>
-    <input id="ref-modal-input" type="text" maxlength="3" placeholder="Ej. ABC"
-      style="width:100%;padding:14px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.4rem;text-transform:uppercase;letter-spacing:6px;text-align:center;box-sizing:border-box;margin-bottom:1rem;outline:none;transition:border-color .2s"
-      oninput="this.value=this.value.toUpperCase();document.getElementById('ref-modal-input').style.borderColor=this.value.length===3?'var(--green)':'var(--border)'">
-    <button onclick="submitRefModal()" style="width:100%;padding:12px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:.75rem">Confirmar código</button>
-    <button onclick="skipRefModal()" style="width:100%;padding:10px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;margin-bottom:.75rem">No, saltar</button>
-    <label id="ref-skip-label" style="display:none;align-items:center;justify-content:center;gap:8px;font-size:.78rem;color:var(--ink3);cursor:pointer">
-      <input type="checkbox" id="ref-no-show" style="cursor:pointer">
-      No volver a mostrar
+<!-- REFERRAL ONBOARDING SCREEN -->
+<div id="ref-screen" style="display:none;position:fixed;inset:0;z-index:950;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;padding:1.5rem">
+  <!-- Background gradient like auth screen -->
+  <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,104,56,.12) 0%,rgba(0,48,135,.10) 50%,rgba(192,0,26,.08) 100%);pointer-events:none"></div>
+
+  <div style="position:relative;z-index:1;width:100%;max-width:400px;display:flex;flex-direction:column;align-items:center;gap:0">
+
+    <!-- Logo -->
+    <canvas id="ref-screen-logo" width="64" height="64" style="border-radius:16px;margin-bottom:1.5rem"></canvas>
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:2rem">
+      <div style="font-weight:800;font-size:1.5rem;color:var(--ink);margin-bottom:.4rem">¿Alguien te invitó?</div>
+      <div style="font-size:.85rem;color:var(--ink3);line-height:1.6;max-width:280px;margin:0 auto">Si alguien compartió su código contigo, ingrésalo para quedar vinculados. Si tu referido gana, ¡le caen $500 MXN!</div>
+    </div>
+
+    <!-- Card -->
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:1.75rem;width:100%;box-shadow:var(--sh2);margin-bottom:1rem">
+
+      <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink3);margin-bottom:.75rem">Código de quien te invitó</div>
+
+      <input id="ref-screen-input" type="text" maxlength="3" placeholder="ABC"
+        style="width:100%;padding:16px;border:2px solid var(--border);border-radius:12px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.8rem;text-transform:uppercase;letter-spacing:8px;text-align:center;box-sizing:border-box;margin-bottom:1.25rem;outline:none;transition:border-color .2s"
+        oninput="this.value=this.value.toUpperCase();this.style.borderColor=this.value.length===3?'var(--green)':'var(--border)'"
+        onkeydown="if(event.key==='Enter')submitRefScreen()">
+
+      <button onclick="submitRefScreen()"
+        style="width:100%;padding:13px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.95rem;cursor:pointer;letter-spacing:.3px">
+        Confirmar código ✓
+      </button>
+    </div>
+
+    <!-- Skip -->
+    <button onclick="skipRefScreen(false)"
+      style="width:100%;padding:11px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;margin-bottom:.75rem;background:var(--surface)">
+      No, nadie me invitó
+    </button>
+
+    <label id="ref-noshow-label" style="display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--ink3);cursor:pointer;padding:.5rem">
+      <input type="checkbox" id="ref-noshow-cb" style="cursor:pointer;width:16px;height:16px;accent-color:var(--green)">
+      No volver a mostrar esta pantalla
     </label>
+
   </div>
 </div>
 
@@ -2564,54 +2592,61 @@ function sendChat(){
 function shouldShowRefModal(){
   const noShow=localStorage.getItem(`q26ref_noshow_${CU.u}`);
   const hasRef=localStorage.getItem(`q26ref_done_${CU.u}`);
-  if(hasRef) return false;       // ya puso código
-  if(noShow) return false;       // dijo no volver a mostrar
-  return true;                   // primera vez o aún no ha puesto código
+  if(hasRef) return false;
+  if(noShow) return false;
+  return true;
 }
 
 function showRefModal(){
-  document.getElementById('ref-modal-input').value='';
-  document.getElementById('ref-modal-input').style.borderColor='var(--border)';
-  document.getElementById('ref-skip-label').style.display='none';
-  document.getElementById('ref-no-show').checked=false;
-  document.getElementById('ref-modal').classList.add('open');
+  document.getElementById('ref-screen-input').value='';
+  document.getElementById('ref-screen-input').style.borderColor='var(--border)';
+  document.getElementById('ref-noshow-cb').checked=false;
+  const scr=document.getElementById('ref-screen');
+  scr.classList.add('open');
+  // Draw logo on the screen
+  setTimeout(()=>{
+    const c=document.getElementById('ref-screen-logo');
+    if(c) drawStaticLogo(c,64);
+    document.getElementById('ref-screen-input').focus();
+  },50);
 }
 
-function closeRefModal(){
-  document.getElementById('ref-modal').classList.remove('open');
+function closeRefScreen(){
+  document.getElementById('ref-screen').classList.remove('open');
 }
 
-function submitRefModal(){
-  const code=document.getElementById('ref-modal-input').value.trim().toUpperCase();
+function submitRefScreen(){
+  const code=document.getElementById('ref-screen-input').value.trim().toUpperCase();
+  const inp=document.getElementById('ref-screen-input');
   if(!code||code.length!==3){
-    document.getElementById('ref-modal-input').style.borderColor='var(--red)';
-    document.getElementById('ref-modal-input').focus();
+    inp.style.borderColor='var(--red)';
+    inp.focus();
     return;
   }
-  api('POST','/api/refs_register',{username:CU.u, refCode:code})
+  api('POST','/api/refs_register',{username:CU.u,refCode:code})
     .then(()=>{
       localStorage.setItem(`q26ref_done_${CU.u}`,'1');
-      toast('¡Código de referido registrado! ✓');
-      closeRefModal();
+      toast('¡Código registrado! ✓');
+      closeRefScreen();
     })
-    .catch(()=>toast('Código no válido, intenta de nuevo'));
+    .catch(()=>{
+      inp.style.borderColor='var(--red)';
+      toast('Código no válido, intenta de nuevo');
+    });
 }
 
-function skipRefModal(){
-  // Show "no volver a mostrar" checkbox
-  const lbl=document.getElementById('ref-skip-label');
-  lbl.style.display='flex';
-  // If already visible and they click skip again, close
-  const cb=document.getElementById('ref-no-show');
-  if(cb.checked){
-    localStorage.setItem(`q26ref_noshow_${CU.u}`,'1');
-  }
-  closeRefModal();
+function skipRefScreen(){
+  const noShow=document.getElementById('ref-noshow-cb').checked;
+  if(noShow) localStorage.setItem(`q26ref_noshow_${CU.u}`,'1');
+  closeRefScreen();
 }
 
-function saveWelcomeRef(){ /* legacy no-op */ }
-function showWelcomeModal(){ /* legacy no-op */ }
-function closeWelcomeModal(){ /* legacy no-op */ }
+// Legacy no-ops
+function submitRefModal(){ submitRefScreen(); }
+function skipRefModal(){ skipRefScreen(); }
+function saveWelcomeRef(){}
+function showWelcomeModal(){}
+function closeWelcomeModal(){}
 
 function escHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
