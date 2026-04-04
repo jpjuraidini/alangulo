@@ -546,6 +546,8 @@ body.dark .mq-row.wrong{background:rgba(255,51,85,.14)}
   background:var(--surface);box-shadow:4px 0 32px rgba(10,14,26,.18);
   display:flex;flex-direction:column;
   transform:translateX(-100%);transition:transform .3s cubic-bezier(0.4,0,0.2,1);
+  overflow-y:auto;
+  overflow-x:hidden;
 }
 #drawer.open{transform:translateX(0)}
 body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
@@ -583,7 +585,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 }
 .drawer-divider{height:2px;background:var(--grad-tri);margin:.5rem 1.25rem;border-radius:2px;opacity:.6}
 
-.drawer-footer{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.5rem}
+.drawer-footer{padding:1rem 1.25rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.5rem;margin-top:auto}
 .drawer-code-box{
   background:var(--g-bg);border:1.5px solid var(--green2);border-radius:10px;
   padding:10px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;
