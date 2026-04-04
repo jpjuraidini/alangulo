@@ -770,13 +770,19 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:2rem 1.75rem;max-width:360px;width:100%;box-shadow:var(--sh2);text-align:center">
     <div style="font-size:2.5rem;margin-bottom:.75rem">🎉</div>
     <div style="font-weight:800;font-size:1.2rem;color:var(--ink);margin-bottom:.5rem">¡Bienvenido a Al Ángulo!</div>
-    <div style="font-size:.82rem;color:var(--ink2);line-height:1.6;margin-bottom:1.5rem">Este es tu <b>código de referido</b> único. Compártelo con amigos para que se unan — si tu referido gana el torneo, te caen <b>$500 MXN</b>.</div>
-    <div style="background:var(--g-bg);border:2px solid var(--green2);border-radius:12px;padding:1rem;margin-bottom:1.5rem">
+    <div style="font-size:.82rem;color:var(--ink2);line-height:1.6;margin-bottom:1.25rem">Este es tu <b>código de referido</b> único. Compártelo — si tu invitado gana el torneo, te caen <b>$500 MXN</b>.</div>
+    <div style="background:var(--g-bg);border:2px solid var(--green2);border-radius:12px;padding:1rem;margin-bottom:1.25rem">
       <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);margin-bottom:4px">Tu código</div>
       <div id="welcome-code" style="font-weight:800;font-size:2rem;color:var(--green);letter-spacing:6px">···</div>
     </div>
-    <button onclick="copyMyCode();closeWelcomeModal()" style="width:100%;padding:11px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:.75rem">Copiar código y cerrar</button>
-    <button onclick="closeWelcomeModal()" style="width:100%;padding:10px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">Lo veo después</button>
+    <div style="background:var(--bg);border:1.5px dashed var(--border2);border-radius:10px;padding:1rem;margin-bottom:1.25rem;text-align:left">
+      <div style="font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">¿Te invitó alguien? (opcional)</div>
+      <input id="welcome-ref" type="text" maxlength="3" placeholder="Código de quien te invitó"
+        style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:1rem;text-transform:uppercase;letter-spacing:3px;box-sizing:border-box"
+        oninput="this.value=this.value.toUpperCase()">
+    </div>
+    <button onclick="saveWelcomeRef();copyMyCode();closeWelcomeModal()" style="width:100%;padding:11px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:.75rem">Copiar mi código y entrar</button>
+    <button onclick="saveWelcomeRef();closeWelcomeModal()" style="width:100%;padding:10px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">Entrar sin copiar</button>
   </div>
 </div>
 
@@ -822,17 +828,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <input class="finput" id="lp" type="password" placeholder="••••" maxlength="6">
     <button class="auth-btn" onclick="doLogin()">Ingresar ⚽</button>
     <div class="auth-err" id="lerr"></div>
-    <div class="auth-divider">¿te invitó alguien?</div>
-    <div class="ref-wrap">
-      <div class="ref-label-row">
-        <span class="ref-icon">🔗</span>
-        <span class="ref-label-txt">Código de quien te invitó</span>
-        <span class="ref-optional">Opcional</span>
-      </div>
-      <input class="finput" id="lref" type="text" placeholder="Ej. ABC" maxlength="3"
-        style="text-transform:uppercase;letter-spacing:3px;font-family:'Plus Jakarta Sans';font-weight:800;font-size:1.1rem;margin-bottom:0"
-        oninput="this.value=this.value.toUpperCase()">
-    </div>
+    <input type="hidden" id="lref" value="">
     <div class="auth-hint">Tu acceso lo proporciona el organizador.</div>
   </div>
 </div>
@@ -2571,12 +2567,17 @@ function sendChat(){
 
 function showWelcomeModal(){
   const code=CU.code||genCode(CU.u);
-  const el=document.getElementById('welcome-modal');
   document.getElementById('welcome-code').textContent=code;
-  el.classList.add('open');
+  document.getElementById('welcome-modal').classList.add('open');
 }
 function closeWelcomeModal(){
   document.getElementById('welcome-modal').classList.remove('open');
+}
+function saveWelcomeRef(){
+  const refCode=document.getElementById('welcome-ref')?.value.trim().toUpperCase();
+  if(refCode && refCode.length===3){
+    api('POST','/api/refs_register',{username:CU.u, refCode}).catch(()=>{});
+  }
 }
 
 function escHtml(s){
