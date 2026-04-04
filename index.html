@@ -1336,10 +1336,8 @@ function boot(){
       if(CU.admin) document.querySelectorAll('.admin-only').forEach(e=>e.style.display='');
       renderGroups();renderBracket();renderRanking();renderPremios();
       if(CU.admin) renderAdmin();
-      // Show referral modal if needed
-      if(shouldShowRefModal()){
-        setTimeout(()=>showRefModal(), 600);
-      }
+      // Restore last page
+      const lastPage = localStorage.getItem('q26page') || 'grupos';
       go(lastPage);
       setTimeout(()=>{
         const al=document.getElementById('auth-logo');
@@ -1347,7 +1345,9 @@ function boot(){
         const dl=document.getElementById('drawer-logo');
         if(dl) drawStaticLogo(dl,28);
         syncDrawer();
-      },50);
+        // Show referral modal after everything is ready
+        if(shouldShowRefModal()) showRefModal();
+      },300);
     }, 380);
   }, 1200);
 }
