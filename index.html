@@ -1034,7 +1034,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   </div>
 </div>
 
-<button class="fab vis" id="fab" onclick="persist();toast('Guardado ✓')">Guardar todo</button>
+<button class="fab vis" id="fab" onclick="persist().then(()=>toast('¡Guardado! ✓')).catch(()=>toast('Error guardando'))">Guardar todo</button>
 <div id="toast"></div>
 
 <script>
@@ -1209,13 +1209,17 @@ async function loadMyPicks(){
 }
 
 async function persist(){
-  // Guardar sesión local
   localStorage.setItem('q26u',JSON.stringify(CU));
-  // Guardar picks del usuario en el backend
   if(CU && picks[CU.u]){
-    try { await api('POST',`/api/picks/${CU.u}`,{data:picks[CU.u]}); }
-    catch(e){ console.error('Error guardando picks:',e); }
+    try {
+      await api('POST',`/api/picks/${CU.u}`,{data:picks[CU.u]});
+    } catch(e){ console.error('Error guardando picks:',e); toast('⚠️ Error guardando, intenta de nuevo'); }
   }
+}
+
+function persistLocal(){
+  // Solo guarda sesión — sin llamada al backend
+  localStorage.setItem('q26u',JSON.stringify(CU));
 }
 
 // All users — ahora viene del backend, dynUsers es cache local
@@ -1457,7 +1461,9 @@ function openM(id,h,a,g,ex){
 }
 function closeM(){document.getElementById('modal').classList.remove('open');}
 function clearSc(){
-  delete picks[CU.u].sc[_m.id];persist();closeM();
+  delete picks[CU.u].sc[_m.id];
+  persist(); // async
+  closeM();
   renderGMatches(_m.g,GM[_m.g],picks[CU.u].sc);
   renderGTable(_m.g,getS(_m.g));
   updateProg();renderBracket();toast('Marcador borrado');
@@ -1466,7 +1472,9 @@ function saveSc(){
   const hv=document.getElementById('mhi').value;
   const av=document.getElementById('mai').value;
   if(hv===''||av===''){toast('Ingresa ambos marcadores');return;}
-  picks[CU.u].sc[_m.id]={h:+hv,a:+av};persist();closeM();
+  picks[CU.u].sc[_m.id]={h:+hv,a:+av};
+  persist(); // async — saves to backend
+  closeM();
   renderGMatches(_m.g,GM[_m.g],picks[CU.u].sc);
   renderGTable(_m.g,getS(_m.g));
   updateProg();renderBracket();
@@ -1670,7 +1678,9 @@ function brT(id,side,team,winner){
 }
 function pickW(id,side,team){
   if(!team){toast('Completa los grupos primero');return;}
-  picks[CU.u].br[id]=team;persist();renderBracket();
+  picks[CU.u].br[id]=team;
+  persist(); // async — fires and continues
+  renderBracket();
   toast(`✓ ${NM[team]||team} avanza`);
 }
 
