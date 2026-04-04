@@ -2053,19 +2053,21 @@ function saveGRes(g){
     if(hv!==''&&av!==''){
       const oldR=results.sc[m.id];
       const newH=+hv, newA=+av;
-      // Only log if actually changed
-      if(!oldR||oldR.h!==newH||oldR.a!==newA){
-        logChange(m.id, oldR?.h, oldR?.a, newH, newA, false);
-      }
+      if(!oldR||oldR.h!==newH||oldR.a!==newA) logChange(m.id,oldR?.h,oldR?.a,newH,newA,false);
       results.sc[m.id]={h:newH,a:newA};
     }
   });
   results.groups[g]=standings(g,results.sc).map(r=>r.team);
-  persist();renderRanking();
-  toast(`Grupo ${g} guardado ✓`);
-  const btn=document.querySelector(`[onclick="saveGRes('${g}')"]`);
-  if(btn){btn.classList.add('ok');setTimeout(()=>btn.classList.remove('ok'),2000);}
-  renderChangelog();
+  // Guardar resultados en el backend
+  api('POST','/api/results',{data:results})
+    .then(()=>{
+      renderRanking();
+      toast(`Grupo ${g} guardado ✓`);
+      const btn=document.querySelector(`[onclick="saveGRes('${g}')"]`);
+      if(btn){btn.classList.add('ok');setTimeout(()=>btn.classList.remove('ok'),2000);}
+      renderChangelog();
+    })
+    .catch(e=>toast('Error guardando resultados: '+e.message));
 }
 
 // ══════════════════════════════════════════════════════
@@ -2411,7 +2413,10 @@ async function fetchLiveScores(){
         updated++;
       }
     });
-    if(updated>0){persist();renderRanking();renderAdmin();}
+    if(updated>0){
+      api('POST','/api/results',{data:results}).catch(e=>console.error('Error guardando resultados live:',e));
+      renderRanking();renderAdmin();
+    }
     liveLastUpdate=new Date();
     updateLiveBar(true,updated);
   }catch(e){
@@ -2439,7 +2444,8 @@ function simulateLiveUpdate(){
   results.sc[pick.id]={h:hg,a:ag,auto:true};
   if(!results.groups) results.groups={};
   results.groups[pick.g]=standings(pick.g,results.sc).map(r=>r.team);
-  persist();renderRanking();renderAdmin();
+  api('POST','/api/results',{data:results}).catch(e=>console.error(e));
+  renderRanking();renderAdmin();
   liveLastUpdate=new Date();
   updateLiveBar(true,1);
 }
