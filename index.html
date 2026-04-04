@@ -634,6 +634,59 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 .adm-modal-btn.cancel{background:var(--surface);color:var(--ink2)}.adm-modal-btn.cancel:hover{background:var(--bg)}
 .adm-modal-btn.confirm{background:var(--grad-gb);color:#fff;border:none}.adm-modal-btn.confirm:hover{opacity:.9}
 .adm-modal-btn.danger{background:var(--red);color:#fff;border:none}.adm-modal-btn.danger:hover{background:var(--red2)}
+/* ── RESPONSIVE MÓVIL ── */
+@media(max-width:768px){
+  /* NAV: ocultar tabs, solo hamburger + logo + usuario */
+  .nav-tabs{display:none !important}
+  .nav{padding:0 .75rem}
+  .nav-logo{font-size:1rem}
+  .nav-user{font-size:.75rem}
+
+  /* Páginas */
+  .page{padding:.75rem}
+  .ph-left .ph-h{font-size:1.3rem}
+  .ph{flex-direction:column;align-items:flex-start;gap:.5rem}
+
+  /* Grupos */
+  .gg{grid-template-columns:1fr}
+  .mtn{max-width:58px}
+
+  /* Ranking */
+  .rk-podium{grid-template-columns:1fr}
+  .rk-table th:nth-child(3),.rk-table td:nth-child(3),
+  .rk-table th:nth-child(4),.rk-table td:nth-child(4){display:none}
+
+  /* Admin */
+  .cu-grid{grid-template-columns:1fr 1fr}
+  .cu-add-btn{grid-column:1/-1}
+  .adm-grid{grid-template-columns:1fr}
+
+  /* Mi Quiniela */
+  .mq-stats{grid-template-columns:repeat(3,1fr)}
+  .mq-row{grid-template-columns:1fr 68px 68px 30px;font-size:.76rem}
+
+  /* Premios */
+  .prizes-grid{grid-template-columns:1fr 1fr}
+  .prizes-bolsa-amt{font-size:2.2rem}
+
+  /* Drawer */
+  #drawer{width:88vw;max-width:300px}
+
+  /* FAB */
+  .fab{padding:10px 16px;font-size:.78rem;bottom:1rem;right:1rem}
+
+  /* Modal */
+  .modal-box{padding:1.5rem 1.25rem}
+}
+
+@media(max-width:480px){
+  .mq-stats{grid-template-columns:repeat(2,1fr)}
+  .prizes-grid{grid-template-columns:1fr}
+  .mt-inp{width:52px;height:52px;font-size:1.5rem}
+  .prizes-hero{padding:1.25rem}
+  .prizes-bolsa-amt{font-size:1.8rem}
+}
+
 #splash-screen{
   position:fixed;inset:0;z-index:9999;
   background:#0a0e1a;
@@ -783,6 +836,14 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     </div>
 
     <div class="drawer-section">Navegación</div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('grupos')" style="display:none">Grupos</button>
+    <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('bracket')" style="display:none">Bracket</button>
+    <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('miquiniela')" style="display:none">Mi Quiniela</button>
+    <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('ranking')" style="display:none">Ranking</button>
+    <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('premios')">Premios</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('reglas')">Reglas</button>
@@ -2650,6 +2711,9 @@ function syncDrawer(){
   if(label) label.textContent = isDark?'Modo claro':'Modo oscuro';
   // show admin item in drawer if admin
   if(CU?.admin) document.querySelectorAll('.drawer-admin-item').forEach(e=>e.style.display='');
+  // show main nav in drawer on mobile
+  const isMobile=window.innerWidth<=768;
+  document.querySelectorAll('.drawer-mobile-nav').forEach(e=>e.style.display=isMobile?'':'none');
 }
 
 // ══════════════════════════════════════════════════════
