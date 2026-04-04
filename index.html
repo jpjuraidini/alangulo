@@ -614,6 +614,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   align-items:center;justify-content:center;padding:1rem;
 }
 #adm-modal.open{display:flex}
+#welcome-modal.open{display:flex}
 .adm-modal-box{
   background:var(--surface);border-radius:16px;padding:1.75rem;
   width:100%;max-width:320px;box-shadow:0 24px 60px rgba(0,0,0,.25);
@@ -764,6 +765,21 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 <body>
 
 <!-- ADMIN ACTION MODAL -->
+<!-- WELCOME MODAL -->
+<div id="welcome-modal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(10,14,26,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:2rem 1.75rem;max-width:360px;width:100%;box-shadow:var(--sh2);text-align:center">
+    <div style="font-size:2.5rem;margin-bottom:.75rem">🎉</div>
+    <div style="font-weight:800;font-size:1.2rem;color:var(--ink);margin-bottom:.5rem">¡Bienvenido a Al Ángulo!</div>
+    <div style="font-size:.82rem;color:var(--ink2);line-height:1.6;margin-bottom:1.5rem">Este es tu <b>código de referido</b> único. Compártelo con amigos para que se unan — si tu referido gana el torneo, te caen <b>$500 MXN</b>.</div>
+    <div style="background:var(--g-bg);border:2px solid var(--green2);border-radius:12px;padding:1rem;margin-bottom:1.5rem">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);margin-bottom:4px">Tu código</div>
+      <div id="welcome-code" style="font-weight:800;font-size:2rem;color:var(--green);letter-spacing:6px">···</div>
+    </div>
+    <button onclick="copyMyCode();closeWelcomeModal()" style="width:100%;padding:11px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:.75rem">Copiar código y cerrar</button>
+    <button onclick="closeWelcomeModal()" style="width:100%;padding:10px;background:transparent;color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">Lo veo después</button>
+  </div>
+</div>
+
 <div id="adm-modal">
   <div class="adm-modal-box">
     <div class="adm-modal-title" id="adm-modal-title"></div>
@@ -1326,8 +1342,12 @@ function boot(){
       if(CU.admin) document.querySelectorAll('.admin-only').forEach(e=>e.style.display='');
       renderGroups();renderBracket();renderRanking();renderPremios();
       if(CU.admin) renderAdmin();
-      // Restore last visited page
-      const lastPage = localStorage.getItem('q26page') || 'grupos';
+      // Show welcome modal on first login
+      const welcomeKey=`q26welcomed_${CU.u}`;
+      if(!localStorage.getItem(welcomeKey)){
+        localStorage.setItem(welcomeKey,'1');
+        setTimeout(()=>showWelcomeModal(),600);
+      }
       go(lastPage);
       setTimeout(()=>{
         const al=document.getElementById('auth-logo');
@@ -2549,6 +2569,16 @@ function sendChat(){
     .catch(e=>{ toast('Error enviando mensaje'); inp.value=text; });
 }
 
+function showWelcomeModal(){
+  const code=CU.code||genCode(CU.u);
+  const el=document.getElementById('welcome-modal');
+  document.getElementById('welcome-code').textContent=code;
+  el.classList.add('open');
+}
+function closeWelcomeModal(){
+  document.getElementById('welcome-modal').classList.remove('open');
+}
+
 function escHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -3271,84 +3301,75 @@ function renderReferidos(){
   const wrap=document.getElementById('referidos-wrap');
   if(!wrap) return;
   const myCode=CU.code||genCode(CU.u);
-  const myRefs=refs[myCode]||[];
-  const board=buildBoard(); // get ranking data
+  wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Cargando...</div>`;
 
-  // Find my rank
-  const myRank=board.findIndex(r=>r.name===CU.u)+1;
+  api('GET',`/api/refs/${myCode}`).then(myRefs=>{
+    refs[myCode]=myRefs||[];
+    const board=buildBoard();
+    const myRank=board.findIndex(r=>r.name===CU.u)+1;
 
-  let html=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:1.5rem">
-    <div class="mq-stat">
-      <div class="mq-stat::before"></div>
-      <div class="mq-stat-num" style="color:var(--green)">${myRefs.length}</div>
-      <div class="mq-stat-label">Referidos tuyos</div>
-    </div>
-    <div class="mq-stat">
-      <div class="mq-stat-num" style="color:var(--blue2)">${myRank||'—'}</div>
-      <div class="mq-stat-label">Tu posición actual</div>
-    </div>
-    <div class="mq-stat">
-      <div class="mq-stat-num" style="color:var(--gld)">$${myRefs.length*500}</div>
-      <div class="mq-stat-label">Bono potencial MXN</div>
-    </div>
-  </div>`;
-
-  // My code box
-  html+=`<div class="my-ref-box" style="margin-bottom:1.25rem">
-    <div class="my-ref-left">
-      <div class="label">Tu código de referido</div>
-      <div class="code">${myCode}</div>
-    </div>
-    <button class="copy-code-btn" onclick="copyMyCode()">Copiar código</button>
-  </div>`;
-
-  if(myRefs.length===0){
-    html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:2.5rem;text-align:center;box-shadow:var(--sh)">
-      <div style="font-size:2rem;margin-bottom:.75rem">🔗</div>
-      <div style="font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.5rem">Aún no tienes referidos</div>
-      <div style="font-size:.82rem;color:var(--ink3);line-height:1.6">Comparte tu código <b style="color:var(--green)">${myCode}</b> con amigos para que se unan.<br>Si tu referido gana el 1er lugar, te caen $500 MXN.</div>
-    </div>`;
-  } else {
-    html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh)">
-      <div style="padding:10px 16px;background:var(--grad-tri);color:#fff;font-weight:700;font-size:.8rem;letter-spacing:.5px">
-        TUS REFERIDOS · ${myRefs.length} persona${myRefs.length!==1?'s':''}
+    let html=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:1.5rem">
+      <div class="mq-stat">
+        <div class="mq-stat-num" style="color:var(--green)">${myRefs.length}</div>
+        <div class="mq-stat-label">Referidos tuyos</div>
       </div>
-      <table style="width:100%;border-collapse:collapse">
-        <thead>
-          <tr style="background:var(--bg)">
-            <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">#</th>
-            <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">Usuario</th>
-            <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:center;border-bottom:1.5px solid var(--border)">Ranking</th>
-            <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:right;border-bottom:1.5px solid var(--border)">Pts</th>
-          </tr>
-        </thead>
-        <tbody>`;
-    myRefs.forEach((u,i)=>{
-      const pos=board.findIndex(r=>r.name===u)+1;
-      const pts=calcScore(u).total;
-      const isLeader=pos===1;
-      html+=`<tr style="${isLeader?'background:var(--gld-bg)':''}${i%2===0&&!isLeader?'background:var(--bg)':''}">
-        <td style="padding:11px 14px;font-weight:800;color:var(--ink3);border-bottom:1px solid var(--border)">${i+1}</td>
-        <td style="padding:11px 14px;font-weight:600;border-bottom:1px solid var(--border)">
-          ${u}${isLeader?` <span class="pill pgld" style="font-size:.6rem">Líder</span>`:''}
-        </td>
-        <td style="padding:11px 14px;text-align:center;border-bottom:1px solid var(--border)">
-          ${pos?`<span style="font-weight:800;color:${pos<=3?'var(--gld)':'var(--ink2)'}">${pos}°</span>`:'<span style="color:var(--ink3)">—</span>'}
-        </td>
-        <td style="padding:11px 14px;text-align:right;font-weight:800;color:var(--green);border-bottom:1px solid var(--border)">${pts}</td>
-      </tr>`;
-    });
-    html+=`</tbody></table></div>`;
+      <div class="mq-stat">
+        <div class="mq-stat-num" style="color:var(--blue2)">${myRank||'—'}</div>
+        <div class="mq-stat-label">Tu posición actual</div>
+      </div>
+      <div class="mq-stat">
+        <div class="mq-stat-num" style="color:var(--gld)">$500</div>
+        <div class="mq-stat-label">Bono si tu ref gana</div>
+      </div>
+    </div>`;
 
-    // Bono alert if one of my refs is leading
-    const myRefLeading=myRefs.find(u=>{const p=board.findIndex(r=>r.name===u);return p===0;});
-    if(myRefLeading){
-      html+=`<div style="margin-top:1rem;background:var(--gld-bg);border:2px solid var(--gld);border-radius:10px;padding:14px 16px;font-size:.88rem;font-weight:700;color:var(--gld)">
-        🎉 ¡${myRefLeading} va en 1er lugar! Si termina ganando el torneo, cobras $500 MXN de bono.
+    html+=`<div class="my-ref-box" style="margin-bottom:1.25rem">
+      <div class="my-ref-left">
+        <div class="label">Tu código de referido</div>
+        <div class="code">${myCode}</div>
+      </div>
+      <button class="copy-code-btn" onclick="copyMyCode()">Copiar código</button>
+    </div>`;
+
+    if(myRefs.length===0){
+      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:2.5rem;text-align:center;box-shadow:var(--sh)">
+        <div style="font-size:2rem;margin-bottom:.75rem">🔗</div>
+        <div style="font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.5rem">Aún no tienes referidos</div>
+        <div style="font-size:.82rem;color:var(--ink3);line-height:1.6">Comparte tu código <b style="color:var(--green)">${myCode}</b> con amigos para que se unan.<br>Si tu referido gana el 1er lugar, te caen $500 MXN.</div>
+      </div>`;
+    } else {
+      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh)">
+        <div style="padding:10px 16px;background:var(--grad-tri);color:#fff;font-weight:700;font-size:.8rem;letter-spacing:.5px">
+          TUS REFERIDOS · ${myRefs.length} persona${myRefs.length!==1?'s':''}
+        </div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead>
+            <tr style="background:var(--bg)">
+              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">#</th>
+              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">Usuario</th>
+              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">Posición</th>
+              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:right;border-bottom:1.5px solid var(--border)">Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${myRefs.map((u,i)=>{
+              const rank=board.findIndex(r=>r.name===u)+1;
+              const pts=board.find(r=>r.name===u)?.total||0;
+              return `<tr style="${i%2===0?'background:var(--bg)':''}">
+                <td style="padding:10px 14px;font-size:.82rem;color:var(--ink3)">${i+1}</td>
+                <td style="padding:10px 14px;font-weight:600;color:var(--ink)">${u}</td>
+                <td style="padding:10px 14px;color:var(--ink2)">${rank?`#${rank}`:'—'}</td>
+                <td style="padding:10px 14px;text-align:right;font-weight:700;color:var(--ink)">${pts} pts</td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
       </div>`;
     }
-  }
-  wrap.innerHTML=html;
+    wrap.innerHTML=html;
+  }).catch(()=>{
+    wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Error cargando referidos.</div>`;
+  });
 }
 
 
