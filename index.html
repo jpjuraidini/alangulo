@@ -2331,7 +2331,8 @@ const PRIZE_PCT=[
   {pos:2, label:'2do lugar',  medal:'🥈', pct:25, cls:'p2', pctCls:'c2',  barColor:'#aaa'},
   {pos:3, label:'3er lugar',  medal:'🥉', pct:15, cls:'p3', pctCls:'c3',  barColor:'#c8875a'},
   {pos:4, label:'4to lugar',  medal:'🏅', pct:10, cls:'p4', pctCls:'c45', barColor:'var(--b2)'},
-  {pos:5, label:'5to lugar',  medal:'🏅', pct:10, cls:'p5', pctCls:'c45', barColor:'var(--b2)'},
+  {pos:5, label:'5to lugar',  medal:'🏅', pct:5,  cls:'p5', pctCls:'c45', barColor:'var(--b2)'},
+  {pos:-1,label:'Último lugar',medal:'🪦', pct:5,  cls:'p6', pctCls:'c45', barColor:'var(--red)'},
 ];
 const PRICE_PER_USER=250; // MXN
 // Sin límite de participantes — la bolsa crece ilimitadamente
@@ -2559,14 +2560,16 @@ function renderReglas(){
   <div class="rules-section">
     <div class="rules-section-hd"><span class="rules-icon">💰</span><span class="rules-section-title">Premios</span></div>
     <div class="rules-body">
-      <p>La inscripción por usuario abona <b>$250 MXN</b> a la bolsa total. La bolsa se reparte en efectivo entre los 5 primeros lugares al finalizar el torneo (19 de julio de 2026).</p>
+      <p>La inscripción por usuario abona <b>$250 MXN</b> a la bolsa total. La bolsa se reparte en efectivo entre los 5 primeros lugares y el último lugar al finalizar el torneo (19 de julio de 2026).</p>
       <div class="rules-pts-grid">
         <div class="rpt"><div class="rpt-num" style="color:var(--gld)">40%</div><div class="rpt-label">1er lugar · ~$${Math.floor(bolsa*.4).toLocaleString('es-MX')} MXN</div></div>
         <div class="rpt"><div class="rpt-num" style="color:#888">25%</div><div class="rpt-label">2do lugar · ~$${Math.floor(bolsa*.25).toLocaleString('es-MX')} MXN</div></div>
         <div class="rpt"><div class="rpt-num" style="color:#c8875a">15%</div><div class="rpt-label">3er lugar · ~$${Math.floor(bolsa*.15).toLocaleString('es-MX')} MXN</div></div>
         <div class="rpt"><div class="rpt-num" style="color:var(--b2)">10%</div><div class="rpt-label">4to lugar · ~$${Math.floor(bolsa*.10).toLocaleString('es-MX')} MXN</div></div>
-        <div class="rpt"><div class="rpt-num" style="color:var(--b2)">10%</div><div class="rpt-label">5to lugar · ~$${Math.floor(bolsa*.10).toLocaleString('es-MX')} MXN</div></div>
+        <div class="rpt"><div class="rpt-num" style="color:var(--b2)">5%</div><div class="rpt-label">5to lugar · ~$${Math.floor(bolsa*.05).toLocaleString('es-MX')} MXN</div></div>
+        <div class="rpt"><div class="rpt-num" style="color:var(--red)">5%</div><div class="rpt-label">🪦 Último lugar · ~$${Math.floor(bolsa*.05).toLocaleString('es-MX')} MXN</div></div>
       </div>
+      <p style="font-size:.78rem;color:var(--ink3);margin-top:.5rem">⚠️ Para calificar al premio del último lugar, el participante debe tener el bracket eliminatorio <b>completamente lleno</b> (todos los partidos predichos). Sin bracket completo, el 5% pasa al siguiente lugar de atrás que sí lo tenga.</p>
       <p>Los montos mostrados son estimados con el número actual de participantes y crecen conforme se registran más jugadores.</p>
     </div>
   </div>
