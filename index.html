@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -972,6 +973,8 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
     <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('ranking')" style="display:none">Ranking</button>
     <div class="drawer-item-sep"></div>
+    <button class="drawer-item" onclick="goDrawer('misgrupos')">Mis Grupos</button>
+    <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('premios')">Premios</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('reglas')">Reglas</button>
@@ -1099,6 +1102,13 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   </div>
 
   <!-- MIS REFERIDOS -->
+  <div class="page" id="page-misgrupos">
+    <div class="ph">
+      <div class="ph-left"><div class="ph-h">Mis Grupos</div><div class="ph-s">Crea o únete a un grupo privado con amigos</div></div>
+    </div>
+    <div id="misgrupos-wrap"></div>
+  </div>
+
   <div class="page" id="page-referidos">
     <div class="ph"><div class="ph-left"><div class="ph-h">Mis Referidos</div><div class="ph-s">Personas que entraron a la quiniela con tu código</div></div></div>
     <div id="referidos-wrap"></div>
@@ -3447,6 +3457,7 @@ function go(name){
   if(name==='reglas')         renderReglas();
   if(name==='chat')           renderChat();
   if(name==='miquiniela')     renderMiQuiniela();
+  if(name==='misgrupos')      renderMisGrupos();
   if(name==='referidos')      renderReferidos();
   if(name==='notificaciones') renderNotificaciones();
   if(name==='countdown')      renderCountdown();
@@ -3603,6 +3614,148 @@ function runSplash(onDone){
 // ══════════════════════════════════════════════════════
 //  MIS REFERIDOS
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+//  MIS GRUPOS
+// ══════════════════════════════════════════════════════
+let _myGroups=[];
+
+function renderMisGrupos(){
+  const wrap=document.getElementById('misgrupos-wrap');
+  if(!wrap) return;
+  wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Cargando grupos...</div>`;
+  api('GET',`/api/groups/user/${CU.u}`).then(groups=>{
+    _myGroups=groups;
+    let html=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem">
+      <button onclick="showCreateGroup()" style="padding:14px;background:var(--grad-tri);color:#fff;border:none;border-radius:var(--rad);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;box-shadow:var(--sh)">
+        ➕ Crear grupo
+      </button>
+      <button onclick="showJoinGroup()" style="padding:14px;background:var(--surface);color:var(--ink);border:1.5px solid var(--border);border-radius:var(--rad);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;box-shadow:var(--sh)">
+        🔗 Unirse al grupo
+      </button>
+    </div>`;
+
+    if(!groups.length){
+      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:2.5rem;text-align:center;box-shadow:var(--sh)">
+        <div style="font-size:2rem;margin-bottom:.75rem">👥</div>
+        <div style="font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.5rem">Aún no estás en ningún grupo</div>
+        <div style="font-size:.82rem;color:var(--ink3);line-height:1.6">Crea un grupo e invita a tus amigos, o únete con un código que alguien te haya compartido.</div>
+      </div>`;
+    } else {
+      html+=`<div style="display:flex;flex-direction:column;gap:1rem">`;
+      groups.forEach(g=>{
+        const isOwner=g.owner===CU.u;
+        html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh)">
+          <div style="background:var(--grad-tri);padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-weight:800;font-size:1rem;color:#fff">${g.name}</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.75);margin-top:2px">${g.member_count} miembro${g.member_count!=1?'s':''} · ${isOwner?'Tú lo creaste':'Miembro'}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:6px 12px;font-weight:800;font-size:.9rem;color:#fff;letter-spacing:2px;cursor:pointer" onclick="copyGroupCode('${g.code}')" title="Copiar código">${g.code}</div>
+            </div>
+          </div>
+          <div id="group-ranking-${g.id}" style="padding:.5rem">
+            <div style="color:var(--ink3);font-size:.8rem;font-style:italic;padding:.5rem">Cargando ranking...</div>
+          </div>
+          <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:.5rem;justify-content:flex-end">
+            <button onclick="copyGroupCode('${g.code}')" style="padding:6px 12px;background:var(--b-bg);color:var(--blue2);border:1px solid var(--b2);border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer">Compartir código</button>
+            ${isOwner
+              ? `<button onclick="deleteGroup(${g.id},'${g.name}')" style="padding:6px 12px;background:var(--r-bg);color:var(--red);border:1px solid var(--red);border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer">Eliminar grupo</button>`
+              : `<button onclick="leaveGroup(${g.id},'${g.name}')" style="padding:6px 12px;background:var(--r-bg);color:var(--red);border:1px solid var(--red);border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer">Salir del grupo</button>`
+            }
+          </div>
+        </div>`;
+      });
+      html+=`</div>`;
+    }
+    wrap.innerHTML=html;
+    // Load rankings for each group
+    groups.forEach(g=>loadGroupRanking(g.id));
+  }).catch(()=>{
+    wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Error cargando grupos.</div>`;
+  });
+}
+
+function loadGroupRanking(groupId){
+  const el=document.getElementById(`group-ranking-${groupId}`);
+  if(!el) return;
+  api('GET',`/api/groups/${groupId}/ranking`).then(data=>{
+    const {members, picks:gPicks}=data;
+    // Calculate scores using existing calcScore logic but with group picks
+    const board=members
+      .filter(u=>!isAdminUser(u))
+      .map(u=>{
+        // Temporarily inject picks for scoring
+        const saved=picks[u];
+        picks[u]=gPicks[u]||{sc:{},br:{}};
+        const sc=calcScore(u);
+        picks[u]=saved;
+        return {name:u, ...sc, isMe:u===CU.u};
+      })
+      .sort((a,b)=>b.total-a.total);
+
+    if(!board.length){el.innerHTML=`<div style="padding:.75rem;font-size:.8rem;color:var(--ink3)">Sin miembros aún.</div>`;return;}
+    const medals=['🥇','🥈','🥉'];
+    el.innerHTML=`<table style="width:100%;border-collapse:collapse">
+      ${board.map((p,i)=>`
+        <tr style="${p.isMe?'background:var(--g-bg)':i%2===0?'background:var(--bg)':''}">
+          <td style="padding:8px 12px;font-size:.9rem;width:32px">${medals[i]||`${i+1}`}</td>
+          <td style="padding:8px 4px;font-weight:${p.isMe?'800':'600'};font-size:.85rem;color:${p.isMe?'var(--green)':'var(--ink)'}">${p.name}${p.isMe?' <span style="font-size:.6rem;background:var(--green);color:#fff;padding:1px 5px;border-radius:4px">tú</span>':''}</td>
+          <td style="padding:8px 12px;text-align:right;font-weight:800;font-size:.88rem;color:var(--ink)">${p.total} <span style="font-size:.65rem;opacity:.6">pts</span></td>
+        </tr>`).join('')}
+    </table>`;
+  }).catch(()=>{
+    if(el) el.innerHTML=`<div style="padding:.75rem;font-size:.8rem;color:var(--ink3)">Error cargando ranking.</div>`;
+  });
+}
+
+function showCreateGroup(){
+  const name=prompt('Nombre del grupo:','');
+  if(!name||!name.trim()) return;
+  api('POST','/api/groups',{name:name.trim(),username:CU.u})
+    .then(g=>{
+      toast(`Grupo "${g.name}" creado · Código: ${g.code}`);
+      // Copy code to clipboard
+      navigator.clipboard?.writeText(g.code).catch(()=>{});
+      renderMisGrupos();
+    })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function showJoinGroup(){
+  const code=prompt('Ingresa el código del grupo (6 letras):','');
+  if(!code||!code.trim()) return;
+  api('POST','/api/groups/join',{code:code.trim().toUpperCase(),username:CU.u})
+    .then(g=>{
+      toast(`¡Te uniste a "${g.name}"! 🎉`);
+      renderMisGrupos();
+    })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function copyGroupCode(code){
+  navigator.clipboard?.writeText(code)
+    .then(()=>toast(`Código ${code} copiado ✓`))
+    .catch(()=>toast(`Código del grupo: ${code}`));
+}
+
+function leaveGroup(id, name){
+  if(!confirm(`¿Salir del grupo "${name}"?`)) return;
+  api('DELETE',`/api/groups/${id}/leave`,{username:CU.u})
+    .then(()=>{ toast('Saliste del grupo'); renderMisGrupos(); })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function deleteGroup(id, name){
+  if(!confirm(`¿Eliminar el grupo "${name}"? Esta acción no se puede deshacer.`)) return;
+  api('DELETE',`/api/groups/${id}`,{username:CU.u})
+    .then(()=>{ toast('Grupo eliminado'); renderMisGrupos(); })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+// ══════════════════════════════════════════════════════
+//  MIS REFERIDOS
 function renderReferidos(){
   const wrap=document.getElementById('referidos-wrap');
   if(!wrap) return;
