@@ -2142,9 +2142,16 @@ function calcScore(u){
 
 function renderRanking(){
   const wrap=document.getElementById('rk-wrap');
-  
-  // Build combined leaderboard: real users + simulated users
-  const board=[];
+
+  // If data hasn't loaded yet, show loading and retry
+  if(!_dataDone){
+    wrap.innerHTML=`<div style="text-align:center;padding:3rem 2rem;display:flex;flex-direction:column;align-items:center;gap:.75rem">
+      <div style="font-size:2rem">⏳</div>
+      <div style="font-weight:700;font-size:.9rem;color:var(--ink)">Cargando ranking...</div>
+    </div>`;
+    setTimeout(renderRanking, 500);
+    return;
+  }
   
   // Real users first
   Object.keys(picks).forEach(u=>{
@@ -4337,6 +4344,15 @@ if(CU){
     } catch(e){}
     _dataDone=true;
     tryCloseSplash();
+    // If app is already visible, re-render current page with real data
+    if(document.getElementById('app').style.display==='block'){
+      const curPage=localStorage.getItem('q26page')||'grupos';
+      renderRanking();
+      renderPremios();
+      if(curPage==='ranking') renderRanking();
+      if(curPage==='premios') renderPremios();
+      if(curPage==='miquiniela') renderMiQuiniela();
+    }
   })();
 } else {
   _dataDone=true;
