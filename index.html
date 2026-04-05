@@ -3912,26 +3912,35 @@ function runSplash(onDone){
   const pf=document.getElementById('splash-pfill');
   const screen=document.getElementById('splash-screen');
 
+  function hideSplash(){
+    screen.classList.add('hide');
+    setTimeout(()=>{ screen.style.display='none'; if(onDone) onDone(); }, 500);
+  }
+
+  // Safety fallback — always close after 3.5s no matter what
+  const safetyTimer=setTimeout(hideSplash, 3500);
+
   // progress bar
   const pStart=performance.now();
   const pDur=2600;
   function stepP(now){
+    if(!pf) return;
     const t=Math.min(1,(now-pStart)/pDur);
     pf.style.width=(t*100)+'%';
     if(t<1)requestAnimationFrame(stepP);
   }
   requestAnimationFrame(stepP);
 
-  animateLogo(canvas, 140, function(){
-    setTimeout(()=>{ wm.classList.add('show'); dots.classList.add('show'); }, 60);
-    setTimeout(()=>{
-      screen.classList.add('hide');
-      setTimeout(()=>{
-        screen.style.display='none';
-        if(onDone) onDone();
-      }, 500);
-    }, 1800);
-  });
+  try {
+    animateLogo(canvas, 140, function(){
+      clearTimeout(safetyTimer);
+      setTimeout(()=>{ if(wm)wm.classList.add('show'); if(dots)dots.classList.add('show'); }, 60);
+      setTimeout(hideSplash, 1800);
+    });
+  } catch(e){
+    clearTimeout(safetyTimer);
+    hideSplash();
+  }
 }
 
 // ══════════════════════════════════════════════════════
