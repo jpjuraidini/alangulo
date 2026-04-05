@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Al Ángulo · Mundial 2026</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0a0e1a}</style>
 <style>
 /* ── DESIGN TOKENS ── */
 :root{
@@ -1541,23 +1544,27 @@ function boot(){
       auth.style.transition = '';
       card.innerHTML = originalContent;
 
-      // Load all data from backend
-      await loadAllData();
+      // Load all data from backend (skip if already preloaded by splash)
+      if(!_dataDone) await loadAllData();
       ensure(CU.u);
 
-      // Load refs for current user
-      try {
-        const myRefs = await api('GET',`/api/refs/${CU.code}`);
-        refs[CU.code] = myRefs;
-      } catch(e){}
+      // Load refs for current user (skip if already preloaded)
+      if(!_dataDone){
+        try {
+          const myRefs = await api('GET',`/api/refs/${CU.code}`);
+          refs[CU.code] = myRefs;
+        } catch(e){}
+      }
 
-      // Load users list (needed to filter admins from ranking)
-      try {
-        const users = await api('GET','/api/users');
-        dynUsers = users
-          .filter(u=>!USERS.find(x=>x.u===u.username))
-          .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
-      } catch(e){}
+      // Load users list (skip if already preloaded)
+      if(!_dataDone){
+        try {
+          const users = await api('GET','/api/users');
+          dynUsers = users
+            .filter(u=>!USERS.find(x=>x.u===u.username))
+            .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
+        } catch(e){}
+      }
 
       document.getElementById('app').style.display = 'block';
       document.getElementById('nav-u').textContent = CU.u;
@@ -4312,16 +4319,42 @@ function renderNotificaciones(){
 load(); loadChat(); loadChangelog(); initDark();
 drawStaticLogo(document.getElementById('auth-logo'), 76);
 drawStaticLogo(document.getElementById('nav-logo'),  34);
+// Run splash and data load in parallel — close splash only when both done
+let _splashDone=false, _dataDone=false, _splashCallback=null;
+
+function tryCloseSplash(){
+  if(_splashDone && _dataDone && _splashCallback) _splashCallback();
+}
+
+// Preload data in parallel with splash
+if(CU){
+  (async()=>{
+    try { await loadAllData(); ensure(CU.u); } catch(e){}
+    try { const r=await api('GET',`/api/refs/${CU.code}`); refs[CU.code]=r; } catch(e){}
+    try {
+      const users=await api('GET','/api/users');
+      dynUsers=users.filter(u=>!USERS.find(x=>x.u===u.username)).map(u=>({u:u.username,p:'',admin:u.is_admin,code:u.code}));
+    } catch(e){}
+    _dataDone=true;
+    tryCloseSplash();
+  })();
+} else {
+  _dataDone=true;
+}
+
 runSplash(function(){
-  if(CU){
-    ensure(CU.u);
-    const dl=document.getElementById('drawer-logo');
-    if(dl) drawStaticLogo(dl,28);
-    syncDrawer();
-    boot();
-  } else {
-    document.getElementById('auth').style.display='flex';
-  }
+  _splashDone=true;
+  _splashCallback=function(){
+    if(CU){
+      const dl=document.getElementById('drawer-logo');
+      if(dl) drawStaticLogo(dl,28);
+      syncDrawer();
+      boot();
+    } else {
+      document.getElementById('auth').style.display='flex';
+    }
+  };
+  tryCloseSplash();
 });
 document.getElementById('lp').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 document.getElementById('lu').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('lp').focus();});
