@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -853,7 +852,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 <div id="br-score-modal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(10,14,26,.55);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:1rem">
   <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem 1.25rem;max-width:340px;width:100%;box-shadow:var(--sh2)">
     <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.25rem" id="br-sm-title">Predecir resultado</div>
-    <div style="font-size:.75rem;color:var(--ink3);margin-bottom:1.25rem">El ganador se determina por el marcador a 90 minutos. Si hay empate, elige quién avanza (puede ser por tiempo extra o penales).</div>
+    <div style="font-size:.75rem;color:var(--ink3);margin-bottom:1.25rem">El marcador a 90 minutos es obligatorio. Si hay empate, elige quién avanza — si no aciertas al que pasa, no ganas puntos.</div>
 
     <!-- Score inputs -->
     <div style="display:grid;grid-template-columns:1fr 24px 1fr;align-items:center;gap:.4rem;margin-bottom:1rem">
@@ -1956,15 +1955,17 @@ function saveBrScore(){
   const hv=document.getElementById('br-sm-h').value;
   const av=document.getElementById('br-sm-a').value;
   const w=picks[CU.u]?.br?.[_brId];
-  if(!w){toast('Selecciona quién avanza');return;}
-  if(hv!==''&&av!==''){
-    if(!picks[CU.u].sc) picks[CU.u].sc={};
-    picks[CU.u].sc[_brId]={h:+hv,a:+av};
-  }
+  // Marcador obligatorio
+  if(hv===''||av===''){toast('El marcador es obligatorio');return;}
+  // En empate, el ganador es obligatorio
+  if(+hv===+av && !w){toast('Selecciona quién avanza');return;}
+  if(!picks[CU.u].sc) picks[CU.u].sc={};
+  picks[CU.u].sc[_brId]={h:+hv,a:+av};
   closeBrScoreModal();
   persist();
   renderBracket();
-  toast(`✓ ${NM[w]||w} avanza${hv!==''&&av!==''?` · ${hv}-${av}`:''}` );
+  const winner=picks[CU.u]?.br?.[_brId];
+  toast(`✓ ${winner?NM[winner]||winner:'Pick'} · ${hv}-${av}`);
 }
 
 function clearBrScore(){
@@ -2017,16 +2018,10 @@ function calcScore(u){
       const [winPts, exactBonus]=PTS[rk]||[0,0];
       const mw=up.br?.[id];
       if(!mw) return;
-      const ms=up.sc?.[id];
-      const hasExactScore=ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a;
-      console.log(`[${id}] mw=${mw} rr.winner=${rr.winner} ms=${JSON.stringify(ms)} rr.h=${rr.h} rr.a=${rr.a} hasExact=${hasExactScore}`);
       if(mw===rr.winner){
-        // Acertó ganador → puntos de ganador + bonus si marcador exacto
         br+=winPts;
-        if(hasExactScore) br+=exactBonus;
-      } else if(hasExactScore){
-        // No acertó ganador pero sí el marcador exacto → solo el bonus
-        br+=exactBonus;
+        const ms=up.sc?.[id];
+        if(ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a) br+=exactBonus;
       }
     });
   }
@@ -2715,7 +2710,7 @@ function renderReglas(){
       <p><b>¿Cómo se eligen los 8 mejores terceros?</b> Se ordenan todos los terceros lugares según: puntos obtenidos → diferencia de goles → goles a favor → Fair Play (tarjetas). Los 8 mejores pasan.</p>
       <p><b>Los cruces de Dieciseisavos</b> siguen el calendario oficial de FIFA publicado el 27 de marzo de 2026. Los enfrentamientos están preasignados según la combinación de grupos cuyos terceros clasificaron, garantizando que ningún equipo se enfrente a alguien de su mismo grupo en primera ronda.</p>
       <p>A partir de Octavos, el bracket es lineal: el ganador de cada partido avanza al siguiente encuentro en el orden establecido.</p>
-      <p><b>Marcador exacto en eliminatoria:</b> El marcador que predices corresponde al resultado a <b>90 minutos</b> (tiempo reglamentario). Si predices un empate, deberás indicar quién avanza. El bonus de marcador exacto se otorga si aciertas el marcador a 90 minutos, <b>incluso si fallaste quién avanza</b>. Los puntos de ganador solo se otorgan si aciertas quién pasa.</p>
+      <p><b>Marcador exacto en eliminatoria:</b> El marcador a 90 minutos es <b>obligatorio</b>. Si predices empate, debes indicar quién avanza. Si no aciertas al que pasa, <b>no ganas ningún punto</b> — ni por el marcador ni por el ganador. Si aciertas al ganador y además el marcador exacto, ganas ambos bonos.</p>
     </div>
   </div>
 
