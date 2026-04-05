@@ -2015,8 +2015,14 @@ function calcScore(u){
       if(!rr?.winner) return;
       const rk=id.split('_')[0];
       const [winPts, exactBonus]=PTS[rk]||[0,0];
-      const mw=up.br?.[id];
+      const mw=up.br?.[id]; // team code user picked as winner
       if(!mw) return;
+      // Verify the match teams match — user's winner must be one of the two real teams
+      const realH=rr.teamH; // team code saved by admin
+      const realA=rr.teamA;
+      // If admin saved team codes, verify user's winner is one of them
+      if(realH && realA && mw!==realH && mw!==realA) return; // teams don't match
+      // Now check if winner matches
       if(mw===rr.winner){
         br+=winPts;
         const ms=up.sc?.[id];
