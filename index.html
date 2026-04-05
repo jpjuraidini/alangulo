@@ -89,9 +89,9 @@ body{
 .nav-logo{font-weight:800;font-size:1.2rem;letter-spacing:-.3px;display:flex;align-items:center;gap:10px;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-logo-badge{width:34px;height:34px;background:var(--grad-tri);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:0 2px 10px rgba(0,104,56,.3);flex-shrink:0}
 .nav-tabs{display:flex;gap:2px}
-.ntab{padding:6px 13px;border-radius:8px;border:none;background:none;font-family:"Plus Jakarta Sans";font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);cursor:pointer;transition:all .15s}
+.ntab{padding:6px 14px;border-radius:20px;border:none;background:none;font-family:"Plus Jakarta Sans";font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);cursor:pointer;transition:all .2s cubic-bezier(.22,1,.36,1)}
 .ntab:hover{color:var(--ink);background:var(--border)}
-.ntab.on{background:var(--grad-tri);color:#fff;box-shadow:0 2px 8px rgba(0,104,56,.25)}
+.ntab.on{background:var(--grad-tri);color:#fff;box-shadow:0 3px 12px rgba(0,104,56,.3);transform:translateY(-1px)}
 .nav-user{font-size:.8rem;color:var(--ink3);display:flex;align-items:center;gap:8px}
 .nav-user b{color:var(--ink);font-weight:700}
 .nav-out{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.72rem;text-decoration:underline}
@@ -139,6 +139,8 @@ body{
 /* APP */
 #app{display:none}
 .page{display:none;padding:1.5rem;max-width:1300px;margin:0 auto}
+.page.on{display:block;animation:pageFadeIn .25s cubic-bezier(.22,1,.36,1) both}
+@keyframes pageFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .page.on{display:block}
 
 /* PAGE HEADER */
@@ -262,10 +264,10 @@ body{
 .br-m{
   background:var(--surface);
   border:1.5px solid var(--border);
-  border-radius:12px;
-  overflow:hidden;transition:all .2s;
+  border-radius:14px;
+  overflow:hidden;transition:all .2s cubic-bezier(.22,1,.36,1);
   display:flex;flex-direction:row;align-items:stretch;
-  box-shadow:0 1px 4px rgba(10,14,26,.07);
+  box-shadow:0 2px 8px rgba(10,14,26,.08);
   position:relative;
 }
 .br-m::before{
@@ -274,8 +276,8 @@ body{
 }
 .br-m:hover{
   border-color:var(--blue2);
-  box-shadow:0 4px 16px rgba(0,82,204,.15);
-  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(0,82,204,.18);
+  transform:translateY(-2px);
 }
 
 .br-mid{
@@ -286,33 +288,34 @@ body{
   background:var(--bg);
   border-right:1px solid var(--border);
   display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;min-width:20px;
+  flex-shrink:0;min-width:22px;
   margin-left:3px;
 }
 
 .br-teams{display:flex;flex-direction:column;flex:1;min-width:0}
 
 .br-t{
-  display:flex;align-items:center;gap:8px;
-  padding:10px 11px;
+  display:flex;align-items:center;gap:9px;
+  padding:11px 12px;
   cursor:pointer;transition:background .15s;
-  flex:1;min-height:36px;position:relative;
+  flex:1;min-height:40px;position:relative;
 }
 .br-t:first-child{border-bottom:1px solid var(--border)}
 .br-t:hover{background:var(--b-bg)}
 .br-t.W{
-  background:linear-gradient(90deg,rgba(0,104,56,.08) 0%,rgba(0,104,56,.02) 100%);
+  background:linear-gradient(90deg,rgba(0,104,56,.1) 0%,rgba(0,104,56,.02) 100%);
 }
 .br-t.W::after{
   content:"";position:absolute;left:0;top:0;bottom:0;width:3px;
   background:var(--green);
 }
 .br-t.W .btn{color:var(--green);font-weight:800}
+.br-t.W .btf{filter:drop-shadow(0 0 4px rgba(0,150,80,.3))}
 
-.btf{font-size:1.05rem;flex-shrink:0;line-height:1}
+.btf{font-size:1.1rem;flex-shrink:0;line-height:1}
 .btn{
   flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  color:var(--ink2);font-size:.76rem;font-weight:600;
+  color:var(--ink2);font-size:.78rem;font-weight:600;
 }
 .btn.tbd{color:var(--ink3);font-style:italic;font-weight:400;font-size:.72rem}
 .br-sm-winner-btn.active{background:var(--green)!important;color:#fff!important;border-color:var(--green)!important}
@@ -2094,7 +2097,11 @@ function renderRanking(){
 }
 
 function buildRankingHTML(board,isDemo){
-  if(!board.length) return '<div style="text-align:center;padding:3rem;color:var(--ink3)">Sin datos aún.</div>';
+  if(!board.length) return `<div style="text-align:center;padding:3rem 2rem;display:flex;flex-direction:column;align-items:center;gap:.75rem">
+    <div style="font-size:3rem">🏆</div>
+    <div style="font-weight:800;font-size:1rem;color:var(--ink)">Sin datos aún</div>
+    <div style="font-size:.82rem;color:var(--ink3);max-width:280px;line-height:1.6">El ranking aparecerá cuando el admin ingrese los primeros resultados.</div>
+  </div>`;
   const maxPts=board[0].total||1;
   const top3=board.slice(0,3);
   const rest=board.slice(3);
@@ -3503,7 +3510,11 @@ function renderMiQuiniela(){
   });
 
   if(!filteredGroup.length && !elimRounds.some(r=>allMatches.find(m=>m.phase==='elim'&&m.round===r.key&&(mqFilter==='all'||m.status===mqFilter||(mqFilter==='correct'&&(m.status==='correct'||m.status==='exact')))))){
-    html += `<div style="text-align:center;padding:2rem;color:var(--ink3)">No hay partidos con ese filtro aún.</div>`;
+    html += `<div style="text-align:center;padding:2.5rem 1rem;display:flex;flex-direction:column;align-items:center;gap:.5rem">
+      <div style="font-size:2.5rem">🔍</div>
+      <div style="font-weight:700;font-size:.9rem;color:var(--ink)">Sin partidos con ese filtro</div>
+      <div style="font-size:.78rem;color:var(--ink3)">Prueba cambiando los filtros</div>
+    </div>`;
   }
 
   wrap.innerHTML = html;
@@ -3575,14 +3586,29 @@ function renderCountdown(){
   if(!wrap) return;
   if(_cdTimer) clearInterval(_cdTimer);
 
-  // México vs Sudáfrica — Estadio Azteca, CDMX — 11 jun 2026, 13:00 CDMX (UTC-6)
   const TARGET=new Date('2026-06-11T13:00:00-06:00');
+
+  // Add keyframes once
+  if(!document.getElementById('cd-styles')){
+    const s=document.createElement('style');s.id='cd-styles';
+    s.textContent=`
+      @keyframes cdPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+      @keyframes cdTick{0%{transform:translateY(-8px);opacity:0}100%{transform:translateY(0);opacity:1}}
+      .cd-block{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:1.25rem .75rem;text-align:center;min-width:72px;flex:1}
+      .cd-num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(2.8rem,10vw,4.5rem);line-height:1;color:#fff;letter-spacing:-2px;animation:cdTick .15s ease-out}
+      .cd-label{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.75;color:#fff;margin-top:8px}
+      .cd-sep{font-size:2.5rem;font-weight:800;color:rgba(255,255,255,.5);align-self:center;margin-bottom:8px;animation:cdPulse 1s ease-in-out infinite}
+    `;
+    document.head.appendChild(s);
+  }
+
+  let prevSecs=-1;
 
   function update(){
     const now=new Date();
     const diff=TARGET-now;
     if(diff<=0){
-      wrap.innerHTML=`<div style="text-align:center;padding:3rem;font-weight:800;font-size:1.5rem;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">¡El Mundial ya comenzó! ⚽</div>`;
+      wrap.innerHTML=`<div style="text-align:center;padding:4rem 2rem;font-weight:800;font-size:2rem;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">¡El Mundial ya comenzó! ⚽🌍</div>`;
       clearInterval(_cdTimer);return;
     }
     const days=Math.floor(diff/86400000);
@@ -3590,51 +3616,58 @@ function renderCountdown(){
     const mins=Math.floor((diff%3600000)/60000);
     const secs=Math.floor((diff%60000)/1000);
 
-    wrap.innerHTML=`
-      <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:560px;margin:0 auto;text-align:center">
+    // Only re-render if seconds changed
+    if(secs===prevSecs) return;
+    prevSecs=secs;
 
-        <div style="background:var(--grad-tri);border-radius:var(--rad-lg);padding:2.25rem 2rem;color:#fff;width:100%;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.18)">
-          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 80% 120%,rgba(255,255,255,.12),transparent 60%)"></div>
+    wrap.innerHTML=`
+      <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:600px;margin:0 auto">
+
+        <!-- Hero countdown -->
+        <div style="background:var(--grad-tri);border-radius:24px;padding:2.5rem 2rem 2rem;width:100%;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.25)">
+          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 20% 120%,rgba(255,255,255,.15),transparent 55%),radial-gradient(ellipse at 80% -20%,rgba(255,255,255,.1),transparent 55%)"></div>
           <div style="position:relative;z-index:1">
-            <div style="font-size:.72rem;font-weight:700;letter-spacing:3px;opacity:.8;margin-bottom:1.25rem;text-transform:uppercase">Faltan</div>
-            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem">
-              ${[{v:days,l:'Días'},{v:hrs,l:'Horas'},{v:mins,l:'Min'},{v:secs,l:'Seg'}].map(u=>`
-                <div>
-                  <div style="font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(2.2rem,8vw,3.8rem);line-height:1">${String(u.v).padStart(2,'0')}</div>
-                  <div style="font-size:.65rem;opacity:.75;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px">${u.l}</div>
+            <div style="font-size:.68rem;font-weight:700;letter-spacing:3px;opacity:.8;margin-bottom:1.5rem;text-transform:uppercase;text-align:center;color:#fff">⚽ El Mundial comienza en</div>
+            <div style="display:flex;align-items:flex-start;justify-content:center;gap:.5rem">
+              ${[{v:days,l:'Días'},{v:hrs,l:'Horas'},{v:mins,l:'Min'},{v:secs,l:'Seg'}].map((u,i)=>`
+                ${i>0?'<div class="cd-sep">:</div>':''}
+                <div class="cd-block">
+                  <div class="cd-num" key="${u.v}">${String(u.v).padStart(2,'0')}</div>
+                  <div class="cd-label">${u.l}</div>
                 </div>`).join('')}
             </div>
           </div>
         </div>
 
-        <div style="display:flex;align-items:center;justify-content:center;gap:1.5rem;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem 2rem;width:100%;box-shadow:var(--sh)">
-          <div style="text-align:center">
-            <div style="font-size:2.5rem">🇲🇽</div>
-            <div style="font-weight:800;font-size:.9rem;margin-top:6px;color:var(--ink)">México</div>
+        <!-- Match card -->
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:1.75rem 2rem;width:100%;box-shadow:var(--sh2);display:flex;align-items:center;justify-content:space-between;gap:1rem">
+          <div style="text-align:center;flex:1">
+            <div style="font-size:3.5rem;line-height:1;margin-bottom:8px">🇲🇽</div>
+            <div style="font-weight:800;font-size:1rem;color:var(--ink)">México</div>
+            <div style="font-size:.7rem;color:var(--ink3);margin-top:2px">Local</div>
           </div>
-          <div style="text-align:center">
-            <div style="font-weight:800;font-size:1.2rem;color:var(--ink3)">vs</div>
-            <div style="font-size:.68rem;color:var(--ink3);margin-top:4px;font-weight:600;letter-spacing:.5px">Partido 1</div>
+          <div style="text-align:center;flex-shrink:0">
+            <div style="background:var(--grad-tri);border-radius:12px;padding:8px 20px;color:#fff;font-weight:800;font-size:1.1rem;margin-bottom:6px">VS</div>
+            <div style="font-size:.65rem;color:var(--ink3);font-weight:600;letter-spacing:.5px">PARTIDO 1 · M1</div>
           </div>
-          <div style="text-align:center">
-            <div style="font-size:2.5rem">🇿🇦</div>
-            <div style="font-weight:800;font-size:.9rem;margin-top:6px;color:var(--ink)">Sudáfrica</div>
+          <div style="text-align:center;flex:1">
+            <div style="font-size:3.5rem;line-height:1;margin-bottom:8px">🇿🇦</div>
+            <div style="font-weight:800;font-size:1rem;color:var(--ink)">Sudáfrica</div>
+            <div style="font-size:.7rem;color:var(--ink3);margin-top:2px">Visitante</div>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;width:100%">
-          <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;text-align:center;box-shadow:var(--sh)">
-            <div style="font-size:.65rem;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Fecha</div>
-            <div style="font-weight:800;font-size:.88rem;color:var(--ink)">11 jun 2026</div>
-          </div>
-          <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;text-align:center;box-shadow:var(--sh)">
-            <div style="font-size:.65rem;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Hora CDMX</div>
-            <div style="font-weight:800;font-size:.88rem;color:var(--ink)">13:00</div>
-          </div>
-          <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;text-align:center;box-shadow:var(--sh)">
-            <div style="font-size:.65rem;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Estadio</div>
-            <div style="font-weight:800;font-size:.78rem;color:var(--ink)">Azteca, CDMX</div>
-          </div>
+        <!-- Info chips -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;width:100%">
+          ${[
+            {icon:'📅',label:'Fecha',val:'11 jun 2026'},
+            {icon:'🕐',label:'Hora CDMX',val:'13:00'},
+            {icon:'🏟',label:'Estadio',val:'Azteca, CDMX'},
+          ].map(c=>`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;text-align:center;box-shadow:var(--sh)">
+            <div style="font-size:1.4rem;margin-bottom:5px">${c.icon}</div>
+            <div style="font-size:.6rem;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${c.label}</div>
+            <div style="font-weight:800;font-size:.82rem;color:var(--ink)">${c.val}</div>
+          </div>`).join('')}
         </div>
 
       </div>`;
