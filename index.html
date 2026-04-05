@@ -494,17 +494,52 @@ body.dark .bono-sub{color:#c09040}
 
 /* REGLAS */
 .rules-wrap{max-width:780px}
-.rules-section{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.5rem;margin-bottom:1rem;box-shadow:var(--sh)}
-.rules-section-hd{display:flex;align-items:center;gap:10px;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid;border-image:var(--grad-tri) 1}
-.rules-icon{font-size:1.4rem}
-.rules-section-title{font-weight:800;font-size:1rem;color:var(--ink)}
-.rules-body{font-size:.875rem;color:var(--ink2);line-height:1.75}
+/* RULES */
+.rules-filter-bar{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1.25rem}
+.rules-ftab{padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink3);font-family:'Plus Jakarta Sans',sans-serif;font-size:.75rem;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.rules-ftab:hover{border-color:var(--blue2);color:var(--blue2)}
+.rules-ftab.on{background:var(--grad-tri);color:#fff;border-color:transparent;box-shadow:0 3px 10px rgba(0,104,56,.25)}
+.rules-section{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh);margin-bottom:1rem;transition:transform .2s}
+.rules-section:hover{transform:translateY(-1px);box-shadow:var(--sh2)}
+.rules-section-hd{display:flex;align-items:center;gap:14px;padding:1.1rem 1.25rem;cursor:pointer;user-select:none;border-bottom:1px solid var(--border)}
+.rules-section-hd:hover{background:var(--bg)}
+.rules-icon-wrap{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.rules-section-title{font-weight:800;font-size:.95rem;color:var(--ink);flex:1}
+.rules-section-chevron{font-size:.75rem;color:var(--ink3);transition:transform .25s}
+.rules-section.open .rules-section-chevron{transform:rotate(180deg)}
+.rules-body{font-size:.875rem;color:var(--ink2);line-height:1.75;padding:0 1.25rem;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.22,1,.36,1),padding .35s}
+.rules-section.open .rules-body{max-height:2000px;padding:1.1rem 1.25rem}
 .rules-body p{margin-bottom:.6rem}
 .rules-body p:last-child{margin-bottom:0}
 .rules-body b{color:var(--ink);font-weight:700}
 .rules-body ul{padding-left:1.25rem;margin:.5rem 0}
-.rules-body li{margin-bottom:.4rem}
-.rules-pts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.5rem;margin:.75rem 0}
+.rules-body li{margin-bottom:.5rem}
+
+/* Points table */
+.rules-pts-table{width:100%;border-collapse:collapse;margin:.75rem 0;border-radius:10px;overflow:hidden;border:1.5px solid var(--border)}
+.rules-pts-table th{background:var(--bg);padding:8px 12px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);text-align:left;border-bottom:1.5px solid var(--border)}
+.rules-pts-table th:last-child,.rules-pts-table td:last-child{text-align:right}
+.rules-pts-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:.82rem;color:var(--ink2)}
+.rules-pts-table tr:last-child td{border-bottom:none}
+.rules-pts-table tr:hover td{background:var(--bg)}
+.rules-pts-table .pt-round{font-weight:700;color:var(--ink)}
+.rules-pts-table .pt-win{font-weight:800;color:var(--green);background:var(--g-bg);padding:3px 8px;border-radius:6px}
+.rules-pts-table .pt-exact{font-weight:800;color:var(--gld);background:var(--gld-bg);padding:3px 8px;border-radius:6px}
+.rules-pts-table .pt-max{font-weight:800;color:var(--blue2)}
+
+/* Key dates timeline */
+.rules-timeline{display:flex;flex-direction:column;gap:0;margin:.5rem 0}
+.rules-tl-item{display:flex;gap:14px;align-items:flex-start;padding:.75rem 0;border-bottom:1px solid var(--border)}
+.rules-tl-item:last-child{border-bottom:none}
+.rules-tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.rules-tl-label{font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin-bottom:2px}
+.rules-tl-val{font-size:.88rem;font-weight:700;color:var(--ink)}
+
+/* Info chips */
+.rules-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.75rem 0}
+.rules-chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:.78rem;font-weight:600;color:var(--ink2)}
+.rules-chip-icon{font-size:1rem}
+
 .rpt{background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:.75rem 1rem;display:flex;align-items:center;gap:10px}
 .rpt-num{font-weight:800;font-size:1.3rem;color:var(--green);min-width:28px;text-align:center}
 .rpt-label{font-size:.78rem;color:var(--ink2);line-height:1.4}
@@ -2752,106 +2787,181 @@ function copyMyCode(){
 function renderReglas(){
   const w=document.getElementById('reglas-wrap');
   const bolsa=Math.max(Object.keys(picks).length,1)*PRICE_PER_USER;
-  w.innerHTML=`<div class="rules-wrap">
 
-  <div class="rules-section">
-    <div class="rules-section-hd"><span class="rules-icon">⚽</span><span class="rules-section-title">¿Cómo se juega?</span></div>
-    <div class="rules-body">
-      <p>La quiniela funciona en dos fases: <b>Fase de Grupos</b> y <b>Fase Eliminatoria</b>. Antes del inicio del torneo (11 de junio de 2026), cada participante debe predecir el marcador de todos los partidos de grupos y elegir a los ganadores en el bracket eliminatorio.</p>
-      <p><b>Fase de Grupos:</b> Predice el resultado exacto de cada partido. Con esos marcadores, la app calcula automáticamente la tabla de posiciones de cada grupo usando las reglas oficiales de la FIFA: victoria = 3 puntos, empate = 1 punto, derrota = 0. La tabla determina quién avanza al bracket. En grupos también se ganan puntos por acertar resultados y marcadores exactos.</p>
-      <p><b>Fase Eliminatoria:</b> Una vez definida tu fase de grupos, completa el bracket desde Dieciseisavos hasta la Final. En cada partido debes elegir al ganador y puedes predecir el marcador exacto a 90 minutos para ganar puntos adicionales. Si predices empate, indica quién avanza. Tus picks quedan guardados y se comparan contra los resultados reales conforme avanza el torneo.</p>
-      <p><b>Fecha límite:</b> Todas las predicciones deben estar guardadas antes del pitazo inicial del primer partido — <b>11 de junio de 2026</b>. No se aceptan cambios después de esa fecha.</p>
-    </div>
-  </div>
+  const sections=[
+    {
+      id:'como',tag:'general',icon:'⚽',iconBg:'linear-gradient(135deg,#006838,#009650)',
+      title:'¿Cómo se juega?',
+      content:`
+        <div class="rules-chips">
+          <div class="rules-chip"><span class="rules-chip-icon">👥</span> 2 fases: Grupos + Eliminatoria</div>
+          <div class="rules-chip"><span class="rules-chip-icon">📅</span> Cierre: 11 jun 2026</div>
+          <div class="rules-chip"><span class="rules-chip-icon">⚽</span> 48 equipos · 12 grupos</div>
+        </div>
+        <p><b>Fase de Grupos:</b> Predice el marcador exacto de cada partido. La app calcula automáticamente la tabla de posiciones usando reglas FIFA (victoria = 3 pts, empate = 1 pt, derrota = 0). Los dos primeros de cada grupo y los 8 mejores terceros avanzan al bracket.</p>
+        <p><b>Fase Eliminatoria:</b> Completa el bracket desde Dieciseisavos hasta la Final. El marcador a 90 minutos es obligatorio. Si predices empate, elige quién avanza. Si no aciertas al que pasa, no ganas ningún punto.</p>
+        <p><b>Fecha límite:</b> Todas las predicciones deben estar guardadas antes del pitazo inicial — <b>11 de junio de 2026</b>. No se aceptan cambios después.</p>
+      `
+    },
+    {
+      id:'puntos',tag:'puntos',icon:'🏆',iconBg:'linear-gradient(135deg,#9a6500,#e8a020)',
+      title:'Sistema de puntos',
+      content:`
+        <p style="margin-bottom:.75rem">Los puntos se acumulan en ambas fases del torneo.</p>
+        <p style="font-weight:700;color:var(--ink);margin-bottom:.5rem">⚽ Fase de Grupos</p>
+        <table class="rules-pts-table">
+          <thead><tr><th>Condición</th><th>Puntos</th></tr></thead>
+          <tbody>
+            <tr><td class="pt-round">Aciertas el resultado (G/E/P)</td><td><span class="pt-win">+1</span></td></tr>
+            <tr><td class="pt-round">Bonus marcador exacto</td><td><span class="pt-exact">+2</span></td></tr>
+            <tr><td class="pt-round" style="color:var(--ink3)">Máximo por partido</td><td class="pt-max">+3</td></tr>
+          </tbody>
+        </table>
+        <p style="font-weight:700;color:var(--ink);margin:.75rem 0 .5rem">🔀 Fase Eliminatoria</p>
+        <table class="rules-pts-table">
+          <thead><tr><th>Ronda</th><th>Ganador</th><th>+ Exacto</th><th>Máx</th></tr></thead>
+          <tbody>
+            <tr><td class="pt-round">Dieciseisavos</td><td><span class="pt-win">+2</span></td><td><span class="pt-exact">+4</span></td><td class="pt-max">+6</td></tr>
+            <tr><td class="pt-round">Octavos</td><td><span class="pt-win">+3</span></td><td><span class="pt-exact">+6</span></td><td class="pt-max">+9</td></tr>
+            <tr><td class="pt-round">Cuartos</td><td><span class="pt-win">+5</span></td><td><span class="pt-exact">+10</span></td><td class="pt-max">+15</td></tr>
+            <tr><td class="pt-round">Semis</td><td><span class="pt-win">+7</span></td><td><span class="pt-exact">+14</span></td><td class="pt-max">+21</td></tr>
+            <tr><td class="pt-round">Final</td><td><span class="pt-win">+10</span></td><td><span class="pt-exact">+20</span></td><td class="pt-max">+30</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.78rem;color:var(--ink3);margin-top:.5rem">⚠️ En eliminatoria, si no aciertas al que avanza no ganas ningún punto — ni por marcador ni por ganador.</p>
+      `
+    },
+    {
+      id:'bracket',tag:'bracket',icon:'🔀',iconBg:'linear-gradient(135deg,#003087,#3d87ff)',
+      title:'¿Cómo funciona el bracket?',
+      content:`
+        <div class="rules-chips">
+          <div class="rules-chip"><span class="rules-chip-icon">🏟</span> 48 equipos · 12 grupos</div>
+          <div class="rules-chip"><span class="rules-chip-icon">✅</span> Clasifican: 1° y 2° de cada grupo</div>
+          <div class="rules-chip"><span class="rules-chip-icon">⭐</span> + 8 mejores terceros lugares</div>
+        </div>
+        <p><b>¿Cómo se eligen los 8 mejores terceros?</b> Se ordenan según: puntos → diferencia de goles → goles a favor → Fair Play. Los 8 mejores pasan.</p>
+        <p><b>Dieciseisavos:</b> Los cruces siguen el calendario oficial FIFA del 27 de marzo de 2026, preasignados según qué grupos clasificaron terceros. Ningún equipo enfrenta a alguien de su mismo grupo.</p>
+        <p><b>A partir de Octavos:</b> Bracket lineal — el ganador avanza al siguiente partido en el orden establecido.</p>
+        <p><b>Marcador exacto:</b> Corresponde a los 90 minutos. Si predices empate, debes indicar quién avanza (puede ser por tiempo extra o penales).</p>
+      `
+    },
+    {
+      id:'premios',tag:'premios',icon:'💰',iconBg:'linear-gradient(135deg,#c0001a,#ff3355)',
+      title:'Premios',
+      content:`
+        <div style="background:var(--grad-tri);border-radius:12px;padding:1rem 1.25rem;color:#fff;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:1rem">
+          <div>
+            <div style="font-size:.65rem;font-weight:700;letter-spacing:1.5px;opacity:.8;text-transform:uppercase;margin-bottom:4px">Bolsa estimada</div>
+            <div style="font-weight:800;font-size:1.8rem;line-height:1">$${bolsa.toLocaleString('es-MX')}</div>
+            <div style="font-size:.7rem;opacity:.8;margin-top:3px">MXN · ${Object.keys(picks).length} participantes × $${PRICE_PER_USER}</div>
+          </div>
+          <div style="font-size:2.5rem">💰</div>
+        </div>
+        <table class="rules-pts-table">
+          <thead><tr><th>Posición</th><th>%</th><th>~Monto</th></tr></thead>
+          <tbody>
+            <tr><td>🥇 1er lugar</td><td><span class="pt-win">40%</span></td><td class="pt-max">$${Math.floor(bolsa*.40).toLocaleString('es-MX')}</td></tr>
+            <tr><td>🥈 2do lugar</td><td><span style="font-weight:700;color:#888">25%</span></td><td class="pt-max">$${Math.floor(bolsa*.25).toLocaleString('es-MX')}</td></tr>
+            <tr><td>🥉 3er lugar</td><td><span style="font-weight:700;color:#c8875a">15%</span></td><td class="pt-max">$${Math.floor(bolsa*.15).toLocaleString('es-MX')}</td></tr>
+            <tr><td>🏅 4to lugar</td><td><span class="pt-exact">10%</span></td><td class="pt-max">$${Math.floor(bolsa*.10).toLocaleString('es-MX')}</td></tr>
+            <tr><td>🏅 5to lugar</td><td><span class="pt-exact">5%</span></td><td class="pt-max">$${Math.floor(bolsa*.05).toLocaleString('es-MX')}</td></tr>
+            <tr><td>🪦 Último lugar</td><td><span style="font-weight:700;color:var(--red)">5%</span></td><td class="pt-max">$${Math.floor(bolsa*.05).toLocaleString('es-MX')}</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.78rem;color:var(--ink3);margin-top:.5rem">⚠️ Para el premio de último lugar, el bracket debe estar <b>completamente lleno</b>. Sin bracket completo, el 5% pasa al siguiente de atrás que sí lo tenga.</p>
+        <p style="font-size:.78rem;color:var(--ink3)">Los montos crecen conforme se registran más participantes.</p>
+      `
+    },
+    {
+      id:'referidos',tag:'general',icon:'🔗',iconBg:'linear-gradient(135deg,#006838,#0052cc)',
+      title:'Referidos y bono especial',
+      content:`
+        <div style="background:var(--gld-bg);border:1.5px solid var(--gld);border-radius:10px;padding:1rem 1.1rem;margin-bottom:1rem;display:flex;gap:12px;align-items:flex-start">
+          <div style="font-size:2rem;flex-shrink:0">🎁</div>
+          <div>
+            <div style="font-weight:800;color:var(--gld);margin-bottom:4px">Bono por referido campeón: $500 MXN</div>
+            <div style="font-size:.82rem;color:var(--ink2);line-height:1.5">Si uno de tus referidos termina en 1er lugar, recibes $500 MXN directamente — financiados por los organizadores, fuera de la bolsa.</div>
+          </div>
+        </div>
+        <p>Cada participante tiene un <b>código único de 3 letras</b> visible en el menú lateral y en Premios. Al compartirlo, quien se registre con tu código queda vinculado como tu referido.</p>
+        <p>El bono se activa automáticamente al cierre del torneo y se muestra en tiempo real en la pestaña de Premios.</p>
+      `
+    },
+    {
+      id:'desempates',tag:'reglas',icon:'⚖️',iconBg:'linear-gradient(135deg,#444,#666)',
+      title:'Desempates y casos especiales',
+      content:`
+        <p><b>Empate en el ranking:</b> Si dos participantes terminan con el mismo puntaje, el desempate es:</p>
+        <div class="rules-timeline">
+          ${['Mayor cantidad de marcadores exactos en eliminatoria','Mayor puntaje en fase de grupos','Mayor puntaje en rondas avanzadas (Final > Semis > …)','Si persiste, el premio se divide en partes iguales'].map((t,i)=>`
+            <div class="rules-tl-item">
+              <div style="width:22px;height:22px;border-radius:50%;background:var(--grad-tri);color:#fff;font-size:.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${i+1}</div>
+              <div style="font-size:.84rem;color:var(--ink2);padding-top:3px">${t}</div>
+            </div>`).join('')}
+        </div>
+        <p style="margin-top:.5rem"><b>Partidos no predichos:</b> 0 puntos en ese partido. No hay predicciones parciales.</p>
+        <p><b>Errores en resultados:</b> Si el admin corrige un resultado, los puntos se recalculan automáticamente.</p>
+      `
+    },
+    {
+      id:'fechas',tag:'general',icon:'📅',iconBg:'linear-gradient(135deg,#c0001a,#9a6500)',
+      title:'Fechas clave',
+      content:`
+        <div class="rules-timeline">
+          ${[
+            {dot:'#00c46a',label:'Disponible ahora',val:'Predicciones abiertas ✓'},
+            {dot:'#e8a020',label:'Cierre de predicciones',val:'11 de junio de 2026 · antes del partido 1'},
+            {dot:'#3d87ff',label:'Inicio del torneo',val:'11 de junio de 2026 · México vs Sudáfrica'},
+            {dot:'#ff3355',label:'Final del torneo',val:'19 de julio de 2026'},
+            {dot:'#9a6500',label:'Pago de premios',val:'Máximo 7 días después de la Final'},
+          ].map(d=>`<div class="rules-tl-item">
+            <div class="rules-tl-dot" style="background:${d.dot};margin-top:6px"></div>
+            <div><div class="rules-tl-label">${d.label}</div><div class="rules-tl-val">${d.val}</div></div>
+          </div>`).join('')}
+        </div>
+      `
+    },
+  ];
 
-  <div class="rules-section">
-    <div class="rules-section-hd"><span class="rules-icon">🏆</span><span class="rules-section-title">Sistema de puntos</span></div>
-    <div class="rules-body">
-      <p>Los puntos se ganan en <b>ambas fases</b> — grupos y eliminatoria.</p>
+  const filters=[
+    {key:'all',label:'Todas'},
+    {key:'general',label:'⚽ General'},
+    {key:'puntos',label:'🏆 Puntos'},
+    {key:'bracket',label:'🔀 Bracket'},
+    {key:'premios',label:'💰 Premios'},
+    {key:'reglas',label:'⚖️ Reglas'},
+  ];
 
-      <p style="margin-bottom:.5rem;font-weight:700;color:var(--ink)">Fase de Grupos</p>
-      <div class="rules-pts-grid">
-        <div class="rpt"><div class="rpt-num">+1</div><div class="rpt-label">Aciertas el resultado (W/E/D)</div></div>
-        <div class="rpt"><div class="rpt-num">+2</div><div class="rpt-label">Bonus marcador exacto</div></div>
+  let activeFilter='all';
+  let openSections=new Set(['como','puntos']); // open by default
+
+  function render(){
+    const visible=sections.filter(s=>activeFilter==='all'||s.tag===activeFilter);
+    w.innerHTML=`
+      <div class="rules-filter-bar">
+        ${filters.map(f=>`<button class="rules-ftab${activeFilter===f.key?' on':''}" onclick="setRulesFilter('${f.key}')">${f.label}</button>`).join('')}
       </div>
+      ${visible.map(s=>`
+        <div class="rules-section${openSections.has(s.id)?' open':''}" id="rs-${s.id}">
+          <div class="rules-section-hd" onclick="toggleRulesSection('${s.id}')">
+            <div class="rules-icon-wrap" style="background:${s.iconBg}">${s.icon}</div>
+            <div class="rules-section-title">${s.title}</div>
+            <div class="rules-section-chevron">▼</div>
+          </div>
+          <div class="rules-body">${s.content}</div>
+        </div>`).join('')}
+    `;
+  }
 
-      <p style="margin:1rem 0 .5rem;font-weight:700;color:var(--ink)">Fase Eliminatoria</p>
-      <div class="rules-pts-grid">
-        <div class="rpt"><div class="rpt-num">+2</div><div class="rpt-label">Ganador Dieciseisavos <span style="font-size:.7rem;color:var(--ink3)">(+4 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+3</div><div class="rpt-label">Ganador Octavos <span style="font-size:.7rem;color:var(--ink3)">(+6 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+5</div><div class="rpt-label">Ganador Cuartos <span style="font-size:.7rem;color:var(--ink3)">(+10 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+7</div><div class="rpt-label">Ganador Semis <span style="font-size:.7rem;color:var(--ink3)">(+14 si exacto)</span></div></div>
-        <div class="rpt"><div class="rpt-num">+10</div><div class="rpt-label">Ganador Final (campeón) <span style="font-size:.7rem;color:var(--ink3)">(+20 si exacto)</span></div></div>
-      </div>
-    </div>
-  </div>
+  window.setRulesFilter=function(f){ activeFilter=f; render(); };
+  window.toggleRulesSection=function(id){
+    if(openSections.has(id)) openSections.delete(id);
+    else openSections.add(id);
+    render();
+  };
 
-  <div class="rules-section">
-    <div class="rules-section-hd"><span class="rules-icon">🔀</span><span class="rules-section-title">¿Cómo funciona el bracket?</span></div>
-    <div class="rules-body">
-      <p>El Mundial 2026 tiene <b>48 equipos</b> divididos en <b>12 grupos</b> de 4 equipos cada uno. Clasifica el 1° y 2° de cada grupo (24 equipos) más los <b>8 mejores terceros lugares</b> de los 12 grupos, sumando 32 equipos en total para la fase eliminatoria.</p>
-      <p><b>¿Cómo se eligen los 8 mejores terceros?</b> Se ordenan todos los terceros lugares según: puntos obtenidos → diferencia de goles → goles a favor → Fair Play (tarjetas). Los 8 mejores pasan.</p>
-      <p><b>Los cruces de Dieciseisavos</b> siguen el calendario oficial de FIFA publicado el 27 de marzo de 2026. Los enfrentamientos están preasignados según la combinación de grupos cuyos terceros clasificaron, garantizando que ningún equipo se enfrente a alguien de su mismo grupo en primera ronda.</p>
-      <p>A partir de Octavos, el bracket es lineal: el ganador de cada partido avanza al siguiente encuentro en el orden establecido.</p>
-      <p><b>Marcador exacto en eliminatoria:</b> El marcador a 90 minutos es <b>obligatorio</b>. Si predices empate, debes indicar quién avanza. Si no aciertas al que pasa, <b>no ganas ningún punto</b> — ni por el marcador ni por el ganador. Si aciertas al ganador y además el marcador exacto, ganas ambos bonos.</p>
-    </div>
-  </div>
-
-  <div class="rules-section">
-    <div class="rules-section-hd"><span class="rules-icon">💰</span><span class="rules-section-title">Premios</span></div>
-    <div class="rules-body">
-      <p>La inscripción por usuario abona <b>$250 MXN</b> a la bolsa total. La bolsa se reparte en efectivo entre los 5 primeros lugares y el último lugar al finalizar el torneo (19 de julio de 2026).</p>
-      <div class="rules-pts-grid">
-        <div class="rpt"><div class="rpt-num" style="color:var(--gld)">40%</div><div class="rpt-label">1er lugar · ~$${Math.floor(bolsa*.4).toLocaleString('es-MX')} MXN</div></div>
-        <div class="rpt"><div class="rpt-num" style="color:#888">25%</div><div class="rpt-label">2do lugar · ~$${Math.floor(bolsa*.25).toLocaleString('es-MX')} MXN</div></div>
-        <div class="rpt"><div class="rpt-num" style="color:#c8875a">15%</div><div class="rpt-label">3er lugar · ~$${Math.floor(bolsa*.15).toLocaleString('es-MX')} MXN</div></div>
-        <div class="rpt"><div class="rpt-num" style="color:var(--b2)">10%</div><div class="rpt-label">4to lugar · ~$${Math.floor(bolsa*.10).toLocaleString('es-MX')} MXN</div></div>
-        <div class="rpt"><div class="rpt-num" style="color:var(--b2)">5%</div><div class="rpt-label">5to lugar · ~$${Math.floor(bolsa*.05).toLocaleString('es-MX')} MXN</div></div>
-        <div class="rpt"><div class="rpt-num" style="color:var(--red)">5%</div><div class="rpt-label">🪦 Último lugar · ~$${Math.floor(bolsa*.05).toLocaleString('es-MX')} MXN</div></div>
-      </div>
-      <p style="font-size:.78rem;color:var(--ink3);margin-top:.5rem">⚠️ Para calificar al premio del último lugar, el participante debe tener el bracket eliminatorio <b>completamente lleno</b> (todos los partidos predichos). Sin bracket completo, el 5% pasa al siguiente lugar de atrás que sí lo tenga.</p>
-      <p>Los montos mostrados son estimados con el número actual de participantes y crecen conforme se registran más jugadores.</p>
-    </div>
-  </div>
-
-  <div class="rules-section">
-    <div class="rules-section-hd"><span class="rules-icon">🔗</span><span class="rules-section-title">Referidos y bono especial</span></div>
-    <div class="rules-body">
-      <p>Cada participante tiene un <b>código único de 3 letras</b> visible en el menú lateral y en la pestaña de Premios. Al compartirlo, quien se registre usando tu código queda vinculado a ti como referido.</p>
-      <p><b>Bono por referido campeón:</b> Si uno de tus referidos termina en el <b>1er lugar</b> del ranking final, recibes <b>$500 MXN</b> directamente, financiados por los organizadores, fuera de la bolsa de premios.</p>
-      <p>El bono se activa automáticamente al cierre del torneo y se muestra en tiempo real en la pestaña de Premios conforme tu referido sube en el ranking.</p>
-    </div>
-  </div>
-
-  <div class="rules-section">
-    <div class="rules-section-hd"><span class="rules-icon">⚖️</span><span class="rules-section-title">Desempates y casos especiales</span></div>
-    <div class="rules-body">
-      <p><b>Empate en el ranking:</b> Si dos o más participantes terminan con el mismo puntaje total, el desempate se resuelve en este orden:</p>
-      <ul>
-        <li>Mayor cantidad de marcadores exactos acertados en fase eliminatoria</li>
-        <li>Mayor puntaje en la fase de grupos</li>
-        <li>Mayor puntaje en rondas avanzadas (Final > Semis > Cuartos > Octavos > Dieciseisavos)</li>
-        <li>Si persiste el empate, el premio correspondiente se divide en partes iguales</li>
-      </ul>
-      <p><b>Partidos no predichos:</b> Si un participante no predijo un partido antes del cierre, recibe 0 puntos en ese partido. No hay predicciones parciales.</p>
-      <p><b>Errores en resultados:</b> Si el administrador registra un resultado incorrecto y luego lo corrige, los puntos se recalculan automáticamente para todos los participantes.</p>
-    </div>
-  </div>
-
-  <div class="rules-section">
-    <div class="rules-section-hd"><span class="rules-icon">📅</span><span class="rules-section-title">Fechas clave</span></div>
-    <div class="rules-body">
-      <ul>
-        <li><b>Apertura de predicciones:</b> Ya disponible</li>
-        <li><b>Cierre de predicciones:</b> 11 de junio de 2026, antes del primer partido</li>
-        <li><b>Inicio del torneo:</b> 11 de junio de 2026</li>
-        <li><b>Final del torneo:</b> 19 de julio de 2026</li>
-        <li><b>Pago de premios:</b> Máximo 7 días después de la Final</li>
-      </ul>
-    </div>
-  </div>
-
-  </div>`;
+  render();
 }
 
 // ══════════════════════════════════════════════════════
