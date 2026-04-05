@@ -2153,6 +2153,61 @@ function renderAdmin(){
   });
   html+=`</div></div>`;
 
+  // ── BRACKET RESULTS ──
+  html+=`<div class="adm-section">
+    <div class="adm-title">Resultados Eliminatorios</div>`;
+
+  const elimRoundsAdmin=[
+    {key:'r32', name:'Dieciseisavos', n:16},
+    {key:'r16', name:'Octavos',       n:8},
+    {key:'qf',  name:'Cuartos',       n:4},
+    {key:'sf',  name:'Semis',         n:2},
+    {key:'f',   name:'Final',         n:1},
+  ];
+
+  const mu=buildR32Matchups();
+
+  elimRoundsAdmin.forEach(({key,name,n})=>{
+    html+=`<div class="adm-card"><div class="adm-card-hd">${name}</div>`;
+    for(let i=0;i<n;i++){
+      const mid=`${key}_${i}`;
+      const label=MATCH_NUM[mid]||mid;
+      // Get teams
+      let h=null,a=null;
+      if(key==='r32'){ const m=mu[mid]; h=m?.home; a=m?.away; }
+      else { const feed=BRACKET_FEEDS[mid]; if(feed){ h=results.bracket?.[feed[0]]?.winner||null; a=results.bracket?.[feed[1]]?.winner||null; } }
+      const rr=results.bracket?.[mid]||{};
+      html+=`<div class="res-row" style="align-items:center">
+        <div class="rteam" style="font-size:.75rem;min-width:70px">
+          <span>${h?FL[h]||'🏳':'❓'}</span>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60px">${h?NM[h]||h:'Por definir'}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-direction:column">
+          <div style="font-size:.55rem;color:var(--ink3);font-weight:600">${label}</div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <input class="sinp" type="number" min="0" max="20" value="${rr.h!=null?rr.h:''}" placeholder="0" id="br_${mid}_h">
+            <span class="dash">-</span>
+            <input class="sinp" type="number" min="0" max="20" value="${rr.a!=null?rr.a:''}" placeholder="0" id="br_${mid}_a">
+          </div>
+        </div>
+        <div class="rteam r" style="font-size:.75rem;min-width:70px;justify-content:flex-end">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60px;text-align:right">${a?NM[a]||a:'Por definir'}</span>
+          <span>${a?FL[a]||'🏳':'❓'}</span>
+        </div>
+      </div>
+      <div style="margin-top:6px;font-size:.7rem;color:var(--ink3);padding:0 4px">
+        Ganador:
+        <select id="br_${mid}_w" style="margin-left:4px;padding:3px 6px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem">
+          <option value="">— Sin resultado —</option>
+          ${h?`<option value="${h}" ${rr.winner===h?'selected':''}>${FL[h]||'🏳'} ${NM[h]||h}</option>`:''}
+          ${a?`<option value="${a}" ${rr.winner===a?'selected':''}>${FL[a]||'🏳'} ${NM[a]||a}</option>`:''}
+        </select>
+      </div>`;
+    }
+    html+=`<button class="sv-btn" style="margin-top:.5rem" onclick="saveBrRes('${key}')">Guardar ${name}</button></div>`;
+  });
+  html+=`</div>`;
+
   html+=`<div class="adm-section">
     <div class="adm-title">Historial de cambios</div>
     <p style="font-size:.78rem;color:var(--ink3);margin-bottom:.75rem">Registro de todos los resultados modificados — <span style="color:var(--b2);font-weight:600">AUTO</span> = importado en vivo, <span style="color:var(--gld);font-weight:600">MANUAL</span> = editado por admin.</p>
@@ -2292,6 +2347,41 @@ function markManual(matchId){
 }
 
 let _savingRes=false;
+let _savingBrRes=false;
+function saveBrRes(roundKey){
+  if(_savingBrRes){toast('Espera, guardando...');return;}
+  if(!results.bracket) results.bracket={};
+  const n={r32:16,r16:8,qf:4,sf:2,f:1}[roundKey]||0;
+  for(let i=0;i<n;i++){
+    const mid=`${roundKey}_${i}`;
+    const hv=document.getElementById(`br_${mid}_h`)?.value;
+    const av=document.getElementById(`br_${mid}_a`)?.value;
+    const wv=document.getElementById(`br_${mid}_w`)?.value;
+    if(wv){
+      results.bracket[mid]={
+        h: hv!==''?+hv:null,
+        a: av!==''?+av:null,
+        winner: wv
+      };
+    }
+  }
+  _savingBrRes=true;
+  const btn=document.querySelector(`[onclick="saveBrRes('${roundKey}')"]`);
+  if(btn){btn.disabled=true;btn.textContent='Guardando...';}
+  api('POST','/api/results',{data:results})
+    .then(()=>{
+      renderRanking();
+      const rName={r32:'Dieciseisavos',r16:'Octavos',qf:'Cuartos',sf:'Semis',f:'Final'}[roundKey];
+      toast(`${rName} guardado ✓`);
+      if(btn){btn.classList.add('ok');btn.textContent=`Guardar ${rName}`;btn.disabled=false;setTimeout(()=>btn.classList.remove('ok'),2000);}
+    })
+    .catch(e=>{
+      toast('Error: '+e.message);
+      if(btn){btn.textContent=`Guardar`;btn.disabled=false;}
+    })
+    .finally(()=>{ _savingBrRes=false; });
+}
+
 function saveGRes(g){
   if(_savingRes){toast('Espera, guardando...');return;}
   if(!results.sc) results.sc={};
