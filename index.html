@@ -2019,6 +2019,7 @@ function calcScore(u){
       if(!mw) return;
       const ms=up.sc?.[id];
       const hasExactScore=ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a;
+      console.log(`[${id}] mw=${mw} rr.winner=${rr.winner} ms=${JSON.stringify(ms)} rr.h=${rr.h} rr.a=${rr.a} hasExact=${hasExactScore}`);
       if(mw===rr.winner){
         // Acertó ganador → puntos de ganador + bonus si marcador exacto
         br+=winPts;
