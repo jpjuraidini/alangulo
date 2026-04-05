@@ -1696,6 +1696,14 @@ function assignThirds(rules, best3Sorted, usedGroups, result){
 }
 
 // Like buildR32Matchups but uses results.sc (real results) instead of user picks
+// Resolve team name → code for bracket scoring comparison
+function nameToCode(name){
+  if(!name) return null;
+  // Direct match in NM values
+  const entry=Object.entries(NM).find(([k,v])=>v.toLowerCase()===name.toLowerCase()||k.toLowerCase()===name.toLowerCase());
+  return entry?entry[0]:name; // fallback to name itself
+}
+
 function buildR32MatchupsFromResults(){
   const sc = results.sc || {};
   const mu = {};
@@ -2005,14 +2013,16 @@ function calcScore(u){
   if(results.bracket){
     Object.entries(results.bracket).forEach(([id,rr])=>{
       if(!rr?.winner) return;
-      const rk=id.split('_')[0]; // r32, r16, qf, sf, f
+      const rk=id.split('_')[0];
       const [winPts, exactBonus]=PTS[rk]||[0,0];
       const mw=up.br?.[id];
-      if(mw && mw===rr.winner){
+      if(!mw) return;
+      // Compare: user picks by code, admin may enter name or code
+      const rrWinnerCode=nameToCode(rr.winner);
+      if(mw===rrWinnerCode||mw===rr.winner){
         br+=winPts;
-        // Exact score bonus (user entered score for elim match)
         const ms=up.sc?.[id];
-        if(ms && +ms.h===rr.h && +ms.a===rr.a) br+=exactBonus;
+        if(ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a) br+=exactBonus;
       }
     });
   }
@@ -2203,7 +2213,10 @@ function renderAdmin(){
 
   // ── BRACKET RESULTS ──
   html+=`<div class="adm-section">
-    <div class="adm-title">Resultados Eliminatorios</div>`;
+    <div class="adm-title">Resultados Eliminatorios</div>
+    <div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-size:.76rem;color:var(--b);margin-bottom:1rem;line-height:1.5">
+      ℹ️ Ingresa el nombre de los equipos, el marcador a 90 minutos y selecciona al ganador. Los usuarios verán sus puntos actualizados automáticamente.
+    </div>`;
 
   const elimRoundsAdmin=[
     {key:'r32', name:'Dieciseisavos', n:16},
@@ -2213,43 +2226,37 @@ function renderAdmin(){
     {key:'f',   name:'Final',         n:1},
   ];
 
-  // Build R32 matchups using real results (not admin's picks)
-  const mu=buildR32MatchupsFromResults();
   elimRoundsAdmin.forEach(({key,name,n})=>{
     html+=`<div class="adm-card"><div class="adm-card-hd">${name}</div>`;
     for(let i=0;i<n;i++){
       const mid=`${key}_${i}`;
       const label=MATCH_NUM[mid]||mid;
-      // Get teams
-      let h=null,a=null;
-      if(key==='r32'){ const m=mu[mid]; h=m?.home; a=m?.away; }
-      else { const feed=BRACKET_FEEDS[mid]; if(feed){ h=results.bracket?.[feed[0]]?.winner||null; a=results.bracket?.[feed[1]]?.winner||null; } }
       const rr=results.bracket?.[mid]||{};
-      html+=`<div class="res-row" style="align-items:center">
-        <div class="rteam" style="font-size:.75rem;min-width:70px">
-          <span>${h?FL[h]||'🏳':'❓'}</span>
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60px">${h?NM[h]||h:'Por definir'}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:6px;flex-direction:column">
-          <div style="font-size:.55rem;color:var(--ink3);font-weight:600">${label}</div>
-          <div style="display:flex;align-items:center;gap:4px">
-            <input class="sinp" type="number" min="0" max="20" value="${rr.h!=null?rr.h:''}" placeholder="0" id="br_${mid}_h">
+      const savedH=rr.teamH||'';
+      const savedA=rr.teamA||'';
+      const savedW=rr.winner||'';
+      const savedHg=rr.h!=null?rr.h:'';
+      const savedAg=rr.a!=null?rr.a:'';
+      html+=`<div style="border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
+        <div style="font-size:.6rem;font-weight:700;color:var(--ink3);margin-bottom:8px;letter-spacing:.5px">${label}</div>
+        <div style="display:grid;grid-template-columns:1fr 90px 1fr;gap:6px;align-items:center;margin-bottom:8px">
+          <input type="text" id="br_${mid}_th" placeholder="Equipo local" value="${savedH}"
+            style="padding:7px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;width:100%;box-sizing:border-box">
+          <div style="display:flex;align-items:center;justify-content:center;gap:3px">
+            <input class="sinp" type="number" min="0" max="20" value="${savedHg}" placeholder="0" id="br_${mid}_h" style="width:30px;text-align:center">
             <span class="dash">-</span>
-            <input class="sinp" type="number" min="0" max="20" value="${rr.a!=null?rr.a:''}" placeholder="0" id="br_${mid}_a">
+            <input class="sinp" type="number" min="0" max="20" value="${savedAg}" placeholder="0" id="br_${mid}_a" style="width:30px;text-align:center">
           </div>
+          <input type="text" id="br_${mid}_ta" placeholder="Equipo visitante" value="${savedA}"
+            style="padding:7px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;width:100%;box-sizing:border-box;text-align:right">
         </div>
-        <div class="rteam r" style="font-size:.75rem;min-width:70px;justify-content:flex-end">
-          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60px;text-align:right">${a?NM[a]||a:'Por definir'}</span>
-          <span>${a?FL[a]||'🏳':'❓'}</span>
+        <div style="font-size:.72rem;color:var(--ink3)">Ganador:
+          <select id="br_${mid}_w" style="margin-left:4px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem">
+            <option value="">— Sin resultado —</option>
+            <option value="__h" ${savedW==='__h'?'selected':''}>🏠 Local ${savedH?'('+savedH+')':''}</option>
+            <option value="__a" ${savedW==='__a'?'selected':''}>✈️ Visitante ${savedA?'('+savedA+')':''}</option>
+          </select>
         </div>
-      </div>
-      <div style="margin-top:6px;font-size:.7rem;color:var(--ink3);padding:0 4px">
-        Ganador:
-        <select id="br_${mid}_w" style="margin-left:4px;padding:3px 6px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem">
-          <option value="">— Sin resultado —</option>
-          ${h?`<option value="${h}" ${rr.winner===h?'selected':''}>${FL[h]||'🏳'} ${NM[h]||h}</option>`:''}
-          ${a?`<option value="${a}" ${rr.winner===a?'selected':''}>${FL[a]||'🏳'} ${NM[a]||a}</option>`:''}
-        </select>
       </div>`;
     }
     html+=`<button class="sv-btn" style="margin-top:.5rem" onclick="saveBrRes('${key}')">Guardar ${name}</button></div>`;
@@ -2405,11 +2412,17 @@ function saveBrRes(roundKey){
     const hv=document.getElementById(`br_${mid}_h`)?.value;
     const av=document.getElementById(`br_${mid}_a`)?.value;
     const wv=document.getElementById(`br_${mid}_w`)?.value;
-    if(wv){
+    const th=document.getElementById(`br_${mid}_th`)?.value.trim();
+    const ta=document.getElementById(`br_${mid}_ta`)?.value.trim();
+    if(wv && th && ta){
+      // Resolve __h/__a to actual team name
+      const winner = wv==='__h' ? th : wv==='__a' ? ta : wv;
       results.bracket[mid]={
+        teamH: th,
+        teamA: ta,
         h: hv!==''?+hv:null,
         a: av!==''?+av:null,
-        winner: wv
+        winner
       };
     }
   }
