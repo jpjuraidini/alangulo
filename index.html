@@ -109,7 +109,7 @@ body{
 #auth{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--grad-tri);padding:1rem;position:relative;overflow:hidden}
 #auth::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 20% 80%,rgba(255,255,255,.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 20%,rgba(255,255,255,.12) 0%,transparent 55%)}
 #auth::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(255,255,255,.06) 0%,transparent 70%)}
-.auth-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.25;animation:orbFloat 8s ease-in-out infinite alternate}
+.auth-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.3;animation:orbFloat 8s ease-in-out infinite alternate;pointer-events:none}
 .auth-orb.o1{width:300px;height:300px;background:#00c46a;top:-80px;left:-80px;animation-delay:0s}
 .auth-orb.o2{width:250px;height:250px;background:#3d87ff;bottom:-60px;right:-60px;animation-delay:-3s}
 .auth-orb.o3{width:180px;height:180px;background:#ff3355;top:40%;right:10%;animation-delay:-5s}
@@ -1415,7 +1415,13 @@ function logout(){
   closeDrawer();
   document.querySelectorAll('.admin-only').forEach(e=>e.style.display='none');
   document.getElementById('app').style.display='none';
-  document.getElementById('auth').style.display='flex';
+  const authEl=document.getElementById('auth');
+  authEl.style.display='flex';
+  // Re-trigger entrance animation
+  const card=authEl.querySelector('.auth-card');
+  card.style.animation='none';
+  card.offsetHeight; // force reflow
+  card.style.animation='';
 }
 function boot(){
   // Hide auth, show a lightweight overlay (logo + dots only, no dark bg animation)
