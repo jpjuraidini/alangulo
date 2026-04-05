@@ -1695,6 +1695,54 @@ function assignThirds(rules, best3Sorted, usedGroups, result){
   return false;
 }
 
+// Like buildR32Matchups but uses results.sc (real results) instead of user picks
+function buildR32MatchupsFromResults(){
+  const sc = results.sc || {};
+  const mu = {};
+
+  function resolveSeedFromResults(seed){
+    const m = seed.match(/^([12])([A-L])$/);
+    if(!m) return null;
+    const pos=+m[1]-1, g=m[2];
+    const st = standings(g, sc);
+    return st[pos]?.team || null;
+  }
+
+  // First pass: non-third slots
+  R32.forEach(([id,hs,as])=>{
+    const h = hs==='3' ? null : resolveSeedFromResults(hs);
+    const a = as==='3' ? null : resolveSeedFromResults(as);
+    mu[id]={home:h, away:a};
+  });
+
+  // Second pass: thirds using backtracking
+  const best3 = getBest3rdsFromResults();
+  const result = {};
+  assignThirds(THIRD_RULES, best3, new Set(), result);
+  Object.entries(result).forEach(([slotId,team])=>{
+    const r32entry=R32.find(r=>r[0]===slotId);
+    if(!r32entry) return;
+    if(r32entry[1]==='3') mu[slotId].home=team;
+    else                  mu[slotId].away=team;
+  });
+
+  return mu;
+}
+
+function getBest3rdsFromResults(){
+  const sc = results.sc || {};
+  const thirds = [];
+  Object.keys(GROUPS).forEach(g=>{
+    const played = GM[g].filter(m=>sc[m.id]!=null).length;
+    if(played===0) return;
+    const st = standings(g, sc);
+    const t = st[2];
+    if(t) thirds.push({team:t.team, pts:t.pts, gd:t.gd, gf:t.gf, grp:g});
+  });
+  thirds.sort((a,b)=>b.pts!==a.pts?b.pts-a.pts:b.gd!==a.gd?b.gd-a.gd:b.gf-a.gf);
+  return thirds.slice(0,8);
+}
+
 function buildR32Matchups(){
   const best3=getBest3rds(); // [{team,grp,pts,gd,gf}] top 8 sorted best→worst
   const mu={};
@@ -2165,8 +2213,8 @@ function renderAdmin(){
     {key:'f',   name:'Final',         n:1},
   ];
 
-  const mu=buildR32Matchups();
-
+  // Build R32 matchups using real results (not admin's picks)
+  const mu=buildR32MatchupsFromResults();
   elimRoundsAdmin.forEach(({key,name,n})=>{
     html+=`<div class="adm-card"><div class="adm-card-hd">${name}</div>`;
     for(let i=0;i<n;i++){
