@@ -3749,11 +3749,11 @@ function renderCountdown(){
     s.textContent=`
       @keyframes cdPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
       @keyframes cdTick{0%{transform:translateY(-8px);opacity:0}100%{transform:translateY(0);opacity:1}}
-      .cd-block{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:16px;padding:1.25rem .75rem;text-align:center;min-width:72px;flex:1}
-      .cd-num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(2.8rem,10vw,4.5rem);line-height:1;color:#fff;letter-spacing:-2px}
+      .cd-block{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:.875rem .5rem;text-align:center;min-width:56px;flex:1}
+      .cd-num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(1.8rem,7vw,3rem);line-height:1;color:#fff;letter-spacing:-1px}
       .cd-num.tick{animation:cdTick .18s ease-out}
-      .cd-label{font-size:.6rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.75;color:#fff;margin-top:8px}
-      .cd-sep{font-size:2.5rem;font-weight:800;color:rgba(255,255,255,.5);align-self:center;margin-bottom:8px;animation:cdPulse 1s ease-in-out infinite}
+      .cd-label{font-size:.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.75;color:#fff;margin-top:6px}
+      .cd-sep{font-size:1.8rem;font-weight:800;color:rgba(255,255,255,.5);align-self:center;margin-bottom:6px;animation:cdPulse 1s ease-in-out infinite}
     `;
     document.head.appendChild(s);
   }
@@ -3777,7 +3777,7 @@ function renderCountdown(){
     if(prev.s===-1){
       wrap.innerHTML=`
       <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:600px;margin:0 auto">
-        <div style="background:var(--grad-tri);border-radius:24px;padding:2.5rem 2rem 2rem;width:100%;position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.25)">
+        <div style="background:var(--grad-tri);border-radius:24px;padding:1.5rem 1.25rem 1.25rem;width:100%;position:relative;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.25)">
           <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 20% 120%,rgba(255,255,255,.15),transparent 55%),radial-gradient(ellipse at 80% -20%,rgba(255,255,255,.1),transparent 55%)"></div>
           <div style="position:relative;z-index:1">
             <div style="font-size:.68rem;font-weight:700;letter-spacing:3px;opacity:.8;margin-bottom:1.5rem;text-transform:uppercase;text-align:center;color:#fff">⚽ El Mundial comienza en</div>
@@ -3792,9 +3792,9 @@ function renderCountdown(){
             </div>
           </div>
         </div>
-        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:1.75rem 2rem;width:100%;box-shadow:var(--sh2);display:flex;align-items:center;justify-content:space-between;gap:1rem">
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:1.1rem 1.25rem;width:100%;box-shadow:var(--sh2);display:flex;align-items:center;justify-content:space-between;gap:.75rem">
           <div style="text-align:center;flex:1">
-            <div style="font-size:3.5rem;line-height:1;margin-bottom:8px">🇲🇽</div>
+            <div style="font-size:2.5rem;line-height:1;margin-bottom:6px">🇲🇽</div>
             <div style="font-weight:800;font-size:1rem;color:var(--ink)">México</div>
             <div style="font-size:.7rem;color:var(--ink3);margin-top:2px">Local</div>
           </div>
@@ -3803,7 +3803,7 @@ function renderCountdown(){
             <div style="font-size:.65rem;color:var(--ink3);font-weight:600;letter-spacing:.5px">PARTIDO 1 · M1</div>
           </div>
           <div style="text-align:center;flex:1">
-            <div style="font-size:3.5rem;line-height:1;margin-bottom:8px">🇿🇦</div>
+            <div style="font-size:2.5rem;line-height:1;margin-bottom:6px">🇿🇦</div>
             <div style="font-weight:800;font-size:1rem;color:var(--ink)">Sudáfrica</div>
             <div style="font-size:.7rem;color:var(--ink3);margin-top:2px">Visitante</div>
           </div>
