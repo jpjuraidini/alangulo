@@ -3695,6 +3695,7 @@ function loadGroupRanking(groupId){
       })
       .sort((a,b)=>b.total-a.total);
 
+    const isOwner=_myGroups.find(g=>g.id===groupId)?.owner===CU.u;
     if(!board.length){el.innerHTML=`<div style="padding:.75rem;font-size:.8rem;color:var(--ink3)">Sin miembros aún.</div>`;return;}
     const medals=['🥇','🥈','🥉'];
     el.innerHTML=`<table style="width:100%;border-collapse:collapse">
@@ -3703,6 +3704,8 @@ function loadGroupRanking(groupId){
           <td style="padding:8px 12px;font-size:.9rem;width:32px">${medals[i]||`${i+1}`}</td>
           <td style="padding:8px 4px;font-weight:${p.isMe?'800':'600'};font-size:.85rem;color:${p.isMe?'var(--green)':'var(--ink)'}">${p.name}${p.isMe?' <span style="font-size:.6rem;background:var(--green);color:#fff;padding:1px 5px;border-radius:4px">tú</span>':''}</td>
           <td style="padding:8px 12px;text-align:right;font-weight:800;font-size:.88rem;color:var(--ink)">${p.total} <span style="font-size:.65rem;opacity:.6">pts</span></td>
+          <td style="padding:8px 8px;width:28px">${isOwner&&!p.isMe?`<button onclick="removeMemberFromGroup(${groupId},'${p.name}')" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 5px;border-radius:4px;transition:color .15s" title="Eliminar del grupo">✕</button>`:''}
+          </td>
         </tr>`).join('')}
     </table>`;
   }).catch(()=>{
@@ -3738,6 +3741,13 @@ function copyGroupCode(code){
   navigator.clipboard?.writeText(code)
     .then(()=>toast(`Código ${code} copiado ✓`))
     .catch(()=>toast(`Código del grupo: ${code}`));
+}
+
+function removeMemberFromGroup(groupId, username){
+  if(!confirm(`¿Eliminar a "${username}" del grupo?`)) return;
+  api('DELETE',`/api/groups/${groupId}/member/${username}`,{requester:CU.u})
+    .then(()=>{ toast(`${username} eliminado del grupo`); renderMisGrupos(); })
+    .catch(e=>toast('Error: '+e.message));
 }
 
 function leaveGroup(id, name){
