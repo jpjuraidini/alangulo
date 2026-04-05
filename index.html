@@ -3278,6 +3278,7 @@ function renderMiQuiniela(){
         id, label: myWinner?(NM[myWinner]||myWinner):`Partido ${id}`,
         flags: myWinner?FL[myWinner]||'⚽':'❓',
         myScore: myWinner?{winner:myWinner}:null,
+        myBrScore: up.sc?.[id]||null,
         realScore: rr||null, status, pts,
         phase:'elim', round:key, roundName:name, roundCls:cls,
         myWinner, realWinner:rr?.winner
@@ -3379,11 +3380,11 @@ function renderMiQuiniela(){
       <div class="mq-section-hd">${name} <span class="mq-pts">${rndPts} pts</span></div>
       <div class="mq-matches">
         <div class="mq-row" style="background:var(--bg);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3)">
-          <div>Tu pick</div><div style="text-align:center">Predicho</div><div style="text-align:center">Real</div><div></div>
+          <div>Tu pick</div><div style="text-align:center">Tu Pred.</div><div style="text-align:center">Real</div><div></div>
         </div>`;
     filtered.forEach(m=>{
-      const myTxt = m.myWinner ? `${FL[m.myWinner]||'🏳'} ${NM[m.myWinner]||m.myWinner}` : '—';
-      const realTxt = m.realWinner ? `${FL[m.realWinner]||'🏳'} ${NM[m.realWinner]||m.realWinner}` : '?';
+      const myTxt = m.myWinner ? `${FL[m.myWinner]||'🏳'} ${NM[m.myWinner]||m.myWinner}${m.myBrScore!=null&&m.myBrScore.h!=null?` <span style="font-size:.65rem;opacity:.7;font-weight:600">(${m.myBrScore.h}-${m.myBrScore.a})</span>`:''}` : '—';
+      const realTxt = m.realWinner ? `${FL[m.realWinner]||'🏳'} ${NM[m.realWinner]||m.realWinner}${m.realScore?.h!=null?` <span style="font-size:.65rem;opacity:.7">(${m.realScore.h}-${m.realScore.a})</span>`:''}` : '?';
       const icon = m.status==='exact'?'🎯':m.status==='correct'?'✅':m.status==='wrong'?'❌':'⏳';
       const [wp,ep]=PTS[key]||[0,0];
       const hint = m.status==='exact'?`+${wp+ep} pts`:m.status==='correct'?`+${wp} pts`:'';
