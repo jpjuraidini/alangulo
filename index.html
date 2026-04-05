@@ -2015,18 +2015,17 @@ function calcScore(u){
       if(!rr?.winner) return;
       const rk=id.split('_')[0];
       const [winPts, exactBonus]=PTS[rk]||[0,0];
-      const mw=up.br?.[id]; // team code user picked as winner
+      const mw=up.br?.[id];
       if(!mw) return;
-      // Verify the match teams match — user's winner must be one of the two real teams
-      const realH=rr.teamH; // team code saved by admin
-      const realA=rr.teamA;
-      // If admin saved team codes, verify user's winner is one of them
-      if(realH && realA && mw!==realH && mw!==realA) return; // teams don't match
-      // Now check if winner matches
+      const ms=up.sc?.[id];
+      const hasExactScore=ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a;
       if(mw===rr.winner){
+        // Acertó ganador → puntos de ganador + bonus si marcador exacto
         br+=winPts;
-        const ms=up.sc?.[id];
-        if(ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a) br+=exactBonus;
+        if(hasExactScore) br+=exactBonus;
+      } else if(hasExactScore){
+        // No acertó ganador pero sí el marcador exacto → solo el bonus
+        br+=exactBonus;
       }
     });
   }
@@ -2715,7 +2714,7 @@ function renderReglas(){
       <p><b>¿Cómo se eligen los 8 mejores terceros?</b> Se ordenan todos los terceros lugares según: puntos obtenidos → diferencia de goles → goles a favor → Fair Play (tarjetas). Los 8 mejores pasan.</p>
       <p><b>Los cruces de Dieciseisavos</b> siguen el calendario oficial de FIFA publicado el 27 de marzo de 2026. Los enfrentamientos están preasignados según la combinación de grupos cuyos terceros clasificaron, garantizando que ningún equipo se enfrente a alguien de su mismo grupo en primera ronda.</p>
       <p>A partir de Octavos, el bracket es lineal: el ganador de cada partido avanza al siguiente encuentro en el orden establecido.</p>
-      <p><b>Marcador exacto en eliminatoria:</b> El marcador que predices corresponde al resultado a <b>90 minutos</b> (tiempo reglamentario). Si predices un empate, deberás indicar quién avanza — ya sea por tiempo extra o penales. El bonus de marcador exacto se otorga únicamente si aciertas el marcador a 90 minutos <i>y</i> al equipo que avanza.</p>
+      <p><b>Marcador exacto en eliminatoria:</b> El marcador que predices corresponde al resultado a <b>90 minutos</b> (tiempo reglamentario). Si predices un empate, deberás indicar quién avanza. El bonus de marcador exacto se otorga si aciertas el marcador a 90 minutos, <b>incluso si fallaste quién avanza</b>. Los puntos de ganador solo se otorgan si aciertas quién pasa.</p>
     </div>
   </div>
 
