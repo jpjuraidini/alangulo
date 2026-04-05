@@ -1544,29 +1544,24 @@ function boot(){
       auth.style.transition = '';
       card.innerHTML = originalContent;
 
-      // Load all data from backend (skip if already preloaded by splash)
-      if(!_dataDone) await loadAllData();
+      // Load all data from backend
+      await loadAllData();
       ensure(CU.u);
 
-      // Load refs for current user (skip if already preloaded)
-      if(!_dataDone){
-        try {
-          const myRefs = await api('GET',`/api/refs/${CU.code}`);
-          refs[CU.code] = myRefs;
-        } catch(e){}
-      }
+      // Load refs for current user
+      try {
+        const myRefs = await api('GET',`/api/refs/${CU.code}`);
+        refs[CU.code] = myRefs;
+      } catch(e){}
 
-      // Load users list (skip if already preloaded)
-      if(!_dataDone){
-        try {
-          const users = await api('GET','/api/users');
-          dynUsers = users
-            .filter(u=>!USERS.find(x=>x.u===u.username))
-            .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
-        } catch(e){}
-      }
+      // Load users list
+      try {
+        const users = await api('GET','/api/users');
+        dynUsers = users
+          .filter(u=>!USERS.find(x=>x.u===u.username))
+          .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
+      } catch(e){}
 
-      // Mark data as ready so renderRanking doesn't show loading state
       _dataDone=true;
 
       document.getElementById('app').style.display = 'block';
@@ -2145,17 +2140,8 @@ function calcScore(u){
 
 function renderRanking(){
   const wrap=document.getElementById('rk-wrap');
+  const board=[];
 
-  // If data hasn't loaded yet, show loading and retry
-  if(!_dataDone){
-    wrap.innerHTML=`<div style="text-align:center;padding:3rem 2rem;display:flex;flex-direction:column;align-items:center;gap:.75rem">
-      <div style="font-size:2rem">⏳</div>
-      <div style="font-weight:700;font-size:.9rem;color:var(--ink)">Cargando ranking...</div>
-    </div>`;
-    setTimeout(renderRanking, 500);
-    return;
-  }
-  
   // Real users first
   Object.keys(picks).forEach(u=>{
     const sc=calcScore(u);
@@ -4347,15 +4333,6 @@ if(CU){
     } catch(e){}
     _dataDone=true;
     tryCloseSplash();
-    // If app is already visible, re-render current page with real data
-    if(document.getElementById('app').style.display==='block'){
-      const curPage=localStorage.getItem('q26page')||'grupos';
-      renderRanking();
-      renderPremios();
-      if(curPage==='ranking') renderRanking();
-      if(curPage==='premios') renderPremios();
-      if(curPage==='miquiniela') renderMiQuiniela();
-    }
   })();
 } else {
   _dataDone=true;
