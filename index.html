@@ -2017,9 +2017,7 @@ function calcScore(u){
       const [winPts, exactBonus]=PTS[rk]||[0,0];
       const mw=up.br?.[id];
       if(!mw) return;
-      // Compare: user picks by code, admin may enter name or code
-      const rrWinnerCode=nameToCode(rr.winner);
-      if(mw===rrWinnerCode||mw===rr.winner){
+      if(mw===rr.winner){
         br+=winPts;
         const ms=up.sc?.[id];
         if(ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a) br+=exactBonus;
@@ -2237,24 +2235,31 @@ function renderAdmin(){
       const savedW=rr.winner||'';
       const savedHg=rr.h!=null?rr.h:'';
       const savedAg=rr.a!=null?rr.a:'';
+      const teamOpts=Object.entries(NM).map(([code,name])=>`<option value="${code}" ${savedH===code||savedA===code?'':''}>` + (FL[code]||'') + ' ' + name + '</option>').join('');
+      const teamOptsH=Object.entries(NM).map(([code,name])=>`<option value="${code}"${savedH===code?' selected':''}>${FL[code]||''} ${name}</option>`).join('');
+      const teamOptsA=Object.entries(NM).map(([code,name])=>`<option value="${code}"${savedA===code?' selected':''}>${FL[code]||''} ${name}</option>`).join('');
       html+=`<div style="border:1px solid var(--border);border-radius:8px;padding:10px;margin-bottom:8px">
         <div style="font-size:.6rem;font-weight:700;color:var(--ink3);margin-bottom:8px;letter-spacing:.5px">${label}</div>
         <div style="display:grid;grid-template-columns:1fr 90px 1fr;gap:6px;align-items:center;margin-bottom:8px">
-          <input type="text" id="br_${mid}_th" placeholder="Equipo local" value="${savedH}"
-            style="padding:7px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;width:100%;box-sizing:border-box">
+          <select id="br_${mid}_th" style="padding:6px;border:1.5px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.76rem;width:100%">
+            <option value="">— Local —</option>
+            ${teamOptsH}
+          </select>
           <div style="display:flex;align-items:center;justify-content:center;gap:3px">
             <input class="sinp" type="number" min="0" max="20" value="${savedHg}" placeholder="0" id="br_${mid}_h" style="width:30px;text-align:center">
             <span class="dash">-</span>
             <input class="sinp" type="number" min="0" max="20" value="${savedAg}" placeholder="0" id="br_${mid}_a" style="width:30px;text-align:center">
           </div>
-          <input type="text" id="br_${mid}_ta" placeholder="Equipo visitante" value="${savedA}"
-            style="padding:7px 8px;border:1.5px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;width:100%;box-sizing:border-box;text-align:right">
+          <select id="br_${mid}_ta" style="padding:6px;border:1.5px solid var(--border);border-radius:7px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.76rem;width:100%">
+            <option value="">— Visitante —</option>
+            ${teamOptsA}
+          </select>
         </div>
         <div style="font-size:.72rem;color:var(--ink3)">Ganador:
           <select id="br_${mid}_w" style="margin-left:4px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem">
             <option value="">— Sin resultado —</option>
-            <option value="__h" ${savedW==='__h'?'selected':''}>🏠 Local ${savedH?'('+savedH+')':''}</option>
-            <option value="__a" ${savedW==='__a'?'selected':''}>✈️ Visitante ${savedA?'('+savedA+')':''}</option>
+            <option value="__h" ${savedW==='__h'?'selected':''}>🏠 Local${savedH?' ('+NM[savedH]||savedH+')':''}</option>
+            <option value="__a" ${savedW==='__a'?'selected':''}>✈️ Visitante${savedA?' ('+NM[savedA]||savedA+')':''}</option>
           </select>
         </div>
       </div>`;
@@ -2412,10 +2417,9 @@ function saveBrRes(roundKey){
     const hv=document.getElementById(`br_${mid}_h`)?.value;
     const av=document.getElementById(`br_${mid}_a`)?.value;
     const wv=document.getElementById(`br_${mid}_w`)?.value;
-    const th=document.getElementById(`br_${mid}_th`)?.value.trim();
-    const ta=document.getElementById(`br_${mid}_ta`)?.value.trim();
+    const th=document.getElementById(`br_${mid}_th`)?.value; // team code
+    const ta=document.getElementById(`br_${mid}_ta`)?.value; // team code
     if(wv && th && ta){
-      // Resolve __h/__a to actual team name
       const winner = wv==='__h' ? th : wv==='__a' ? ta : wv;
       results.bracket[mid]={
         teamH: th,
