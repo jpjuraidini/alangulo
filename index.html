@@ -1235,6 +1235,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       </div>
     </div>
     <div id="rk-wrap"></div>
+    <div id="rk-history-wrap" style="margin-top:1.5rem"></div>
   </div>
 
   <!-- MI QUINIELA -->
@@ -2326,6 +2327,17 @@ function renderAdmin(){
   api('GET','/api/refs').then(allRefs=>{ refs=allRefs; renderUsersTable(); }).catch(()=>{});
   const w=document.getElementById('adm-wrap');
   let html='';
+
+  // ── SNAPSHOT DEL RANKING ──
+  html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
+    <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:.5rem">📸 Guardar snapshot del ranking</div>
+    <div style="font-size:.78rem;color:var(--ink3);margin-bottom:.75rem">Guarda una foto del ranking actual para el historial. Úsalo al final de cada jornada.</div>
+    <div style="display:flex;gap:.5rem">
+      <input id="snapshot-label" type="text" placeholder="ej. Jornada 1, Octavos, etc." maxlength="40"
+        style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;outline:none">
+      <button onclick="saveRankingSnapshot()" style="padding:9px 16px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap">Guardar</button>
+    </div>
+  </div>`;
 
   // ── LIVE SCORES BAR ──
   html+=`<div class="live-bar">
@@ -4007,7 +4019,7 @@ function go(name){
   if(pg) pg.classList.add('on');
   const tab=document.querySelector(`[data-p="${name}"]`);
   if(tab) tab.classList.add('on');
-  if(name==='ranking')        renderRanking();
+  if(name==='ranking')        { renderRanking(); renderRankingHistory(); }
   if(name==='bracket')        renderBracket();
   if(name==='admin')          renderAdmin();
   if(name==='premios')        renderPremios();
@@ -4525,6 +4537,66 @@ document.getElementById('lu').addEventListener('keydown',e=>{if(e.key==='Enter')
 document.getElementById('chat-input').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
 });
+
+function saveRankingSnapshot(){
+  const label = document.getElementById('snapshot-label').value.trim();
+  if(!label){ toast('Ponle un nombre al snapshot'); return; }
+  api('POST','/api/ranking/snapshot',{ label })
+    .then(r=>{ toast(`Snapshot "${label}" guardado — ${r.count} jugadores ✓`); document.getElementById('snapshot-label').value=''; })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function renderRankingHistory(){
+  const wrap = document.getElementById('rk-history-wrap');
+  if(!wrap) return;
+  api('GET','/api/ranking/history').then(snapshots=>{
+    if(!snapshots.length){ wrap.innerHTML=''; return; }
+
+    // Build position map per snapshot for each user
+    const allUsers = [...new Set(snapshots.flatMap(s=>s.snapshot.map(p=>p.name)))];
+    const myName = CU.u;
+
+    // For each snapshot, get position of current user and top 3
+    let html=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;box-shadow:var(--sh)">
+      <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:1rem">📈 Historial del ranking</div>`;
+
+    // Timeline of user's position
+    html+=`<div style="overflow-x:auto;padding-bottom:.5rem"><div style="display:flex;gap:0;min-width:max-content">`;
+    snapshots.forEach((snap,i)=>{
+      const pos = snap.snapshot.findIndex(p=>p.name===myName);
+      const myData = snap.snapshot.find(p=>p.name===myName);
+      const total = snap.snapshot.length;
+      const posNum = pos===-1 ? '-' : pos+1;
+      const isFirst = posNum===1;
+      const color = pos===0?'var(--gld)':pos===1?'#888':pos===2?'#c8875a':'var(--green)';
+      html+=`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 12px;border-right:1px solid var(--border);min-width:90px">
+        <div style="font-size:.65rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;text-align:center">${snap.label}</div>
+        <div style="font-size:1.6rem;font-weight:800;color:${color}">${pos===0?'🥇':pos===1?'🥈':pos===2?'🥉':'#'+posNum}</div>
+        <div style="font-size:.72rem;color:var(--ink3)">${myData?myData.total+' pts':'-'}</div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+
+    // Top 3 per snapshot table
+    html+=`<div style="margin-top:1rem;overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:.78rem">
+      <thead><tr style="border-bottom:2px solid var(--border)">
+        <th style="padding:6px 8px;text-align:left;color:var(--ink3);font-weight:700;font-size:.65rem;text-transform:uppercase">Jornada</th>
+        <th style="padding:6px 8px;text-align:center;color:var(--gld);font-size:.9rem">🥇</th>
+        <th style="padding:6px 8px;text-align:center;color:#888;font-size:.9rem">🥈</th>
+        <th style="padding:6px 8px;text-align:center;color:#c8875a;font-size:.9rem">🥉</th>
+      </tr></thead><tbody>`;
+    snapshots.forEach(snap=>{
+      const top3 = snap.snapshot.slice(0,3);
+      html+=`<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:8px;font-weight:600;color:var(--ink)">${snap.label}</td>
+        ${top3.map(p=>`<td style="padding:8px;text-align:center;color:var(--ink2)">${p.name}<br><span style="font-size:.65rem;color:var(--ink3)">${p.total}pts</span></td>`).join('')}
+        ${top3.length<3?'<td></td>'.repeat(3-top3.length):''}
+      </tr>`;
+    });
+    html+=`</tbody></table></div></div>`;
+    wrap.innerHTML = html;
+  }).catch(()=>{ document.getElementById('rk-history-wrap').innerHTML=''; });
+}
 
 // ── ONLINE COUNTER ──
 let _onlineSSE = null;
