@@ -1138,6 +1138,8 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('premios')">Premios</button>
     <div class="drawer-item-sep"></div>
+    <button class="drawer-item" onclick="goDrawer('stats')">📊 Estadísticas</button>
+    <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('reglas')">Reglas</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('chat')">Chat</button>
@@ -1260,6 +1262,14 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
         <button class="chat-send" onclick="sendChat()">Enviar ↗</button>
       </div>
     </div>
+  </div>
+
+  <!-- ESTADÍSTICAS -->
+  <div class="page" id="page-stats">
+    <div class="ph">
+      <div class="ph-left"><div class="ph-h">Estadísticas</div><div class="ph-s">Datos curiosos de todos los participantes</div></div>
+    </div>
+    <div id="stats-wrap"></div>
   </div>
 
   <!-- PREMIOS -->
@@ -4020,6 +4030,7 @@ function go(name){
   const tab=document.querySelector(`[data-p="${name}"]`);
   if(tab) tab.classList.add('on');
   if(name==='ranking')        { renderRanking(); renderRankingHistory(); }
+  if(name==='stats')          renderStats();
   if(name==='bracket')        renderBracket();
   if(name==='admin')          renderAdmin();
   if(name==='premios')        renderPremios();
@@ -4598,6 +4609,108 @@ function renderRankingHistory(){
     html+=`</tbody></table></div></div>`;
     wrap.innerHTML = html;
   }).catch(()=>{ document.getElementById('rk-history-wrap').innerHTML=''; });
+}
+
+function renderStats(){
+  const wrap = document.getElementById('stats-wrap');
+  wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--ink3);font-size:.85rem">Cargando estadísticas...</div>`;
+
+  api('GET','/api/stats').then(d=>{
+    if(d.empty){
+      wrap.innerHTML=`<div style="text-align:center;padding:3rem 2rem">
+        <div style="font-size:2.5rem;margin-bottom:.75rem">📊</div>
+        <div style="font-weight:800;color:var(--ink);margin-bottom:.5rem">Sin datos aún</div>
+        <div style="font-size:.82rem;color:var(--ink3)">Las estadísticas aparecen cuando el admin ingrese los primeros resultados.</div>
+      </div>`;
+      return;
+    }
+
+    // Helper to get match label
+    function matchLabel(id){
+      const num = id.replace(/\D/g,'');
+      return `Partido ${num}`;
+    }
+
+    let html='';
+
+    // ── RESUMEN GENERAL ──
+    html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1rem">
+      ${statCard('👥','Participantes',d.total,'')}
+      ${statCard('⚽','Partidos con resultado',d.matchesWithResults,'')}
+      ${statCard('🎯','Acierto global',d.globalPct+'%','de todos los picks de grupos')}
+      ${statCard('🏆','Rondas eliminatorias',d.bracketWithResults,'')}
+    </div>`;
+
+    // ── PARTIDOS DESTACADOS ──
+    if(d.mostCorrect || d.mostExact || d.leastCorrect){
+      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
+        <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:1rem">🎯 Partidos destacados</div>
+        <div style="display:flex;flex-direction:column;gap:.75rem">`;
+      if(d.mostCorrect) html+=matchStatRow('✅','Más acertado',matchLabel(d.mostCorrect.id),`${d.mostCorrect.pct}% lo acertaron (${d.mostCorrect.correct}/${d.mostCorrect.picked})`, 'var(--green)');
+      if(d.mostExact)   html+=matchStatRow('🎯','Más exacto',matchLabel(d.mostExact.id),`${d.mostExact.exact} personas lo dijeron exacto`, 'var(--blue2)');
+      if(d.leastCorrect) html+=matchStatRow('😬','Más difícil',matchLabel(d.leastCorrect.id),`Solo ${d.leastCorrect.pct}% lo acertó (${d.leastCorrect.correct}/${d.leastCorrect.picked})`, 'var(--red)');
+      html+=`</div></div>`;
+    }
+
+    // ── CAMPEÓN FAVORITO ──
+    if(d.topChamp?.length){
+      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
+        <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:.75rem">🏆 Campeón favorito del grupo</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">`;
+      d.topChamp.forEach((c,i)=>{
+        const medals=['🥇','🥈','🥉'];
+        html+=`<div style="display:flex;align-items:center;gap:10px">
+          <div style="font-size:1.1rem;width:24px;text-align:center">${medals[i]||''}</div>
+          <div style="font-weight:700;color:var(--ink);min-width:50px">${c.team}</div>
+          <div style="flex:1;background:var(--bg);border-radius:20px;height:8px;overflow:hidden">
+            <div style="width:${c.pct}%;height:100%;background:var(--grad-tri);border-radius:20px;transition:width .6s"></div>
+          </div>
+          <div style="font-size:.78rem;color:var(--ink3);min-width:50px;text-align:right">${c.votes} votos · ${c.pct}%</div>
+        </div>`;
+      });
+      html+=`</div></div>`;
+    }
+
+    // ── TOP EXACTOS ──
+    if(d.exactByUser?.length){
+      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
+        <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:.75rem">🔮 Más marcadores exactos</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">`;
+      d.exactByUser.forEach((u,i)=>{
+        const isMe = u.name===CU.u;
+        html+=`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+          <div style="font-weight:800;color:var(--ink3);font-size:.8rem;width:20px;text-align:center">${i+1}</div>
+          <div style="font-weight:${isMe?'800':'600'};color:${isMe?'var(--green)':'var(--ink)'};flex:1">${u.name}${isMe?' (tú)':''}</div>
+          <div style="font-size:.82rem;color:var(--ink3)">${u.exact} exacto${u.exact!==1?'s':''}</div>
+        </div>`;
+      });
+      html+=`</div></div>`;
+    }
+
+    wrap.innerHTML = html;
+  }).catch(()=>{
+    wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--ink3)">Error cargando estadísticas</div>`;
+  });
+}
+
+function statCard(icon, label, value, sub){
+  return `<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;box-shadow:var(--sh);display:flex;flex-direction:column;gap:4px">
+    <div style="font-size:1.4rem">${icon}</div>
+    <div style="font-weight:800;font-size:1.3rem;color:var(--ink);line-height:1">${value}</div>
+    <div style="font-size:.72rem;font-weight:700;color:var(--ink2)">${label}</div>
+    ${sub?`<div style="font-size:.65rem;color:var(--ink3)">${sub}</div>`:''}
+  </div>`;
+}
+
+function matchStatRow(icon, tag, match, desc, color){
+  return `<div style="display:flex;align-items:flex-start;gap:10px;padding:.5rem 0;border-bottom:1px solid var(--border)">
+    <div style="font-size:1.1rem;flex-shrink:0">${icon}</div>
+    <div style="flex:1">
+      <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3)">${tag}</div>
+      <div style="font-weight:700;color:var(--ink);font-size:.88rem">${match}</div>
+      <div style="font-size:.78rem;color:${color}">${desc}</div>
+    </div>
+  </div>`;
 }
 
 function deleteSnapshot(id){
