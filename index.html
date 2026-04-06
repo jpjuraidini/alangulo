@@ -994,6 +994,28 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   </div>
 </div>
 
+<!-- CHANGE PIN MODAL -->
+<div id="change-pin-modal" style="display:none;position:fixed;inset:0;z-index:800;background:rgba(10,14,26,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad-lg);padding:1.5rem 1.25rem;max-width:340px;width:100%;box-shadow:var(--sh2);animation:cardIn .25s cubic-bezier(.22,1,.36,1) both">
+    <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.25rem">🔑 Cambiar mi PIN</div>
+    <div style="font-size:.75rem;color:var(--ink3);margin-bottom:1.25rem">El nuevo PIN debe tener exactamente 5 caracteres alfanuméricos (ej. aB3x9)</div>
+    <label style="display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:5px">PIN actual</label>
+    <input id="current-pin-input" type="password" maxlength="10" placeholder="Tu PIN actual"
+      style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;box-sizing:border-box;outline:none;margin-bottom:.75rem;transition:border-color .2s"
+      onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+    <label style="display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:5px">Nuevo PIN</label>
+    <input id="new-pin-input" type="text" maxlength="5" placeholder="Nuevo PIN"
+      style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;text-align:left;letter-spacing:3px;box-sizing:border-box;outline:none;margin-bottom:1rem;transition:border-color .2s"
+      oninput="this.value=this.value.toUpperCase()"
+      onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
+    <div id="change-pin-err" style="font-size:.75rem;color:var(--red);margin-bottom:.75rem;display:none"></div>
+    <div style="display:flex;gap:.5rem">
+      <button onclick="saveNewPin()" style="flex:1;padding:12px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer">Guardar</button>
+      <button onclick="document.getElementById('change-pin-modal').style.display='none'" style="padding:12px 16px;background:var(--surface);color:var(--ink3);border:1.5px solid var(--border);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;cursor:pointer">✕</button>
+    </div>
+  </div>
+</div>
+
 <div id="adm-modal">
   <div class="adm-modal-box">
     <div class="adm-modal-title" id="adm-modal-title"></div>
@@ -1075,7 +1097,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <label class="flabel">Usuario</label>
     <input class="finput" id="lu" type="text" placeholder="tu_usuario" autocomplete="off">
     <label class="flabel">PIN</label>
-    <input class="finput" id="lp" type="password" placeholder="••••" maxlength="6">
+    <input class="finput" id="lp" type="text" placeholder="••••• " maxlength="5" autocomplete="off" style="letter-spacing:3px">
     <button class="auth-btn" onclick="doLogin()">Ingresar ⚽</button>
     <div class="auth-err" id="lerr"></div>
     <input type="hidden" id="lref" value="">
@@ -1147,6 +1169,9 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       </button>
       <button class="drawer-mode-btn" id="drawer-dark-btn" onclick="toggleDark()">
         <span id="drawer-dark-icon"></span> <span id="drawer-dark-label">Modo oscuro</span>
+      </button>
+      <button class="drawer-mode-btn" onclick="showChangePinModal()">
+        🔑 Cambiar mi PIN
       </button>
       <button class="drawer-logout" onclick="logout()">
         Cerrar sesión
@@ -2328,7 +2353,7 @@ function renderAdmin(){
         </div>
         <div class="cu-field">
           <label>PIN</label>
-          <input id="cu-p" type="text" placeholder="ej. 1234" maxlength="6">
+          <input id="cu-p" type="text" placeholder="ej. aB3x9" maxlength="5" oninput="this.value=this.value.toUpperCase()">
         </div>
         <div class="cu-field">
           <label>Código único (3 letras)</label>
@@ -2496,7 +2521,7 @@ function createUser(){
   const c=document.getElementById('cu-c').value.trim().toUpperCase();
   const err=document.getElementById('cu-err');
   if(!u){err.textContent='El usuario no puede estar vacío.';return;}
-  if(!p){err.textContent='El PIN no puede estar vacío.';return;}
+  if(!p||p.length!==5||!/^[a-zA-Z0-9]{5}$/.test(p)){err.textContent='El PIN debe tener exactamente 5 caracteres alfanuméricos.';return;}
   if(c.length!==3){err.textContent='El código debe tener exactamente 3 letras.';return;}
   err.textContent='';
   api('POST','/api/users',{username:u,pin:p,code:c})
@@ -2559,16 +2584,61 @@ function deleteUser(u){
 function editPin(u){
   openAdmModal(
     `Cambiar PIN de "${u}"`,
-    'Ingresa el nuevo PIN (4 a 6 caracteres).',
+    'Nuevo PIN: exactamente 5 caracteres alfanuméricos (letras y números).',
     'Guardar PIN','confirm',true,'',
     function(newPin){
-      if(!newPin||newPin.length<4||newPin.length>6){toast('PIN inválido');return;}
+      if(!newPin||newPin.length!==5||!/^[a-zA-Z0-9]{5}$/.test(newPin)){toast('PIN inválido — debe ser exactamente 5 caracteres alfanuméricos');return;}
       api('PATCH',`/api/users/${u}/pin`,{pin:newPin})
         .then(()=>{renderUsersTable();toast(`PIN de "${u}" actualizado ✓`);})
         .catch(e=>toast('Error: '+e.message));
     }
   );
 }
+function showChangePinModal(){
+  closeDrawer();
+  document.getElementById('current-pin-input').value='';
+  document.getElementById('new-pin-input').value='';
+  document.getElementById('change-pin-err').style.display='none';
+  document.getElementById('change-pin-modal').style.display='flex';
+  setTimeout(()=>document.getElementById('current-pin-input').focus(),100);
+}
+
+function saveNewPin(){
+  const currentPin=document.getElementById('current-pin-input').value.trim();
+  const newPin=document.getElementById('new-pin-input').value.trim();
+  const errEl=document.getElementById('change-pin-err');
+
+  if(!currentPin){
+    errEl.textContent='Ingresa tu PIN actual.';errEl.style.display='block';return;
+  }
+  if(!newPin||newPin.length!==5||!/^[a-zA-Z0-9]{5}$/.test(newPin)){
+    errEl.textContent='El nuevo PIN debe tener exactamente 5 caracteres alfanuméricos.';errEl.style.display='block';return;
+  }
+  if(currentPin===newPin){
+    errEl.textContent='El nuevo PIN debe ser diferente al actual.';errEl.style.display='block';return;
+  }
+
+  // Validate current PIN via login endpoint
+  api('POST','/api/login',{username:CU.u, pin:currentPin})
+    .then(()=>{
+      // Current PIN correct — update to new PIN
+      return api('PATCH',`/api/users/${CU.u}/pin`,{pin:newPin});
+    })
+    .then(()=>{
+      document.getElementById('change-pin-modal').style.display='none';
+      toast('PIN actualizado ✓');
+    })
+    .catch(e=>{
+      const msg = e.message||'';
+      if(msg.includes('401')||msg.includes('incorrecto')||msg.includes('PIN')){
+        errEl.textContent='PIN actual incorrecto.';
+      } else {
+        errEl.textContent='Error al actualizar el PIN.';
+      }
+      errEl.style.display='block';
+    });
+}
+
 function markManual(matchId){
   // When admin edits an auto-imported score, remove the auto flag
   if(results.sc?.[matchId]) results.sc[matchId].auto=false;
