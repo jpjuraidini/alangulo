@@ -1228,6 +1228,10 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
         <button class="export-btn" onclick="exportRanking()">📸 Exportar imagen</button>
         <span class="pill pg" id="rk-live-badge">⚽ En vivo</span>
+        <span id="online-badge" style="display:none;align-items:center;gap:5px;background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:5px 10px;font-size:.72rem;font-weight:700;color:var(--ink2)">
+          <span style="width:7px;height:7px;border-radius:50%;background:#00c46a;display:inline-block;animation:pulse 2s ease-in-out infinite"></span>
+          <span id="online-count">0</span> en línea
+        </span>
       </div>
     </div>
     <div id="rk-wrap"></div>
@@ -1666,6 +1670,8 @@ function boot(){
   }, 1200);
   // Show install banner after user is in the app
   setTimeout(showInstallBannerIfNeeded, 3000);
+  // Connect online counter
+  setTimeout(connectOnlineCounter, 1500);
 }
 
 // ══════════════════════════════════════════════════════
@@ -4507,6 +4513,7 @@ runSplash(function(){
       if(dl) drawStaticLogo(dl,28);
       syncDrawer();
       boot();
+      setTimeout(connectOnlineCounter, 3000);
     } else {
       document.getElementById('auth').style.display='flex';
     }
@@ -4518,6 +4525,35 @@ document.getElementById('lu').addEventListener('keydown',e=>{if(e.key==='Enter')
 document.getElementById('chat-input').addEventListener('keydown',e=>{
   if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}
 });
+
+// ── ONLINE COUNTER ──
+let _onlineSSE = null;
+
+function connectOnlineCounter(){
+  if(!CU || _onlineSSE) return;
+  try {
+    _onlineSSE = new EventSource(`${API}/api/online?u=${encodeURIComponent(CU.u)}`);
+    _onlineSSE.onmessage = function(e){
+      try {
+        const msg = JSON.parse(e.data);
+        if(msg.type === 'online_count'){
+          const badge = document.getElementById('online-badge');
+          const count = document.getElementById('online-count');
+          if(badge && count){
+            count.textContent = msg.count;
+            badge.style.display = msg.count > 1 ? 'flex' : 'none';
+          }
+        }
+      } catch(err){}
+    };
+    _onlineSSE.onerror = function(){
+      _onlineSSE.close();
+      _onlineSSE = null;
+      // Retry after 10s
+      setTimeout(connectOnlineCounter, 10000);
+    };
+  } catch(e){}
+}
 
 // Register PWA service worker
 if('serviceWorker' in navigator){
