@@ -1637,6 +1637,8 @@ function boot(){
       },300);
     }, 380);
   }, 1200);
+  // Show install banner after user is in the app
+  setTimeout(showInstallBannerIfNeeded, 3000);
 }
 
 // ══════════════════════════════════════════════════════
@@ -3209,11 +3211,20 @@ function sendChat(){
 }
 
 function shouldShowRefModal(){
-  const noShow=localStorage.getItem(`q26ref_noshow_${CU.u}`);
-  const hasRef=localStorage.getItem(`q26ref_done_${CU.u}`);
-  if(hasRef) return false;
-  if(noShow) return false;
+  if(!CU) return false;
+  // If user already has a referrer registered in backend, never show
+  if(CU.refCode) return false; // came with a ref code already
+  // Check backend refs — if this user appears as referred by anyone, skip
+  const allRefsFlat = Object.values(refs).flat();
+  if(allRefsFlat.includes(CU.u)) return false;
+  // Check persistent flag saved in CU object
+  if(CU.refSeen) return false;
   return true;
+}
+
+function markRefSeen(){
+  CU.refSeen = true;
+  localStorage.setItem('q26u', JSON.stringify(CU));
 }
 
 function showRefModal(){
@@ -3246,6 +3257,7 @@ function submitRefScreen(){
   }
   api('POST','/api/refs_register',{username:CU.u,refCode:code})
     .then(()=>{
+      markRefSeen();
       localStorage.setItem(`q26ref_done_${CU.u}`,'1');
       toast('¡Código registrado! ✓');
       closeRefScreen();
@@ -3258,7 +3270,10 @@ function submitRefScreen(){
 
 function skipRefScreen(){
   const noShow=document.getElementById('ref-noshow-cb').checked;
-  if(noShow) localStorage.setItem(`q26ref_noshow_${CU.u}`,'1');
+  if(noShow){
+    markRefSeen();
+    localStorage.setItem(`q26ref_noshow_${CU.u}`,'1');
+  }
   closeRefScreen();
 }
 
@@ -4423,8 +4438,6 @@ window.addEventListener('beforeinstallprompt', e => {
   e.preventDefault();
   _pwaPrompt = e;
   showInstallButton();
-  // Show banner if not dismissed before
-  if(!localStorage.getItem('q26install_dismissed')) showInstallBanner(false);
 });
 
 function showInstallButton(){
@@ -4468,14 +4481,19 @@ function showIOSInstructions(){
   closeDrawer();
 }
 
-// iOS — show after a delay if not installed
+// iOS — show after login, not immediately
 if(_isIOS && !_isInStandalone){
   document.getElementById('drawer-ios-btn').style.display='block';
-  setTimeout(()=>{
-    if(!localStorage.getItem('q26install_dismissed')){
-      showInstallBanner(true);
-    }
-  }, 4000);
+}
+
+function showInstallBannerIfNeeded(){
+  if(_isInStandalone) return;
+  if(localStorage.getItem('q26install_dismissed')) return;
+  if(_isIOS){
+    showInstallBanner(true);
+  } else if(_pwaPrompt){
+    showInstallBanner(false);
+  }
 }
 </script>
 </body>
