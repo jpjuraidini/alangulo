@@ -1647,8 +1647,10 @@ function boot(){
         const dl=document.getElementById('drawer-logo');
         if(dl) drawStaticLogo(dl,28);
         syncDrawer();
-        // Show ref screen on top of everything if needed
-        if(shouldShowRefModal()){
+      // Check if user already has referrer before showing modal
+      await checkRefStatus();
+      // Show ref screen on top of everything if needed
+      if(shouldShowRefModal()){
           const scr=document.getElementById('ref-screen');
           scr.style.display='flex';
           scr.classList.add('open');
@@ -3282,19 +3284,25 @@ function sendChat(){
 
 function shouldShowRefModal(){
   if(!CU) return false;
-  // If user already has a referrer registered in backend, never show
-  if(CU.refCode) return false; // came with a ref code already
-  // Check backend refs — if this user appears as referred by anyone, skip
-  const allRefsFlat = Object.values(refs).flat();
-  if(allRefsFlat.includes(CU.u)) return false;
-  // Check persistent flag saved in CU object
   if(CU.refSeen) return false;
+  if(CU.refCode) return false;
   return true;
 }
 
 function markRefSeen(){
   CU.refSeen = true;
   localStorage.setItem('q26u', JSON.stringify(CU));
+}
+
+// Check backend on boot — if user already has referrer, mark as seen
+async function checkRefStatus(){
+  if(!CU || CU.refSeen) return;
+  try {
+    const r = await api('GET', `/api/refs/check/${CU.u}`);
+    if(r.hasReferrer){
+      markRefSeen();
+    }
+  } catch(e){}
 }
 
 function showRefModal(){
