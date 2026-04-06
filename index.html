@@ -1647,10 +1647,9 @@ function boot(){
         const dl=document.getElementById('drawer-logo');
         if(dl) drawStaticLogo(dl,28);
         syncDrawer();
-      // Check if user already has referrer before showing modal
-      await checkRefStatus();
-      // Show ref screen on top of everything if needed
-      if(shouldShowRefModal()){
+      // Check referrer status then conditionally show modal
+      checkRefStatus().then(()=>{
+        if(shouldShowRefModal()){
           const scr=document.getElementById('ref-screen');
           scr.style.display='flex';
           scr.classList.add('open');
@@ -1661,6 +1660,7 @@ function boot(){
           if(c) drawStaticLogo(c,64);
           setTimeout(()=>document.getElementById('ref-screen-input').focus(),100);
         }
+      }).catch(()=>{});
       },300);
     }, 380);
   }, 1200);
