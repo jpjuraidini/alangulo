@@ -961,6 +961,39 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   </div>
 </div>
 
+<!-- PWA INSTALL BANNER -->
+<div id="install-banner" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:900;padding:.75rem 1rem;background:var(--surface);border-top:1.5px solid var(--border);box-shadow:0 -4px 24px rgba(0,0,0,.15);display:none;align-items:center;gap:12px">
+  <div style="font-size:2rem;flex-shrink:0">📲</div>
+  <div style="flex:1;min-width:0">
+    <div style="font-weight:800;font-size:.9rem;color:var(--ink)">Instala Al Ángulo</div>
+    <div style="font-size:.75rem;color:var(--ink3);margin-top:1px" id="install-banner-sub">Agrégala a tu pantalla de inicio</div>
+  </div>
+  <button onclick="triggerInstall()" id="install-banner-btn" style="padding:8px 16px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;white-space:nowrap">Instalar</button>
+  <button onclick="dismissInstallBanner()" style="padding:6px 10px;background:none;border:none;color:var(--ink3);font-size:1.1rem;cursor:pointer;flex-shrink:0">✕</button>
+</div>
+
+<!-- iOS INSTRUCTIONS MODAL -->
+<div id="ios-modal" style="display:none;position:fixed;inset:0;z-index:950;background:rgba(10,14,26,.6);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center;padding:1rem">
+  <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:20px 20px 16px 16px;padding:1.5rem 1.25rem;width:100%;max-width:420px;box-shadow:var(--sh2);animation:cardIn .25s cubic-bezier(.22,1,.36,1) both">
+    <div style="font-weight:800;font-size:1rem;color:var(--ink);margin-bottom:1rem">📲 Instalar en iPhone</div>
+    <div style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.25rem">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</div>
+        <div style="font-size:.85rem;color:var(--ink2)">Toca el botón de <b>compartir</b> <span style="font-size:1rem">⬆️</span> en Safari (abajo al centro)</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</div>
+        <div style="font-size:.85rem;color:var(--ink2)">Baja y toca <b>"Añadir a pantalla de inicio"</b></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</div>
+        <div style="font-size:.85rem;color:var(--ink2)">Toca <b>"Añadir"</b> — listo, ya está en tu pantalla</div>
+      </div>
+    </div>
+    <button onclick="document.getElementById('ios-modal').style.display='none'" style="width:100%;padding:12px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.9rem;cursor:pointer">Entendido</button>
+  </div>
+</div>
+
 <div id="adm-modal">
   <div class="adm-modal-box">
     <div class="adm-modal-title" id="adm-modal-title"></div>
@@ -1106,6 +1139,12 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
         </div>
         <span style="font-size:.8rem;color:var(--green);font-weight:600">Copiar</span>
       </div>
+      <button id="drawer-install-btn" onclick="triggerInstall()" style="display:none;padding:10px 14px;background:var(--g-bg);color:var(--green);border:1.5px solid var(--green2);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;text-align:left">
+        📲 Instalar app en tu teléfono
+      </button>
+      <button id="drawer-ios-btn" onclick="showIOSInstructions()" style="display:none;padding:10px 14px;background:var(--g-bg);color:var(--green);border:1.5px solid var(--green2);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;text-align:left">
+        📲 Instalar app en tu teléfono
+      </button>
       <button class="drawer-mode-btn" id="drawer-dark-btn" onclick="toggleDark()">
         <span id="drawer-dark-icon"></span> <span id="drawer-dark-label">Modo oscuro</span>
       </button>
@@ -4372,6 +4411,71 @@ document.getElementById('chat-input').addEventListener('keydown',e=>{
 // Register PWA service worker
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
+}
+
+// ── PWA INSTALL ──
+let _pwaPrompt = null;
+const _isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+const _isInStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+// Capture install prompt (Android/Chrome)
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _pwaPrompt = e;
+  showInstallButton();
+  // Show banner if not dismissed before
+  if(!localStorage.getItem('q26install_dismissed')) showInstallBanner(false);
+});
+
+function showInstallButton(){
+  const btn = document.getElementById('drawer-install-btn');
+  if(btn) btn.style.display = 'block';
+}
+
+function showInstallBanner(isIOS){
+  if(_isInStandalone) return;
+  const banner = document.getElementById('install-banner');
+  if(!banner) return;
+  if(isIOS){
+    document.getElementById('install-banner-sub').textContent = 'Toca compartir → Añadir a pantalla de inicio';
+    document.getElementById('install-banner-btn').textContent = 'Ver cómo';
+    document.getElementById('install-banner-btn').onclick = showIOSInstructions;
+  }
+  banner.style.display = 'flex';
+}
+
+function dismissInstallBanner(){
+  document.getElementById('install-banner').style.display = 'none';
+  localStorage.setItem('q26install_dismissed','1');
+}
+
+function triggerInstall(){
+  if(_pwaPrompt){
+    _pwaPrompt.prompt();
+    _pwaPrompt.userChoice.then(r=>{
+      if(r.outcome==='accepted'){
+        document.getElementById('install-banner').style.display='none';
+        document.getElementById('drawer-install-btn').style.display='none';
+      }
+      _pwaPrompt=null;
+    });
+  }
+  closeDrawer();
+}
+
+function showIOSInstructions(){
+  document.getElementById('ios-modal').style.display='flex';
+  closeDrawer();
+}
+
+// iOS — show after a delay if not installed
+if(_isIOS && !_isInStandalone){
+  document.getElementById('drawer-ios-btn').style.display='block';
+  setTimeout(()=>{
+    if(!localStorage.getItem('q26install_dismissed')){
+      showInstallBanner(true);
+    }
+  }, 4000);
 }
 </script>
 </body>
