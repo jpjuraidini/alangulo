@@ -3977,6 +3977,23 @@ function renderCountdown(){
   update();
   _cdTimer=setInterval(update,1000);
 }
+// ── AUTO-REFRESH ──
+let _autoRefreshInterval = null;
+
+function startAutoRefresh(page){
+  stopAutoRefresh();
+  if(page === 'ranking'){
+    _autoRefreshInterval = setInterval(()=>{
+      const cur = localStorage.getItem('q26page');
+      if(cur === 'ranking') renderRanking();
+    }, 2 * 60 * 1000); // cada 2 minutos
+  }
+}
+
+function stopAutoRefresh(){
+  if(_autoRefreshInterval){ clearInterval(_autoRefreshInterval); _autoRefreshInterval=null; }
+}
+
 function go(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
@@ -3997,6 +4014,7 @@ function go(name){
   if(name==='countdown')      renderCountdown();
   document.getElementById('fab').classList.toggle('vis',name==='grupos'||name==='bracket');
   localStorage.setItem('q26page', name);
+  startAutoRefresh(name);
 }
 
 // ══════════════════════════════════════════════════════
