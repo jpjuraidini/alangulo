@@ -4584,6 +4584,7 @@ function renderRankingHistory(){
         <th style="padding:6px 8px;text-align:center;color:var(--gld);font-size:.9rem">🥇</th>
         <th style="padding:6px 8px;text-align:center;color:#888;font-size:.9rem">🥈</th>
         <th style="padding:6px 8px;text-align:center;color:#c8875a;font-size:.9rem">🥉</th>
+        ${CU.admin?'<th style="padding:6px 8px;width:36px"></th>':''}
       </tr></thead><tbody>`;
     snapshots.forEach(snap=>{
       const top3 = snap.snapshot.slice(0,3);
@@ -4591,11 +4592,19 @@ function renderRankingHistory(){
         <td style="padding:8px;font-weight:600;color:var(--ink)">${snap.label}</td>
         ${top3.map(p=>`<td style="padding:8px;text-align:center;color:var(--ink2)">${p.name}<br><span style="font-size:.65rem;color:var(--ink3)">${p.total}pts</span></td>`).join('')}
         ${top3.length<3?'<td></td>'.repeat(3-top3.length):''}
+        ${CU.admin?`<td style="padding:8px;text-align:center"><button onclick="deleteSnapshot(${snap.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.8rem;padding:2px 6px;border-radius:4px" title="Eliminar">✕</button></td>`:''}
       </tr>`;
     });
     html+=`</tbody></table></div></div>`;
     wrap.innerHTML = html;
   }).catch(()=>{ document.getElementById('rk-history-wrap').innerHTML=''; });
+}
+
+function deleteSnapshot(id){
+  if(!confirm('¿Eliminar este snapshot?')) return;
+  api('DELETE',`/api/ranking/snapshot/${id}`)
+    .then(()=>{ toast('Snapshot eliminado ✓'); renderRankingHistory(); })
+    .catch(e=>toast('Error: '+e.message));
 }
 
 // ── ONLINE COUNTER ──
