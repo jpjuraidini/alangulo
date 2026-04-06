@@ -2140,36 +2140,42 @@ function calcScore(u){
 
 function renderRanking(){
   const wrap=document.getElementById('rk-wrap');
-  const board=[];
+  wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--ink3);font-size:.85rem">Cargando ranking...</div>`;
 
-  // Real users first
-  Object.keys(picks).forEach(u=>{
-    const sc=calcScore(u);
-    board.push({name:u,...sc,isMe:u===CU.u,isReal:true});
-  });
-  
-  // Add simulated users (only if no real results yet, to fill the demo)
-  const hasRealResults=Object.keys(results.groups||{}).length>0||Object.keys(results.bracket||{}).length>0;
-  if(!hasRealResults){
-    // Demo mode: use SIM data, replace last entry with current user's real data
-    const myReal=calcScore(CU.u);
-    const demoBoard=SIM_NAMES.map((n,i)=>{
-      const isMe=n.includes('(tú)');
-      return{
-        name:isMe?CU.u:n,
-        grupos:isMe?myReal.grupos:SIM_PTS[i].grupos,
-        bracket:isMe?myReal.bracket:SIM_PTS[i].bracket,
-        total:isMe?myReal.total:SIM_PTS[i].total,
-        isMe,isReal:isMe
-      };
+  api('GET','/api/ranking').then(board=>{
+    const hasRealResults=Object.keys(results.groups||{}).length>0||Object.keys(results.bracket||{}).length>0;
+
+    if(!hasRealResults){
+      // Demo mode — no real results yet
+      const myReal=calcScore(CU.u);
+      const demoBoard=SIM_NAMES.map((n,i)=>{
+        const isMe=n.includes('(tú)');
+        return{
+          name:isMe?CU.u:n,
+          grupos:isMe?myReal.grupos:SIM_PTS[i].grupos,
+          bracket:isMe?myReal.bracket:SIM_PTS[i].bracket,
+          total:isMe?myReal.total:SIM_PTS[i].total,
+          isMe,isReal:isMe
+        };
+      });
+      demoBoard.sort((a,b)=>b.total-a.total);
+      wrap.innerHTML=buildRankingHTML(demoBoard,true);
+      return;
+    }
+
+    // Real ranking from server
+    const enriched=board.map(p=>({...p, isMe:p.name===CU.u}));
+    wrap.innerHTML=buildRankingHTML(enriched,false);
+  }).catch(()=>{
+    // Fallback to client-side calc if API fails
+    const board=[];
+    Object.keys(picks).forEach(u=>{
+      const sc=calcScore(u);
+      board.push({name:u,...sc,isMe:u===CU.u});
     });
-    demoBoard.sort((a,b)=>b.total-a.total);
-    wrap.innerHTML=buildRankingHTML(demoBoard,true);
-    return;
-  }
-  
-  board.sort((a,b)=>b.total-a.total);
-  wrap.innerHTML=buildRankingHTML(board,false);
+    board.sort((a,b)=>b.total-a.total);
+    wrap.innerHTML=buildRankingHTML(board,false);
+  });
 }
 
 function buildRankingHTML(board,isDemo){
