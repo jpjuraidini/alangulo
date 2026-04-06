@@ -1,9 +1,9 @@
-const CACHE = 'alangulo-v1';
-const ASSETS = ['/'];
+const CACHE = 'alangulo-v2';
+const ASSETS = ['/', '/index.html', '/manifest.json', '/icon-192.png', '/icon-512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS))
+    caches.open(CACHE).then(c => c.addAll(ASSETS)).catch(()=>{})
   );
   self.skipWaiting();
 });
@@ -18,12 +18,17 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // Solo cachear el index.html, las llamadas al API siempre van a la red
   if (e.request.url.includes('/api/')) {
-    e.respondWith(fetch(e.request));
+    e.respondWith(fetch(e.request).catch(() => new Response('{}', {headers:{'Content-Type':'application/json'}})));
     return;
   }
   e.respondWith(
-    fetch(e.request).catch(() => caches.match('/'))
+    fetch(e.request)
+      .then(r => {
+        const clone = r.clone();
+        caches.open(CACHE).then(c => c.put(e.request, clone)).catch(()=>{});
+        return r;
+      })
+      .catch(() => caches.match(e.request).then(r => r || caches.match('/')))
   );
 });
