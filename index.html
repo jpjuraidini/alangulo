@@ -3504,28 +3504,40 @@ function submitComment(postId, parentId){
 }
 
 function toggleReaction(postId, emoji){
-  // Close picker immediately for snappy feel
+  // Close picker immediately
   const picker = document.getElementById(`picker-${postId}`);
   if(picker) picker.style.display='none';
 
+  // Optimistic update — update local state and re-render post instantly
+  const post = _wallPosts.find(p=>p.id===postId);
+  if(post){
+    const reactions = post.reactions || {};
+    const r = reactions[emoji] || { count: 0, users: [] };
+    const alreadyReacted = r.users.includes(CU.u);
+    // Remove user from any existing reaction first
+    Object.keys(reactions).forEach(e=>{
+      reactions[e].users = reactions[e].users.filter(u=>u!==CU.u);
+      reactions[e].count = reactions[e].users.length;
+    });
+    if(!alreadyReacted){
+      // Add new reaction
+      if(!reactions[emoji]) reactions[emoji] = { count: 0, users: [] };
+      reactions[emoji].users.push(CU.u);
+      reactions[emoji].count = reactions[emoji].users.length;
+    }
+    post.reactions = reactions;
+    // Re-render just this post
+    const el = document.getElementById(`post-${postId}`);
+    if(el){
+      const tmp = document.createElement('div');
+      tmp.innerHTML = renderPost(post);
+      el.replaceWith(tmp.firstChild);
+      if(_openComments[postId]) loadComments(postId);
+    }
+  }
+
+  // Fire API call in background
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
-    .then(()=>{
-      // Refresh just this post's data
-      api('GET','/api/wall').then(posts=>{
-        _wallPosts = posts;
-        const post = posts.find(p=>p.id===postId);
-        if(post){
-          const el = document.getElementById(`post-${post.id}`);
-          if(el){
-            const tmp = document.createElement('div');
-            tmp.innerHTML = renderPost(post);
-            el.replaceWith(tmp.firstChild);
-            // Restore comments state
-            if(_openComments[postId]) loadComments(postId);
-          }
-        }
-      });
-    })
     .catch(e=>toast('Error: '+e.message));
 }
 
@@ -3556,39 +3568,38 @@ function startWallPolling(){
   _wallPollInterval = setInterval(()=>{
     if(localStorage.getItem('q26page') !== 'chat') { stopWallPolling(); return; }
     api('GET','/api/wall').then(posts=>{
-      if(posts.length !== _lastWallPostCount || JSON.stringify(posts.map(p=>({id:p.id,reactions:p.reactions,comment_count:p.comment_count}))) !== JSON.stringify(_wallPosts.map(p=>({id:p.id,reactions:p.reactions,comment_count:p.comment_count})))){
-        _lastWallPostCount = posts.length;
-        _wallPosts = posts;
-        // Smart update: only add new posts, update reactions/counts on existing
-        posts.forEach(p=>{
-          const existing = document.getElementById(`post-${p.id}`);
-          if(!existing){
-            // New post — prepend after compose
-            const wrap = document.getElementById('wall-wrap');
-            if(wrap){
-              const tmp = document.createElement('div');
-              tmp.innerHTML = renderPost(p);
-              // Insert after the count div
-              const countDiv = wrap.querySelector('[data-wall-count]');
-              if(countDiv) countDiv.after(tmp.firstChild);
-            }
-          } else {
-            // Existing post — update reaction counts only (don't disturb open comments)
-            const reactionArea = existing.querySelector('[data-reactions]');
-            // Just re-render the whole post but preserve comments open state
+      const changed = posts.length !== _wallPosts.length ||
+        JSON.stringify(posts.map(p=>p.id+p.comment_count+JSON.stringify(p.reactions))) !==
+        JSON.stringify(_wallPosts.map(p=>p.id+p.comment_count+JSON.stringify(p.reactions)));
+      if(!changed) return;
+      _wallPosts = posts;
+      posts.forEach(p=>{
+        const existing = document.getElementById(`post-${p.id}`);
+        if(!existing){
+          const wrap = document.getElementById('wall-wrap');
+          if(wrap){
             const tmp = document.createElement('div');
             tmp.innerHTML = renderPost(p);
-            existing.replaceWith(tmp.firstChild);
-            if(_openComments[p.id]) loadComments(p.id);
+            const countEl = wrap.querySelector('[data-wall-count]');
+            if(countEl) countEl.after(tmp.firstChild);
+            else wrap.appendChild(tmp.firstChild);
           }
-        });
-        // Update count
-        const wrap = document.getElementById('wall-wrap');
-        const countEl = wrap?.querySelector('[data-wall-count]');
-        if(countEl) countEl.textContent = `${posts.length} publicación${posts.length!==1?'es':''}`;
-      }
+        } else {
+          const tmp = document.createElement('div');
+          tmp.innerHTML = renderPost(p);
+          existing.replaceWith(tmp.firstChild);
+          if(_openComments[p.id]) loadComments(p.id);
+        }
+      });
+      // Remove deleted posts
+      document.querySelectorAll('[id^="post-"]').forEach(el=>{
+        const id = parseInt(el.id.replace('post-',''));
+        if(!posts.find(p=>p.id===id)) el.remove();
+      });
+      const countEl = document.querySelector('[data-wall-count]');
+      if(countEl) countEl.textContent = `${posts.length} publicación${posts.length!==1?'es':''}`;
     }).catch(()=>{});
-  }, 15000);
+  }, 1000);
 }
 
 function stopWallPolling(){
