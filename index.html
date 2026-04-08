@@ -552,43 +552,32 @@ body.dark .bono-sub{color:#c09040}
 .rpt-num{font-weight:800;font-size:1.3rem;color:var(--green);min-width:28px;text-align:center}
 .rpt-label{font-size:.78rem;color:var(--ink2);line-height:1.4}
 
-/* CHAT */
-/* WALL */
-.wall-compose{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;box-shadow:var(--sh);margin-bottom:1rem}
-.wall-compose textarea{width:100%;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;min-height:72px;box-sizing:border-box}
+/* WALL — Design A */
+.wall-compose{background:var(--surface);border-radius:20px;padding:14px 16px;margin-bottom:14px;border:1.5px solid var(--border);box-shadow:0 2px 14px rgba(0,0,0,.06)}
+.wall-compose-top{display:flex;gap:10px;align-items:flex-start}
+.wall-compose textarea{flex:1;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;min-height:64px;box-sizing:border-box;padding-top:6px}
 .wall-compose-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--border)}
 .wall-char-count{font-size:.72rem;color:var(--ink3)}
-.wall-post-btn{padding:8px 18px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer}
+.wall-post-btn{padding:7px 20px;background:var(--grad-gb);color:#fff;border:none;border-radius:20px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;letter-spacing:.2px}
 .wall-post-btn:disabled{opacity:.4;cursor:not-allowed}
-.wall-post{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.1rem;box-shadow:var(--sh);margin-bottom:.75rem}
-.wall-post-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
-.wall-post-user{font-weight:800;font-size:.85rem;color:var(--ink)}
-.wall-post-time{font-size:.68rem;color:var(--ink3)}
-.wall-post-content{font-size:.88rem;color:var(--ink2);line-height:1.6;margin-bottom:.75rem;word-break:break-word}
-.wall-reactions{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
-.wall-reaction{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:.8rem;transition:all .15s;user-select:none}
-.wall-reaction.mine{border-color:var(--green2);background:var(--g-bg)}
-.wall-reaction:hover{border-color:var(--green2)}
-.wall-reaction-count{font-size:.72rem;font-weight:700;color:var(--ink3)}
-.wall-reaction.mine .wall-reaction-count{color:var(--green)}
-.wall-actions{display:flex;gap:.75rem;align-items:center}
-.wall-action-btn{background:none;border:none;cursor:pointer;font-size:.75rem;font-weight:600;color:var(--ink3);padding:0;font-family:'Plus Jakarta Sans',sans-serif;transition:color .15s}
-.wall-action-btn:hover{color:var(--green)}
-.wall-comments{margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.5rem}
-.wall-comment{display:flex;gap:8px;align-items:flex-start}
-.wall-comment.reply{margin-left:1.5rem;padding-left:.75rem;border-left:2px solid var(--border)}
-.wall-comment-body{flex:1;background:var(--bg);border-radius:10px;padding:.5rem .75rem}
-.wall-comment-user{font-weight:700;font-size:.75rem;color:var(--ink);margin-bottom:2px}
+.wall-post{background:var(--surface);border-radius:20px;padding:14px 16px;box-shadow:0 2px 14px rgba(0,0,0,.06);margin-bottom:10px;border:1.5px solid var(--border)}
+.wall-comment-body{flex:1;background:var(--bg);border-radius:4px 14px 14px 14px;padding:7px 11px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.wall-comment-user{font-weight:700;font-size:.74rem;color:var(--green);margin-bottom:2px}
 .wall-comment-text{font-size:.82rem;color:var(--ink2);line-height:1.5;word-break:break-word}
 .wall-comment-footer{display:flex;gap:.75rem;align-items:center;margin-top:4px}
 .wall-comment-time{font-size:.63rem;color:var(--ink3)}
 .wall-comment-input{display:none;margin-top:.5rem;gap:.5rem}
 .wall-comment-input.open{display:flex}
-.wall-comment-input input{flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none}
+.wall-comment-input input{flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:20px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none}
 .wall-comment-input input:focus{border-color:var(--green)}
-.wall-comment-input button{padding:7px 14px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer}
-.wall-muted-banner{background:var(--r-bg);border:1.5px solid var(--red);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;font-size:.85rem;color:var(--red);font-weight:600;line-height:1.5}
-.wall-disclaimer{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.72rem;color:var(--ink3);line-height:1.5;margin-bottom:1rem}
+.wall-comment-input button{padding:7px 16px;background:var(--grad-gb);color:#fff;border:none;border-radius:20px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer}
+.wall-muted-banner{background:var(--r-bg);border:1.5px solid var(--red);border-radius:16px;padding:1rem 1.25rem;margin-bottom:1rem;font-size:.85rem;color:var(--red);font-weight:600;line-height:1.5}
+.wall-comment{display:flex;gap:8px;align-items:flex-start}
+.wall-comment.reply{margin-left:1.5rem;padding-left:.75rem;border-left:2px solid var(--border)}
+.wall-comments{margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.5rem}
+.wall-action-btn{background:none;border:none;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--ink3);padding:0;font-family:'Plus Jakarta Sans',sans-serif;transition:color .15s}
+.wall-action-btn:hover{color:var(--green)}
+.wall-disclaimer{background:var(--grad-light);border:1px solid rgba(0,104,56,.15);border-radius:16px;padding:10px 14px;font-size:.76rem;color:var(--ink3);margin-bottom:14px;line-height:1.5}
 
 /* CHANGELOG */
 .changelog-list{display:flex;flex-direction:column;gap:.5rem;max-height:400px;overflow-y:auto}
@@ -3297,40 +3286,39 @@ function renderChat(){
       let html = '';
 
       // Disclaimer
-      html += `<div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:10px;padding:10px 14px;font-size:.76rem;color:var(--b2);margin-bottom:1rem;line-height:1.6">
-        🤝 Este es un espacio para compartir con todos los participantes. Buscamos que todo sea ameno y respetuoso — los posts o comentarios inapropiados serán eliminados por el admin. <b>A la segunda eliminación, se desactiva tu acceso al muro.</b>
-      </div>`;
+      html += `<div class="wall-disclaimer">🤝 Comparte con todos los participantes. Sé respetuoso — 2 eliminaciones y pierdes acceso al muro.</div>`;
 
       // Strike warning
       if(strikes === 1 && !muted){
-        html += `<div style="background:var(--gld-bg);border:1.5px solid var(--gld);border-radius:10px;padding:10px 14px;font-size:.78rem;color:var(--gld);font-weight:600;margin-bottom:1rem">
+        html += `<div style="background:var(--gld-bg);border:1.5px solid var(--gld);border-radius:14px;padding:10px 14px;font-size:.78rem;color:var(--gld);font-weight:600;margin-bottom:12px">
           ⚠️ Tienes 1 aviso — si el admin elimina otro de tus posts o comentarios, perderás acceso al muro.
         </div>`;
       }
 
       // Muted banner
       if(muted){
-        html += `<div style="background:var(--r-bg);border:1.5px solid var(--red);border-radius:10px;padding:14px 16px;font-size:.85rem;color:var(--red);font-weight:700;text-align:center;margin-bottom:1rem">
-          🚫 Tu acceso al muro ha sido desactivado por el administrador.
-        </div>`;
+        html += `<div class="wall-muted-banner" style="text-align:center">🚫 Tu acceso al muro ha sido desactivado por el administrador.</div>`;
       }
 
       // Compose box
       if(!muted){
-        html += `<div class="wall-compose" style="margin-bottom:1rem">
-          <textarea id="wall-input" placeholder="¿Qué quieres compartir? ⚽" maxlength="500" rows="3"
-            style="width:100%;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;box-sizing:border-box"
-            oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
-            onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
+        const meInitials = CU.u.slice(0,2).toUpperCase();
+        html += `<div class="wall-compose">
+          <div class="wall-compose-top">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${meInitials}</div>
+            <textarea id="wall-input" placeholder="¿Qué está pasando en tu quiniela? ⚽" maxlength="500" rows="2"
+              oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
+              onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
+          </div>
           <div class="wall-compose-footer">
             <span class="wall-char-count" id="wall-input-count">0/500</span>
-            <button class="wall-post-btn" onclick="submitWallPost()">Publicar →</button>
+            <button class="wall-post-btn" onclick="submitWallPost()">Publicar ⚽</button>
           </div>
         </div>`;
       }
 
       // Posts count
-      html += `<div data-wall-count style="font-size:.72rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.75rem">${posts.length} publicación${posts.length!==1?'es':''}</div>`;
+      html += `<div data-wall-count style="font-size:.68rem;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:2px">${posts.length} publicación${posts.length!==1?'es':''}</div>`;
 
       if(!posts.length){
         html += `<div style="text-align:center;padding:3rem 1rem;color:var(--ink3)">Sé el primero en publicar algo ⚽</div>`;
@@ -3341,19 +3329,22 @@ function renderChat(){
       wrap.innerHTML = html;
     }).catch(()=>{ wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--red)">Error cargando el muro</div>`; });
   }).catch(()=>{
-    // If strikes endpoint fails just render normally
     api('GET','/api/wall').then(posts=>{
       _wallPosts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
-      wrap.innerHTML = `<div class="wall-compose" style="margin-bottom:1rem">
-        <textarea id="wall-input" placeholder="¿Qué quieres compartir? ⚽" maxlength="500" rows="3"
-          style="width:100%;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;box-sizing:border-box"
-          oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
-          onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
-        <div class="wall-compose-footer">
-          <span class="wall-char-count" id="wall-input-count">0/500</span>
-          <button class="wall-post-btn" onclick="submitWallPost()">Publicar →</button>
-        </div>
-      </div>` + posts.map(p=>renderPost(p)).join('');
+      const meInitials = CU.u.slice(0,2).toUpperCase();
+      wrap.innerHTML = `<div class="wall-disclaimer">🤝 Comparte con todos los participantes. Sé respetuoso — 2 eliminaciones y pierdes acceso al muro.</div>
+        <div class="wall-compose">
+          <div class="wall-compose-top">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${meInitials}</div>
+            <textarea id="wall-input" placeholder="¿Qué está pasando en tu quiniela? ⚽" maxlength="500" rows="2"
+              oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
+              onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
+          </div>
+          <div class="wall-compose-footer">
+            <span class="wall-char-count" id="wall-input-count">0/500</span>
+            <button class="wall-post-btn" onclick="submitWallPost()">Publicar ⚽</button>
+          </div>
+        </div>` + posts.map(p=>renderPost(p)).join('');
     }).catch(()=>{ wrap.innerHTML=`<div style="padding:2rem;color:var(--red)">Error cargando</div>`; });
   });
 }
@@ -3368,48 +3359,46 @@ function renderPost(p){
   // Active reactions (ones with count > 0)
   const reactionMap = normalizeReactions(p.reactions);
   const activeReactions = WALL_EMOJIS.filter(e => (reactionMap[e]?.count||0) > 0);
-  const myReaction = WALL_EMOJIS.find(e => reactionMap[e]?.users?.includes(CU.u));
 
-  // Show only reactions that have counts + a "+" button to open picker
   const activeHtml = activeReactions.map(e=>{
     const r = reactionMap[e];
     const active = r?.users?.includes(CU.u);
-    return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:4px 9px;border-radius:20px;border:1.5px solid ${active?'var(--green)':'var(--border)'};background:${active?'var(--g-bg)':'var(--bg)'};cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;gap:3px;transition:all .15s">
-      ${e}<span style="font-size:.72rem;font-weight:700;color:${active?'var(--green)':'var(--ink3)'}">${r.count}</span>
+    return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:5px 11px;border-radius:24px;border:1.5px solid ${active?'var(--green)':'var(--border)'};background:${active?'var(--g-bg)':'var(--bg)'};cursor:pointer;font-size:.84rem;display:inline-flex;align-items:center;gap:3px;transition:all .15s">
+      ${e}<span style="font-size:.7rem;font-weight:800;color:${active?'var(--green)':'var(--ink3)'}">${r.count}</span>
     </button>`;
   }).join('');
 
-  // Picker (hidden by default, shown on demand)
-  const pickerHtml = `<div id="picker-${p.id}" style="display:none;flex-wrap:wrap;gap:4px;padding:6px 8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;box-shadow:var(--sh2);margin-top:4px">
+  const pickerHtml = `<div id="picker-${p.id}" style="display:none;flex-wrap:wrap;gap:5px;padding:8px 10px;background:var(--surface);border:1.5px solid var(--border);border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,.1);margin-top:6px">
     ${WALL_EMOJIS.map(e=>{
       const active = reactionMap[e]?.users?.includes(CU.u);
-      return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:5px 7px;border:none;background:${active?'var(--g-bg)':'none'};border-radius:7px;cursor:pointer;font-size:1.1rem;transition:background .15s" title="${e}">${e}</button>`;
+      return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:6px 8px;border:none;background:${active?'var(--g-bg)':'transparent'};border-radius:10px;cursor:pointer;font-size:1.15rem;transition:background .15s">${e}</button>`;
     }).join('')}
   </div>`;
 
-  return `<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.1rem;margin-bottom:.75rem;box-shadow:var(--sh)" id="post-${p.id}">
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:.6rem">
-      <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
+  return `<div class="wall-post" id="post-${p.id}">
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-weight:700;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'}">${p.username}${isMe?' (tú)':''}</span>
+          <span style="font-weight:700;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'}">${p.username}</span>
+          ${isMe?`<span style="background:var(--g-bg);color:var(--green);font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.3px">tú</span>`:''}
           <span style="font-size:.7rem;color:var(--ink3)">${time}</span>
         </div>
-        <div style="font-size:.88rem;color:var(--ink);line-height:1.55;margin-top:4px;word-break:break-word">${escHtml(p.content)}</div>
+        <div style="font-size:.88rem;color:var(--ink2);line-height:1.6;margin-top:5px;word-break:break-word">${escHtml(p.content)}</div>
       </div>
-      ${canDelete?`<button onclick="deleteWallPost(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 6px;flex-shrink:0" title="Eliminar">✕</button>`:''}
+      ${canDelete?`<button onclick="deleteWallPost(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 6px;flex-shrink:0;opacity:.6" title="Eliminar">✕</button>`:''}
     </div>
-    <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:.6rem">
+    <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:10px">
       ${activeHtml}
-      <button onclick="toggleEmojiPicker(${p.id})" style="padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:.85rem;font-weight:700;color:var(--ink3);transition:all .15s" title="Reaccionar">
-        +
-      </button>
+      <button onclick="toggleEmojiPicker(${p.id})" style="width:30px;height:30px;border-radius:50%;border:1.5px dashed var(--border2);background:transparent;cursor:pointer;font-size:.9rem;font-weight:700;color:var(--ink3);display:flex;align-items:center;justify-content:center;transition:all .15s" title="Reaccionar">+</button>
     </div>
     ${pickerHtml}
-    <button onclick="toggleComments(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.78rem;font-family:'Plus Jakarta Sans',sans-serif;padding:0;font-weight:600">
-      💬 ${p.comment_count} comentario${p.comment_count!=1?'s':''}  ${commentsOpen?'▲':'▼'}
-    </button>
-    <div id="comments-${p.id}" style="display:${commentsOpen?'block':'none'};margin-top:.75rem"></div>
+    <div style="border-top:1px solid var(--border);padding-top:8px">
+      <button onclick="toggleComments(${p.id})" class="wall-action-btn">
+        💬 ${p.comment_count} comentario${p.comment_count!=1?'s':''}  ${commentsOpen?'▲':'▼'}
+      </button>
+    </div>
+    <div id="comments-${p.id}" style="display:${commentsOpen?'block':'none'};margin-top:.5rem"></div>
   </div>`;
 }
 
