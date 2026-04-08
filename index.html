@@ -3317,7 +3317,7 @@ function renderChat(){
       }
 
       // Posts count
-      html += `<div style="font-size:.72rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.75rem">${posts.length} publicación${posts.length!==1?'es':''}</div>`;
+      html += `<div data-wall-count style="font-size:.72rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.75rem">${posts.length} publicación${posts.length!==1?'es':''}</div>`;
 
       if(!posts.length){
         html += `<div style="text-align:center;padding:3rem 1rem;color:var(--ink3)">Sé el primero en publicar algo ⚽</div>`;
@@ -3352,19 +3352,30 @@ function renderPost(p){
   const initials = p.username.slice(0,2).toUpperCase();
   const commentsOpen = _openComments[p.id];
 
-  // Reactions — API returns { emoji: { count, users } }
+  // Active reactions (ones with count > 0)
   const reactionMap = p.reactions || {};
-  const reactionsHtml = WALL_EMOJIS.map(e=>{
+  const activeReactions = WALL_EMOJIS.filter(e => (reactionMap[e]?.count||0) > 0);
+  const myReaction = WALL_EMOJIS.find(e => reactionMap[e]?.users?.includes(CU.u));
+
+  // Show only reactions that have counts + a "+" button to open picker
+  const activeHtml = activeReactions.map(e=>{
     const r = reactionMap[e];
     const active = r?.users?.includes(CU.u);
-    const count = r?.count||0;
-    return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:4px 8px;border-radius:20px;border:1.5px solid ${active?'var(--green)':'var(--border)'};background:${active?'var(--g-bg)':'transparent'};cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:3px;color:var(--ink2)">
-      ${e}${count>0?`<span style="font-size:.7rem;font-weight:700;color:${active?'var(--green)':'var(--ink3)'}">${count}</span>`:''}
+    return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:4px 9px;border-radius:20px;border:1.5px solid ${active?'var(--green)':'var(--border)'};background:${active?'var(--g-bg)':'var(--bg)'};cursor:pointer;font-size:.85rem;display:inline-flex;align-items:center;gap:3px;transition:all .15s">
+      ${e}<span style="font-size:.72rem;font-weight:700;color:${active?'var(--green)':'var(--ink3)'}">${r.count}</span>
     </button>`;
   }).join('');
 
+  // Picker (hidden by default, shown on demand)
+  const pickerHtml = `<div id="picker-${p.id}" style="display:none;flex-wrap:wrap;gap:4px;padding:6px 8px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;box-shadow:var(--sh2);margin-top:4px">
+    ${WALL_EMOJIS.map(e=>{
+      const active = reactionMap[e]?.users?.includes(CU.u);
+      return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:5px 7px;border:none;background:${active?'var(--g-bg)':'none'};border-radius:7px;cursor:pointer;font-size:1.1rem;transition:background .15s" title="${e}">${e}</button>`;
+    }).join('')}
+  </div>`;
+
   return `<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.1rem;margin-bottom:.75rem;box-shadow:var(--sh)" id="post-${p.id}">
-    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:.75rem">
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:.6rem">
       <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
@@ -3375,12 +3386,27 @@ function renderPost(p){
       </div>
       ${canDelete?`<button onclick="deleteWallPost(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 6px;flex-shrink:0" title="Eliminar">✕</button>`:''}
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem">${reactionsHtml}</div>
+    <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:.6rem">
+      ${activeHtml}
+      <button onclick="toggleEmojiPicker(${p.id})" style="padding:4px 8px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:.78rem;font-weight:600;color:var(--ink3);transition:all .15s" title="Reaccionar">
+        ${myReaction||'+'} <span style="font-size:.7rem">${myReaction?'✓':'Reaccionar'}</span>
+      </button>
+    </div>
+    ${pickerHtml}
     <button onclick="toggleComments(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.78rem;font-family:'Plus Jakarta Sans',sans-serif;padding:0;font-weight:600">
       💬 ${p.comment_count} comentario${p.comment_count!=1?'s':''}  ${commentsOpen?'▲':'▼'}
     </button>
     <div id="comments-${p.id}" style="display:${commentsOpen?'block':'none'};margin-top:.75rem"></div>
   </div>`;
+}
+
+function toggleEmojiPicker(postId){
+  const picker = document.getElementById(`picker-${postId}`);
+  if(!picker) return;
+  const isOpen = picker.style.display !== 'none';
+  // Close all other pickers first
+  document.querySelectorAll('[id^="picker-"]').forEach(el=>el.style.display='none');
+  picker.style.display = isOpen ? 'none' : 'flex';
 }
 
 function toggleComments(postId){
@@ -3478,8 +3504,28 @@ function submitComment(postId, parentId){
 }
 
 function toggleReaction(postId, emoji){
+  // Close picker immediately for snappy feel
+  const picker = document.getElementById(`picker-${postId}`);
+  if(picker) picker.style.display='none';
+
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
-    .then(()=>renderChat())
+    .then(()=>{
+      // Refresh just this post's data
+      api('GET','/api/wall').then(posts=>{
+        _wallPosts = posts;
+        const post = posts.find(p=>p.id===postId);
+        if(post){
+          const el = document.getElementById(`post-${post.id}`);
+          if(el){
+            const tmp = document.createElement('div');
+            tmp.innerHTML = renderPost(post);
+            el.replaceWith(tmp.firstChild);
+            // Restore comments state
+            if(_openComments[postId]) loadComments(postId);
+          }
+        }
+      });
+    })
     .catch(e=>toast('Error: '+e.message));
 }
 
@@ -3501,7 +3547,53 @@ function deleteWallComment(id, postId){
     .catch(e=>toast('Error: '+e.message));
 }
 
-function timeAgo(dateStr){
+// ── WALL POLLING ──
+let _wallPollInterval = null;
+let _lastWallPostCount = 0;
+
+function startWallPolling(){
+  stopWallPolling();
+  _wallPollInterval = setInterval(()=>{
+    if(localStorage.getItem('q26page') !== 'chat') { stopWallPolling(); return; }
+    api('GET','/api/wall').then(posts=>{
+      if(posts.length !== _lastWallPostCount || JSON.stringify(posts.map(p=>({id:p.id,reactions:p.reactions,comment_count:p.comment_count}))) !== JSON.stringify(_wallPosts.map(p=>({id:p.id,reactions:p.reactions,comment_count:p.comment_count})))){
+        _lastWallPostCount = posts.length;
+        _wallPosts = posts;
+        // Smart update: only add new posts, update reactions/counts on existing
+        posts.forEach(p=>{
+          const existing = document.getElementById(`post-${p.id}`);
+          if(!existing){
+            // New post — prepend after compose
+            const wrap = document.getElementById('wall-wrap');
+            if(wrap){
+              const tmp = document.createElement('div');
+              tmp.innerHTML = renderPost(p);
+              // Insert after the count div
+              const countDiv = wrap.querySelector('[data-wall-count]');
+              if(countDiv) countDiv.after(tmp.firstChild);
+            }
+          } else {
+            // Existing post — update reaction counts only (don't disturb open comments)
+            const reactionArea = existing.querySelector('[data-reactions]');
+            // Just re-render the whole post but preserve comments open state
+            const tmp = document.createElement('div');
+            tmp.innerHTML = renderPost(p);
+            existing.replaceWith(tmp.firstChild);
+            if(_openComments[p.id]) loadComments(p.id);
+          }
+        });
+        // Update count
+        const wrap = document.getElementById('wall-wrap');
+        const countEl = wrap?.querySelector('[data-wall-count]');
+        if(countEl) countEl.textContent = `${posts.length} publicación${posts.length!==1?'es':''}`;
+      }
+    }).catch(()=>{});
+  }, 15000);
+}
+
+function stopWallPolling(){
+  if(_wallPollInterval){ clearInterval(_wallPollInterval); _wallPollInterval=null; }
+}
   const diff = Date.now() - new Date(dateStr).getTime();
   const m = Math.floor(diff/60000);
   if(m<1) return 'ahora';
@@ -4231,6 +4323,8 @@ function stopAutoRefresh(){
 function go(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.ntab').forEach(t=>t.classList.remove('on'));
+  // Stop wall polling when leaving chat
+  if(localStorage.getItem('q26page')==='chat' && name!=='chat') stopWallPolling();
   const pg=document.getElementById(`page-${name}`);
   if(pg) pg.classList.add('on');
   const tab=document.querySelector(`[data-p="${name}"]`);
@@ -4241,7 +4335,7 @@ function go(name){
   if(name==='admin')          renderAdmin();
   if(name==='premios')        renderPremios();
   if(name==='reglas')         renderReglas();
-  if(name==='chat')           renderChat();
+  if(name==='chat')           { renderChat(); startWallPolling(); }
   if(name==='miquiniela')     renderMiQuiniela();
   if(name==='misgrupos')      renderMisGrupos();
   if(name==='referidos')      renderReferidos();
