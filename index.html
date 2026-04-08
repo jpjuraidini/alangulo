@@ -3594,6 +3594,8 @@ function startWallPolling(){
 function stopWallPolling(){
   if(_wallPollInterval){ clearInterval(_wallPollInterval); _wallPollInterval=null; }
 }
+
+function timeAgo(dateStr){
   const diff = Date.now() - new Date(dateStr).getTime();
   const m = Math.floor(diff/60000);
   if(m<1) return 'ahora';
