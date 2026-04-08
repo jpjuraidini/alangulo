@@ -3538,13 +3538,14 @@ function toggleReaction(postId, emoji){
   _recentlyReacted.add(postId);
 
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
-    .then(()=>{
-      // Server confirmed — now let polling take over with real data
+    .then(r=>{
+      console.log('React OK:', r);
       _recentlyReacted.delete(postId);
     })
     .catch(e=>{
+      console.error('React ERROR:', e.message);
       _recentlyReacted.delete(postId);
-      toast('Error: '+e.message);
+      toast('Error reacción: '+e.message);
     });
 }
 
