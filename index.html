@@ -3534,18 +3534,16 @@ function toggleReaction(postId, emoji){
     }
   }
 
-  // Mark as pending — polling will keep our optimistic state until server confirms
+  // Pause polling immediately so it doesn't fire while request is in flight
   _recentlyReacted.add(postId);
 
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
-    .then(r=>{
-      console.log('React OK:', r);
-      _recentlyReacted.delete(postId);
+    .then(()=>{
+      setTimeout(()=>_recentlyReacted.delete(postId), 3000);
     })
     .catch(e=>{
-      console.error('React ERROR:', e.message);
       _recentlyReacted.delete(postId);
-      toast('Error reacción: '+e.message);
+      toast('Error: '+e.message);
     });
 }
 
@@ -3576,55 +3574,40 @@ function startWallPolling(){
   _wallPollInterval = setInterval(()=>{
     if(localStorage.getItem('q26page') !== 'chat') { stopWallPolling(); return; }
     api('GET','/api/wall').then(posts=>{
-      const changed = posts.length !== _wallPosts.length ||
-        JSON.stringify(posts.map(p=>p.id+p.comment_count+JSON.stringify(p.reactions))) !==
-        JSON.stringify(_wallPosts.map(p=>p.id+p.comment_count+JSON.stringify(p.reactions)));
-      if(!changed) return;
-      // Update internal data
       posts.forEach(p=>{
+        // Skip posts with pending reactions
+        if(_recentlyReacted.has(p.id)) return;
+        // Update internal state
         const idx = _wallPosts.findIndex(x=>x.id===p.id);
-        if(idx>=0){
-          // If recently reacted, keep our optimistic reactions, update everything else
-          if(_recentlyReacted.has(p.id)){
-            _wallPosts[idx] = {...p, reactions: _wallPosts[idx].reactions};
-          } else {
-            _wallPosts[idx] = p;
-          }
+        if(idx>=0) _wallPosts[idx] = p;
+        // Update DOM
+        const existing = document.getElementById(`post-${p.id}`);
+        if(existing){
+          const tmp = document.createElement('div');
+          tmp.innerHTML = renderPost(p);
+          existing.replaceWith(tmp.firstChild);
+          if(_openComments[p.id]) loadComments(p.id);
         }
       });
-      // Handle new/deleted posts
-      const existingIds = new Set(_wallPosts.map(p=>p.id));
+      // Add new posts
       posts.forEach(p=>{
-        if(!existingIds.has(p.id)) _wallPosts.unshift(p);
-      });
-      _wallPosts = _wallPosts.filter(p=>posts.find(x=>x.id===p.id));
-
-      // Re-render DOM
-      _wallPosts.forEach(p=>{
-        const existing = document.getElementById(`post-${p.id}`);
-        if(!existing){
+        if(!_wallPosts.find(x=>x.id===p.id)){
+          _wallPosts.unshift(p);
           const wrap = document.getElementById('wall-wrap');
           if(wrap){
             const tmp = document.createElement('div');
             tmp.innerHTML = renderPost(p);
             const countEl = wrap.querySelector('[data-wall-count]');
             if(countEl) countEl.after(tmp.firstChild);
-            else wrap.appendChild(tmp.firstChild);
           }
-        } else if(!_recentlyReacted.has(p.id)){
-          const tmp = document.createElement('div');
-          tmp.innerHTML = renderPost(p);
-          existing.replaceWith(tmp.firstChild);
-          if(_openComments[p.id]) loadComments(p.id);
         }
-        // If recentlyReacted — skip DOM update, optimistic state stays
       });
+      // Remove deleted posts
+      _wallPosts = _wallPosts.filter(p=>posts.find(x=>x.id===p.id));
       document.querySelectorAll('[id^="post-"]').forEach(el=>{
         const id = parseInt(el.id.replace('post-',''));
-        if(!_wallPosts.find(p=>p.id===id)) el.remove();
+        if(!posts.find(p=>p.id===id)) el.remove();
       });
-      const countEl = document.querySelector('[data-wall-count]');
-      if(countEl) countEl.textContent = `${_wallPosts.length} publicación${_wallPosts.length!==1?'es':''}`;
     }).catch(()=>{});
   }, 1000);
 }
