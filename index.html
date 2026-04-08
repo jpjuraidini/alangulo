@@ -3539,7 +3539,23 @@ function toggleReaction(postId, emoji){
 
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
     .then(()=>{
-      setTimeout(()=>_recentlyReacted.delete(postId), 3000);
+      // Fetch fresh server data, update _wallPosts with confirmed state, then release
+      api('GET','/api/wall').then(posts=>{
+        const fresh = posts.find(p=>p.id===postId);
+        if(fresh){
+          const idx = _wallPosts.findIndex(x=>x.id===postId);
+          if(idx>=0) _wallPosts[idx] = fresh;
+          // Re-render with confirmed server data
+          const el = document.getElementById(`post-${postId}`);
+          if(el){
+            const tmp = document.createElement('div');
+            tmp.innerHTML = renderPost(fresh);
+            el.replaceWith(tmp.firstChild);
+            if(_openComments[postId]) loadComments(postId);
+          }
+        }
+        _recentlyReacted.delete(postId);
+      }).catch(()=>_recentlyReacted.delete(postId));
     })
     .catch(e=>{
       _recentlyReacted.delete(postId);
@@ -3575,23 +3591,11 @@ function startWallPolling(){
     if(localStorage.getItem('q26page') !== 'chat') { stopWallPolling(); return; }
     api('GET','/api/wall').then(posts=>{
       posts.forEach(p=>{
-        // Skip posts with pending reactions
-        if(_recentlyReacted.has(p.id)) return;
-        // Update internal state
-        const idx = _wallPosts.findIndex(x=>x.id===p.id);
-        if(idx>=0) _wallPosts[idx] = p;
-        // Update DOM
         const existing = document.getElementById(`post-${p.id}`);
-        if(existing){
-          const tmp = document.createElement('div');
-          tmp.innerHTML = renderPost(p);
-          existing.replaceWith(tmp.firstChild);
-          if(_openComments[p.id]) loadComments(p.id);
-        }
-      });
-      // Add new posts
-      posts.forEach(p=>{
-        if(!_wallPosts.find(x=>x.id===p.id)){
+        const localPost = _wallPosts.find(x=>x.id===p.id);
+
+        if(!existing){
+          // New post — add to DOM
           _wallPosts.unshift(p);
           const wrap = document.getElementById('wall-wrap');
           if(wrap){
@@ -3600,8 +3604,34 @@ function startWallPolling(){
             const countEl = wrap.querySelector('[data-wall-count]');
             if(countEl) countEl.after(tmp.firstChild);
           }
+          return;
+        }
+
+        // Skip if this post has a pending reaction from current user
+        if(_recentlyReacted.has(p.id)){
+          // Still update comment count label without re-rendering
+          if(localPost) localPost.comment_count = p.comment_count;
+          const btn = existing.querySelector(`[onclick="toggleComments(${p.id})"]`);
+          if(btn) btn.innerHTML = `💬 ${p.comment_count} comentario${p.comment_count!=1?'s':''}  ${_openComments[p.id]?'▲':'▼'}`;
+          return;
+        }
+
+        // Check if reactions changed by someone else (total count differs)
+        const serverTotal = Object.values(p.reactions||{}).reduce((s,r)=>s+(r.count||0),0);
+        const localTotal = Object.values(localPost?.reactions||{}).reduce((s,r)=>s+(r.count||0),0);
+        const commentChanged = localPost && p.comment_count !== localPost.comment_count;
+        const reactionsChanged = serverTotal !== localTotal;
+
+        if(reactionsChanged || commentChanged){
+          const idx = _wallPosts.findIndex(x=>x.id===p.id);
+          if(idx>=0) _wallPosts[idx] = p;
+          const tmp = document.createElement('div');
+          tmp.innerHTML = renderPost(p);
+          existing.replaceWith(tmp.firstChild);
+          if(_openComments[p.id]) loadComments(p.id);
         }
       });
+
       // Remove deleted posts
       _wallPosts = _wallPosts.filter(p=>posts.find(x=>x.id===p.id));
       document.querySelectorAll('[id^="post-"]').forEach(el=>{
