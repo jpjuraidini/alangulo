@@ -3541,13 +3541,12 @@ function toggleReaction(postId, emoji){
 
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
     .then(()=>{
-      // Fetch fresh server data, update _wallPosts with confirmed state, then release
       api('GET','/api/wall').then(posts=>{
         const fresh = posts.find(p=>p.id===postId);
+        console.log('Fresh reactions from server:', JSON.stringify(fresh?.reactions));
         if(fresh){
           const idx = _wallPosts.findIndex(x=>x.id===postId);
           if(idx>=0) _wallPosts[idx] = fresh;
-          // Re-render with confirmed server data
           const el = document.getElementById(`post-${postId}`);
           if(el){
             const tmp = document.createElement('div');
@@ -3625,6 +3624,7 @@ function startWallPolling(){
         const reactionsChanged = serverTotal !== localTotal;
 
         if(reactionsChanged || commentChanged){
+          console.log(`Poll updating post ${p.id} - serverTotal:${serverTotal} localTotal:${localTotal}`);
           const idx = _wallPosts.findIndex(x=>x.id===p.id);
           if(idx>=0) _wallPosts[idx] = p;
           const tmp = document.createElement('div');
