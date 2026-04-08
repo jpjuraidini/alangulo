@@ -3401,8 +3401,8 @@ function renderPost(p){
     </div>
     <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin-bottom:.6rem">
       ${activeHtml}
-      <button onclick="toggleEmojiPicker(${p.id})" style="padding:4px 8px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:.78rem;font-weight:600;color:var(--ink3);transition:all .15s" title="Reaccionar">
-        ${myReaction||'+'} <span style="font-size:.7rem">${myReaction?'':'Reaccionar'}</span>
+      <button onclick="toggleEmojiPicker(${p.id})" style="padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:.85rem;font-weight:700;color:var(--ink3);transition:all .15s" title="Reaccionar">
+        ${myReaction||'+'}
       </button>
     </div>
     ${pickerHtml}
