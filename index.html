@@ -553,23 +553,42 @@ body.dark .bono-sub{color:#c09040}
 .rpt-label{font-size:.78rem;color:var(--ink2);line-height:1.4}
 
 /* CHAT */
-.chat-layout{display:grid;grid-template-columns:1fr;gap:1rem;max-width:720px}
-.chat-messages{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);height:420px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;box-shadow:var(--sh)}
-.chat-msg{display:flex;gap:10px;align-items:flex-start}
-.chat-msg.mine{flex-direction:row-reverse}
-.chat-avatar{width:32px;height:32px;border-radius:50%;background:var(--grad-gb);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0}
-.chat-avatar.mine-av{background:var(--grad-br)}
-.chat-bubble{max-width:75%;padding:8px 12px;border-radius:12px;font-size:.84rem;line-height:1.5;background:var(--bg);border:1px solid var(--border)}
-.chat-msg.mine .chat-bubble{background:var(--g-bg);border-color:var(--green2)}
-.chat-bubble-name{font-size:.65rem;font-weight:700;color:var(--ink3);margin-bottom:3px}
-.chat-bubble-text{color:var(--ink2)}
-.chat-bubble-time{font-size:.6rem;color:var(--ink3);margin-top:3px;text-align:right}
-.chat-input-row{display:flex;gap:.5rem;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:.75rem;box-shadow:var(--sh)}
-.chat-input{flex:1;border:none;outline:none;font-family:"Plus Jakarta Sans";font-size:.88rem;color:var(--ink);background:transparent;resize:none;height:38px;line-height:1.4}
-.chat-send{padding:8px 16px;background:var(--grad-gb);color:#fff;border:none;border-radius:8px;font-family:"Plus Jakarta Sans";font-weight:700;font-size:.82rem;cursor:pointer;transition:opacity .2s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,104,56,.2)}
-.chat-send:hover{opacity:.88}
-.chat-empty{text-align:center;padding:2rem;color:var(--ink3);font-size:.85rem;margin:auto}
-.chat-streak{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#ff8c00,#ff4500);color:#fff;border-radius:20px;padding:2px 8px;font-size:.7rem;font-weight:700}
+/* WALL */
+.wall-compose{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;box-shadow:var(--sh);margin-bottom:1rem}
+.wall-compose textarea{width:100%;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;min-height:72px;box-sizing:border-box}
+.wall-compose-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--border)}
+.wall-char-count{font-size:.72rem;color:var(--ink3)}
+.wall-post-btn{padding:8px 18px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer}
+.wall-post-btn:disabled{opacity:.4;cursor:not-allowed}
+.wall-post{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.1rem;box-shadow:var(--sh);margin-bottom:.75rem}
+.wall-post-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.wall-post-user{font-weight:800;font-size:.85rem;color:var(--ink)}
+.wall-post-time{font-size:.68rem;color:var(--ink3)}
+.wall-post-content{font-size:.88rem;color:var(--ink2);line-height:1.6;margin-bottom:.75rem;word-break:break-word}
+.wall-reactions{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
+.wall-reaction{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:.8rem;transition:all .15s;user-select:none}
+.wall-reaction.mine{border-color:var(--green2);background:var(--g-bg)}
+.wall-reaction:hover{border-color:var(--green2)}
+.wall-reaction-count{font-size:.72rem;font-weight:700;color:var(--ink3)}
+.wall-reaction.mine .wall-reaction-count{color:var(--green)}
+.wall-actions{display:flex;gap:.75rem;align-items:center}
+.wall-action-btn{background:none;border:none;cursor:pointer;font-size:.75rem;font-weight:600;color:var(--ink3);padding:0;font-family:'Plus Jakarta Sans',sans-serif;transition:color .15s}
+.wall-action-btn:hover{color:var(--green)}
+.wall-comments{margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.5rem}
+.wall-comment{display:flex;gap:8px;align-items:flex-start}
+.wall-comment.reply{margin-left:1.5rem;padding-left:.75rem;border-left:2px solid var(--border)}
+.wall-comment-body{flex:1;background:var(--bg);border-radius:10px;padding:.5rem .75rem}
+.wall-comment-user{font-weight:700;font-size:.75rem;color:var(--ink);margin-bottom:2px}
+.wall-comment-text{font-size:.82rem;color:var(--ink2);line-height:1.5;word-break:break-word}
+.wall-comment-footer{display:flex;gap:.75rem;align-items:center;margin-top:4px}
+.wall-comment-time{font-size:.63rem;color:var(--ink3)}
+.wall-comment-input{display:none;margin-top:.5rem;gap:.5rem}
+.wall-comment-input.open{display:flex}
+.wall-comment-input input{flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none}
+.wall-comment-input input:focus{border-color:var(--green)}
+.wall-comment-input button{padding:7px 14px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer}
+.wall-muted-banner{background:var(--r-bg);border:1.5px solid var(--red);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;font-size:.85rem;color:var(--red);font-weight:600;line-height:1.5}
+.wall-disclaimer{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.72rem;color:var(--ink3);line-height:1.5;margin-bottom:1rem}
 
 /* CHANGELOG */
 .changelog-list{display:flex;flex-direction:column;gap:.5rem;max-height:400px;overflow-y:auto}
@@ -1142,7 +1161,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('reglas')">Reglas</button>
     <div class="drawer-item-sep"></div>
-    <button class="drawer-item" onclick="goDrawer('chat')">Chat</button>
+    <button class="drawer-item" onclick="goDrawer('chat')">Muro</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('referidos')">Mis Referidos</button>
     <div class="drawer-item-sep"></div>
@@ -1250,18 +1269,13 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   </div>
 
   <!-- CHAT -->
+  <!-- MURO -->
+  <!-- MURO -->
   <div class="page" id="page-chat">
     <div class="ph">
-      <div class="ph-left"><div class="ph-h">Chat 💬</div><div class="ph-s">Canal general · todos los participantes</div></div>
-      <span class="pill pnk" id="chat-count">0 mensajes</span>
+      <div class="ph-left"><div class="ph-h">Muro</div><div class="ph-s">Comparte algo con todos los participantes</div></div>
     </div>
-    <div class="chat-layout">
-      <div class="chat-messages" id="chat-messages"></div>
-      <div class="chat-input-row">
-        <textarea class="chat-input" id="chat-input" placeholder="Escribe algo sobre el partido, el torneo, o lo que sea..." maxlength="280" rows="1"></textarea>
-        <button class="chat-send" onclick="sendChat()">Enviar ↗</button>
-      </div>
-    </div>
+    <div id="wall-wrap"></div>
   </div>
 
   <!-- ESTADÍSTICAS -->
@@ -3251,64 +3265,256 @@ function loadChat(){
 }
 function saveChat(){ /* no-op — API handles persistence */ }
 
-function renderChat(){
-  const box = document.getElementById('chat-messages');
-  const countEl = document.getElementById('chat-count');
-  if (!box) return;
-  box.innerHTML = '<div class="chat-empty" style="color:var(--ink3);font-style:italic;padding:1rem">Cargando mensajes...</div>';
+const WALL_EMOJIS = ['⚽','🔥','😂','😬','👏','💀','🐐','😤'];
+let _wallPosts = [];
+let _openComments = {}; // postId -> bool
 
-  api('GET','/api/chat').then(msgs => {
-    chatMsgs = msgs;
-    if (!msgs.length){
-      box.innerHTML = '<div class="chat-empty">Sé el primero en escribir algo ⚽</div>';
-      if (countEl) countEl.textContent = '0 mensajes';
-      return;
-    }
-    if (countEl) countEl.textContent = `${msgs.length} mensaje${msgs.length!==1?'s':''}`;
-    box.innerHTML = '';
-    msgs.forEach(m => {
-      const mine = m.username === CU.u;
-      const initials = m.username.slice(0,2).toUpperCase();
-      const time = new Date(m.created_at).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
-      const dateStr = new Date(m.created_at).toLocaleDateString('es-MX',{day:'numeric',month:'short'});
-      const el = document.createElement('div');
-      el.className = `chat-msg${mine?' mine':''}`;
-      const canDelete = CU.admin || mine;
-      el.innerHTML = `
-        <div class="chat-avatar${mine?' mine-av':''}">${initials}</div>
-        <div class="chat-bubble">
-          ${!mine?`<div class="chat-bubble-name">${m.username}</div>`:''}
-          <div class="chat-bubble-text">${escHtml(m.message)}</div>
-          <div class="chat-bubble-time" style="display:flex;align-items:center;justify-content:flex-end;gap:8px">
-            <span>${dateStr} · ${time}</span>
-            ${canDelete?`<button onclick="deleteChatMsg(${m.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.65rem;padding:0;line-height:1" title="Eliminar">✕</button>`:''}
+function renderChat(){
+  const wrap = document.getElementById('wall-wrap');
+  if(!wrap) return;
+
+  // Check mute status first
+  api('GET',`/api/wall/strikes/${CU.u}`).then(status=>{
+    const muted = status.muted;
+    const strikes = status.strikes;
+
+    api('GET','/api/wall').then(posts=>{
+      _wallPosts = posts;
+
+      let html = '';
+
+      // Disclaimer
+      html += `<div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:10px;padding:10px 14px;font-size:.76rem;color:var(--b2);margin-bottom:1rem;line-height:1.6">
+        🤝 Este es un espacio para compartir con todos los participantes. Buscamos que todo sea ameno y respetuoso — los posts o comentarios inapropiados serán eliminados por el admin. <b>A la segunda eliminación, se desactiva tu acceso al muro.</b>
+      </div>`;
+
+      // Strike warning
+      if(strikes === 1 && !muted){
+        html += `<div style="background:var(--gld-bg);border:1.5px solid var(--gld);border-radius:10px;padding:10px 14px;font-size:.78rem;color:var(--gld);font-weight:600;margin-bottom:1rem">
+          ⚠️ Tienes 1 aviso — si el admin elimina otro de tus posts o comentarios, perderás acceso al muro.
+        </div>`;
+      }
+
+      // Muted banner
+      if(muted){
+        html += `<div style="background:var(--r-bg);border:1.5px solid var(--red);border-radius:10px;padding:14px 16px;font-size:.85rem;color:var(--red);font-weight:700;text-align:center;margin-bottom:1rem">
+          🚫 Tu acceso al muro ha sido desactivado por el administrador.
+        </div>`;
+      }
+
+      // Compose box
+      if(!muted){
+        html += `<div class="wall-compose" style="margin-bottom:1rem">
+          <textarea id="wall-input" placeholder="¿Qué quieres compartir? ⚽" maxlength="500" rows="3"
+            style="width:100%;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;box-sizing:border-box"
+            oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
+            onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
+          <div class="wall-compose-footer">
+            <span class="wall-char-count" id="wall-input-count">0/500</span>
+            <button class="wall-post-btn" onclick="submitWallPost()">Publicar →</button>
           </div>
         </div>`;
-      box.appendChild(el);
-    });
-    box.scrollTop = box.scrollHeight;
+      }
+
+      // Posts count
+      html += `<div style="font-size:.72rem;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.75rem">${posts.length} publicación${posts.length!==1?'es':''}</div>`;
+
+      if(!posts.length){
+        html += `<div style="text-align:center;padding:3rem 1rem;color:var(--ink3)">Sé el primero en publicar algo ⚽</div>`;
+      } else {
+        html += posts.map(p=>renderPost(p)).join('');
+      }
+
+      wrap.innerHTML = html;
+    }).catch(()=>{ wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--red)">Error cargando el muro</div>`; });
   }).catch(()=>{
-    box.innerHTML = '<div class="chat-empty">Error cargando mensajes.</div>';
+    // If strikes endpoint fails just render normally
+    api('GET','/api/wall').then(posts=>{
+      _wallPosts = posts;
+      wrap.innerHTML = `<div class="wall-compose" style="margin-bottom:1rem">
+        <textarea id="wall-input" placeholder="¿Qué quieres compartir? ⚽" maxlength="500" rows="3"
+          style="width:100%;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;box-sizing:border-box"
+          oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
+          onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
+        <div class="wall-compose-footer">
+          <span class="wall-char-count" id="wall-input-count">0/500</span>
+          <button class="wall-post-btn" onclick="submitWallPost()">Publicar →</button>
+        </div>
+      </div>` + posts.map(p=>renderPost(p)).join('');
+    }).catch(()=>{ wrap.innerHTML=`<div style="padding:2rem;color:var(--red)">Error cargando</div>`; });
   });
 }
 
-function deleteChatMsg(id){
-  api('DELETE',`/api/chat/${id}`)
-    .then(()=>renderChat())
-    .catch(e=>toast('Error: '+e.message));
-  toast('Mensaje eliminado');
+function renderPost(p){
+  const isMe = p.username===CU.u;
+  const canDelete = CU.admin || isMe;
+  const time = timeAgo(p.created_at);
+  const initials = p.username.slice(0,2).toUpperCase();
+  const commentsOpen = _openComments[p.id];
+
+  // Reactions — API returns { emoji: { count, users } }
+  const reactionMap = p.reactions || {};
+  const reactionsHtml = WALL_EMOJIS.map(e=>{
+    const r = reactionMap[e];
+    const active = r?.users?.includes(CU.u);
+    const count = r?.count||0;
+    return `<button onclick="toggleReaction(${p.id},'${e}')" style="padding:4px 8px;border-radius:20px;border:1.5px solid ${active?'var(--green)':'var(--border)'};background:${active?'var(--g-bg)':'transparent'};cursor:pointer;font-size:.85rem;display:flex;align-items:center;gap:3px;color:var(--ink2)">
+      ${e}${count>0?`<span style="font-size:.7rem;font-weight:700;color:${active?'var(--green)':'var(--ink3)'}">${count}</span>`:''}
+    </button>`;
+  }).join('');
+
+  return `<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.1rem;margin-bottom:.75rem;box-shadow:var(--sh)" id="post-${p.id}">
+    <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:.75rem">
+      <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.8rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-weight:700;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'}">${p.username}${isMe?' (tú)':''}</span>
+          <span style="font-size:.7rem;color:var(--ink3)">${time}</span>
+        </div>
+        <div style="font-size:.88rem;color:var(--ink);line-height:1.55;margin-top:4px;word-break:break-word">${escHtml(p.content)}</div>
+      </div>
+      ${canDelete?`<button onclick="deleteWallPost(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 6px;flex-shrink:0" title="Eliminar">✕</button>`:''}
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem">${reactionsHtml}</div>
+    <button onclick="toggleComments(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.78rem;font-family:'Plus Jakarta Sans',sans-serif;padding:0;font-weight:600">
+      💬 ${p.comment_count} comentario${p.comment_count!=1?'s':''}  ${commentsOpen?'▲':'▼'}
+    </button>
+    <div id="comments-${p.id}" style="display:${commentsOpen?'block':'none'};margin-top:.75rem"></div>
+  </div>`;
 }
 
-function sendChat(){
-  const inp = document.getElementById('chat-input');
-  const text = inp.value.trim();
-  if (!text) return;
-  if (text.length > 280){ toast('Máximo 280 caracteres'); return; }
-  inp.value = '';
-  api('POST','/api/chat',{username:CU.u, message:text})
-    .then(()=>renderChat())
-    .catch(e=>{ toast('Error enviando mensaje'); inp.value=text; });
+function toggleComments(postId){
+  _openComments[postId] = !_openComments[postId];
+  if(_openComments[postId]) loadComments(postId);
+  else {
+    const el = document.getElementById(`comments-${postId}`);
+    if(el) el.style.display='none';
+    // re-render toggle button only
+    const post = _wallPosts.find(p=>p.id===postId);
+    if(post){
+      const btn = document.querySelector(`#post-${postId} button[onclick="toggleComments(${postId})"]`);
+      if(btn) btn.innerHTML=`💬 ${post.comment_count} comentario${post.comment_count!=1?'s':''} ▼`;
+    }
+  }
 }
+
+function loadComments(postId){
+  const wrap = document.getElementById(`comments-${postId}`);
+  if(!wrap) return;
+  wrap.style.display='block';
+  wrap.innerHTML=`<div style="color:var(--ink3);font-size:.78rem;padding:.5rem 0">Cargando...</div>`;
+  api('GET',`/api/wall/${postId}/comments`).then(comments=>{
+    wrap.innerHTML = renderComments(comments, postId, null) + commentInput(postId, null);
+  }).catch(()=>{ wrap.innerHTML=`<div style="color:var(--red);font-size:.78rem">Error</div>`; });
+}
+
+function renderComments(comments, postId, parentId){
+  const level = comments.filter(c=>c.parent_id===parentId);
+  if(!level.length) return '';
+  return level.map(c=>{
+    const isMe = c.username===CU.u;
+    const canDelete = CU.admin||isMe;
+    const replies = renderComments(comments, postId, c.id);
+    const hasReplies = comments.some(x=>x.parent_id===c.id);
+    return `<div style="padding:.6rem 0;border-bottom:1px solid var(--border);${parentId?'margin-left:1.5rem;':''}">
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <div style="width:26px;height:26px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${c.username.slice(0,2).toUpperCase()}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-weight:700;font-size:.8rem;color:${isMe?'var(--green)':'var(--ink)'}">${c.username}</span>
+            <span style="font-size:.65rem;color:var(--ink3)">${timeAgo(c.created_at)}</span>
+          </div>
+          <div style="font-size:.82rem;color:var(--ink);line-height:1.5;margin-top:2px">${escHtml(c.content)}</div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button onclick="showReplyInput(${postId},${c.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.72rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;padding:0">Responder</button>
+            ${canDelete?`<button onclick="deleteWallComment(${c.id},${postId})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.72rem;padding:0">Eliminar</button>`:''}
+          </div>
+          <div id="reply-input-${c.id}"></div>
+        </div>
+      </div>
+      ${replies}
+    </div>`;
+  }).join('');
+}
+
+function commentInput(postId, parentId){
+  const id = parentId ? `reply-form-${parentId}` : `comment-form-${postId}`;
+  return `<div style="display:flex;gap:8px;align-items:flex-start;padding:.75rem 0 0" id="${id}">
+    <div style="width:26px;height:26px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${CU.u.slice(0,2).toUpperCase()}</div>
+    <div style="flex:1;display:flex;gap:6px">
+      <input type="text" placeholder="${parentId?'Responder...':'Comentar...'}" maxlength="500"
+        id="comment-input-${parentId||postId}"
+        style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;outline:none"
+        onkeydown="if(event.key==='Enter')submitComment(${postId},${parentId||'null'})">
+      <button onclick="submitComment(${postId},${parentId||'null'})" style="padding:7px 12px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer">↗</button>
+    </div>
+  </div>`;
+}
+
+function showReplyInput(postId, parentId){
+  const wrap = document.getElementById(`reply-input-${parentId}`);
+  if(!wrap) return;
+  wrap.innerHTML = commentInput(postId, parentId);
+  setTimeout(()=>document.getElementById(`comment-input-${parentId}`)?.focus(),50);
+}
+
+function submitWallPost(){
+  const inp = document.getElementById('wall-input');
+  const text = inp.value.trim();
+  if(!text){ toast('Escribe algo primero'); return; }
+  api('POST','/api/wall',{username:CU.u, content:text})
+    .then(()=>{ inp.value=''; document.getElementById('wall-input-count').textContent='0/500'; renderChat(); })
+    .catch(e=>{ toast(e.message||'Error publicando'); });
+}
+
+function submitComment(postId, parentId){
+  const inputId = `comment-input-${parentId||postId}`;
+  const inp = document.getElementById(inputId);
+  if(!inp||!inp.value.trim()) return;
+  const text = inp.value.trim();
+  api('POST',`/api/wall/${postId}/comments`,{username:CU.u, content:text, parent_id:parentId})
+    .then(()=>{ loadComments(postId); _openComments[postId]=true; renderChat(); })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function toggleReaction(postId, emoji){
+  api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
+    .then(()=>renderChat())
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function deleteWallPost(id){
+  api('DELETE',`/api/wall/${id}`,{username:CU.u, is_admin:!!CU.admin})
+    .then(r=>{
+      if(r.muted) toast('⚠️ Usuario silenciado del muro por 2 eliminaciones');
+      renderChat();
+    })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function deleteWallComment(id, postId){
+  api('DELETE',`/api/wall/comments/${id}`,{username:CU.u, is_admin:!!CU.admin})
+    .then(r=>{
+      if(r.muted) toast('⚠️ Usuario silenciado del muro por 2 eliminaciones');
+      loadComments(postId);
+    })
+    .catch(e=>toast('Error: '+e.message));
+}
+
+function timeAgo(dateStr){
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m = Math.floor(diff/60000);
+  if(m<1) return 'ahora';
+  if(m<60) return `hace ${m}m`;
+  const h = Math.floor(m/60);
+  if(h<24) return `hace ${h}h`;
+  const d = Math.floor(h/24);
+  return `hace ${d}d`;
+}
+
+// Legacy no-op for chat
+function sendChat(){}
+function deleteChatMsg(){}
 
 function shouldShowRefModal(){
   if(!CU) return false;
