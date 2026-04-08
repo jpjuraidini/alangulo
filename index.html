@@ -3503,6 +3503,8 @@ function submitComment(postId, parentId){
     .catch(e=>toast('Error: '+e.message));
 }
 
+let _wallPollPaused = false;
+
 function toggleReaction(postId, emoji){
   // Close picker immediately
   const picker = document.getElementById(`picker-${postId}`);
@@ -3520,7 +3522,6 @@ function toggleReaction(postId, emoji){
       reactions[e].count = reactions[e].users.length;
     });
     if(!alreadyReacted){
-      // Add new reaction
       if(!reactions[emoji]) reactions[emoji] = { count: 0, users: [] };
       reactions[emoji].users.push(CU.u);
       reactions[emoji].count = reactions[emoji].users.length;
@@ -3535,6 +3536,10 @@ function toggleReaction(postId, emoji){
       if(_openComments[postId]) loadComments(postId);
     }
   }
+
+  // Pause polling for 3s so optimistic update isn't overwritten
+  _wallPollPaused = true;
+  setTimeout(()=>{ _wallPollPaused = false; }, 3000);
 
   // Fire API call in background
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
@@ -3567,6 +3572,7 @@ function startWallPolling(){
   stopWallPolling();
   _wallPollInterval = setInterval(()=>{
     if(localStorage.getItem('q26page') !== 'chat') { stopWallPolling(); return; }
+    if(_wallPollPaused) return;
     api('GET','/api/wall').then(posts=>{
       const changed = posts.length !== _wallPosts.length ||
         JSON.stringify(posts.map(p=>p.id+p.comment_count+JSON.stringify(p.reactions))) !==
