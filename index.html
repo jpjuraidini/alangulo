@@ -3510,16 +3510,15 @@ function toggleReaction(postId, emoji){
   const picker = document.getElementById(`picker-${postId}`);
   if(picker) picker.style.display='none';
 
+  // Optimistic update
   const post = _wallPosts.find(p=>p.id===postId);
   if(post){
     const reactions = post.reactions || {};
     const prevEmoji = Object.keys(reactions).find(e => reactions[e]?.users?.includes(CU.u));
-    // Remove from previous emoji
     if(prevEmoji){
       reactions[prevEmoji].users = reactions[prevEmoji].users.filter(u=>u!==CU.u);
       reactions[prevEmoji].count = reactions[prevEmoji].users.length;
     }
-    // Add new (or toggle off if same)
     if(prevEmoji !== emoji){
       if(!reactions[emoji]) reactions[emoji] = { count: 0, users: [] };
       reactions[emoji].users.push(CU.u);
@@ -3535,11 +3534,18 @@ function toggleReaction(postId, emoji){
     }
   }
 
-  // Mark this post as recently reacted — skip DOM update in polling for 5s
+  // Mark as pending — polling will keep our optimistic state until server confirms
   _recentlyReacted.add(postId);
-  setTimeout(()=>_recentlyReacted.delete(postId), 5000);
 
-  api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji}).catch(e=>toast('Error: '+e.message));
+  api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
+    .then(()=>{
+      // Server confirmed — now let polling take over with real data
+      _recentlyReacted.delete(postId);
+    })
+    .catch(e=>{
+      _recentlyReacted.delete(postId);
+      toast('Error: '+e.message);
+    });
 }
 
 function deleteWallPost(id){
