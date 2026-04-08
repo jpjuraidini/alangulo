@@ -3267,6 +3267,17 @@ function loadChat(){
 }
 function saveChat(){ /* no-op — API handles persistence */ }
 
+// Convert server reaction format [{emoji,count,users}] to {emoji:{count,users}}
+function normalizeReactions(reactions){
+  if(!reactions) return {};
+  if(Array.isArray(reactions)){
+    const map = {};
+    reactions.forEach(r=>{ map[r.emoji] = { count: r.count, users: r.users||[] }; });
+    return map;
+  }
+  return reactions; // already object format
+}
+
 const WALL_EMOJIS = ['⚽','🔥','😂','😬','👏','💀','🐐','❤️','👍','😔'];
 let _wallPosts = [];
 let _openComments = {}; // postId -> bool
@@ -3281,7 +3292,7 @@ function renderChat(){
     const strikes = status.strikes;
 
     api('GET','/api/wall').then(posts=>{
-      _wallPosts = posts;
+      _wallPosts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
 
       let html = '';
 
@@ -3332,7 +3343,7 @@ function renderChat(){
   }).catch(()=>{
     // If strikes endpoint fails just render normally
     api('GET','/api/wall').then(posts=>{
-      _wallPosts = posts;
+      _wallPosts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
       wrap.innerHTML = `<div class="wall-compose" style="margin-bottom:1rem">
         <textarea id="wall-input" placeholder="¿Qué quieres compartir? ⚽" maxlength="500" rows="3"
           style="width:100%;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;box-sizing:border-box"
@@ -3355,7 +3366,7 @@ function renderPost(p){
   const commentsOpen = _openComments[p.id];
 
   // Active reactions (ones with count > 0)
-  const reactionMap = p.reactions || {};
+  const reactionMap = normalizeReactions(p.reactions);
   const activeReactions = WALL_EMOJIS.filter(e => (reactionMap[e]?.count||0) > 0);
   const myReaction = WALL_EMOJIS.find(e => reactionMap[e]?.users?.includes(CU.u));
 
@@ -3515,7 +3526,7 @@ function toggleReaction(postId, emoji){
   // Optimistic update
   const post = _wallPosts.find(p=>p.id===postId);
   if(post){
-    const reactions = post.reactions || {};
+    const reactions = normalizeReactions(post.reactions);
     const prevEmoji = Object.keys(reactions).find(e => reactions[e]?.users?.includes(CU.u));
     if(prevEmoji){
       reactions[prevEmoji].users = reactions[prevEmoji].users.filter(u=>u!==CU.u);
@@ -3542,7 +3553,7 @@ function toggleReaction(postId, emoji){
   api('POST',`/api/wall/${postId}/react`,{username:CU.u, emoji})
     .then(()=>{
       api('GET','/api/wall').then(posts=>{
-        const fresh = posts.find(p=>p.id===postId);
+        const fresh = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)})).find(p=>p.id===postId);
         console.log('Fresh reactions from server:', JSON.stringify(fresh?.reactions));
         if(fresh){
           const idx = _wallPosts.findIndex(x=>x.id===postId);
@@ -3591,6 +3602,7 @@ function startWallPolling(){
   _wallPollInterval = setInterval(()=>{
     if(localStorage.getItem('q26page') !== 'chat') { stopWallPolling(); return; }
     api('GET','/api/wall').then(posts=>{
+      posts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
       posts.forEach(p=>{
         const existing = document.getElementById(`post-${p.id}`);
         const localPost = _wallPosts.find(x=>x.id===p.id);
