@@ -1400,14 +1400,20 @@ const GROUPS={
   L:{teams:['ENG','CRO','GHA','PAN']}
 };
 
-// All 6 round-robin matches per group (team plays everyone once)
+// All 6 round-robin matches per group in FIFA matchday order
+// J1: 1v2, 3v4 | J2: 1v3, 2v4 | J3: 1v4, 2v3
 function mkMatches(){
   const all={};
   Object.entries(GROUPS).forEach(([g,{teams}])=>{
-    all[g]=[];let n=1;
-    for(let i=0;i<teams.length;i++)
-      for(let j=i+1;j<teams.length;j++)
-        all[g].push({id:`${g}${n++}`,h:teams[i],a:teams[j]});
+    const [t1,t2,t3,t4]=teams;
+    all[g]=[
+      {id:`${g}1`,h:t1,a:t2}, // J1: seed1 vs seed2
+      {id:`${g}2`,h:t3,a:t4}, // J1: seed3 vs seed4
+      {id:`${g}3`,h:t1,a:t3}, // J2: seed1 vs seed3
+      {id:`${g}4`,h:t2,a:t4}, // J2: seed2 vs seed4
+      {id:`${g}5`,h:t1,a:t4}, // J3: seed1 vs seed4
+      {id:`${g}6`,h:t2,a:t3}, // J3: seed2 vs seed3
+    ];
   });
   return all;
 }
