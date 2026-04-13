@@ -4643,13 +4643,23 @@ function renderMisGrupos(){
 function loadGroupRanking(groupId){
   const el=document.getElementById(`group-ranking-${groupId}`);
   if(!el) return;
-  api('GET',`/api/groups/${groupId}/ranking`).then(data=>{
+
+  // Fetch group ranking AND global ranking in parallel
+  Promise.all([
+    api('GET',`/api/groups/${groupId}/ranking`),
+    api('GET','/api/ranking')
+  ]).then(([data, globalRanking])=>{
     const {members, picks:gPicks}=data;
-    // Calculate scores using existing calcScore logic but with group picks
+
+    // Build global position map: { username -> { pos, total } }
+    const globalMap={};
+    globalRanking.forEach((r,i)=>{ globalMap[r.username]={pos:i+1, total:globalRanking.length}; });
+    const totalPlayers=globalRanking.length;
+
+    // Calculate group scores
     const board=members
       .filter(u=>!isAdminUser(u))
       .map(u=>{
-        // Temporarily inject picks for scoring
         const saved=picks[u];
         picks[u]=gPicks[u]||{sc:{},br:{}};
         const sc=calcScore(u);
@@ -4662,14 +4672,25 @@ function loadGroupRanking(groupId){
     if(!board.length){el.innerHTML=`<div style="padding:.75rem;font-size:.8rem;color:var(--ink3)">Sin miembros aún.</div>`;return;}
     const medals=['🥇','🥈','🥉'];
     el.innerHTML=`<table style="width:100%;border-collapse:collapse">
-      ${board.map((p,i)=>`
+      ${board.map((p,i)=>{
+        const gp=globalMap[p.name];
+        const globalLine=gp
+          ? `<div style="font-size:.68rem;color:var(--ink3);font-weight:600;margin-top:2px">#${gp.pos} de ${totalPlayers} en general</div>`
+          : '';
+        return `
         <tr style="${p.isMe?'background:var(--g-bg)':i%2===0?'background:var(--bg)':''}">
-          <td style="padding:8px 12px;font-size:.9rem;width:32px">${medals[i]||`${i+1}`}</td>
-          <td style="padding:8px 4px;font-weight:${p.isMe?'800':'600'};font-size:.85rem;color:${p.isMe?'var(--green)':'var(--ink)'}">${p.name}${p.isMe?' <span style="font-size:.6rem;background:var(--green);color:#fff;padding:1px 5px;border-radius:4px">tú</span>':''}</td>
-          <td style="padding:8px 12px;text-align:right;font-weight:800;font-size:.88rem;color:var(--ink)">${p.total} <span style="font-size:.65rem;opacity:.6">pts</span></td>
-          <td style="padding:8px 8px;width:28px">${isOwner&&!p.isMe?`<button onclick="removeMemberFromGroup(${groupId},'${p.name}')" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 5px;border-radius:4px;transition:color .15s" title="Eliminar del grupo">✕</button>`:''}
+          <td style="padding:8px 12px;font-size:.9rem;width:32px;vertical-align:top;padding-top:10px">${medals[i]||`${i+1}`}</td>
+          <td style="padding:8px 4px;vertical-align:top">
+            <div style="font-weight:${p.isMe?'800':'600'};font-size:.85rem;color:${p.isMe?'var(--green)':'var(--ink)'}">
+              ${p.name}${p.isMe?' <span style="font-size:.6rem;background:var(--green);color:#fff;padding:1px 5px;border-radius:4px">tú</span>':''}
+            </div>
+            ${globalLine}
           </td>
-        </tr>`).join('')}
+          <td style="padding:8px 12px;text-align:right;font-weight:800;font-size:.88rem;color:var(--ink);vertical-align:top;padding-top:10px">${p.total} <span style="font-size:.65rem;opacity:.6">pts</span></td>
+          <td style="padding:8px 8px;width:28px;vertical-align:top;padding-top:10px">${isOwner&&!p.isMe?`<button onclick="removeMemberFromGroup(${groupId},'${p.name}')" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Eliminar del grupo">✕</button>`:''}
+          </td>
+        </tr>`;
+      }).join('')}
     </table>`;
   }).catch(()=>{
     if(el) el.innerHTML=`<div style="padding:.75rem;font-size:.8rem;color:var(--ink3)">Error cargando ranking.</div>`;
