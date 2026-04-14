@@ -122,7 +122,7 @@ body{
 .auth-orb.o2{width:250px;height:250px;background:#3d87ff;bottom:-60px;right:-60px;animation-delay:-3s}
 .auth-orb.o3{width:180px;height:180px;background:#ff3355;top:40%;right:10%;animation-delay:-5s}
 @keyframes orbFloat{from{transform:translate(0,0) scale(1)}to{transform:translate(20px,30px) scale(1.1)}}
-.auth-card{background:rgba(255,255,255,.97);backdrop-filter:blur(24px);border-radius:28px;padding:2.5rem 2rem 2rem;width:100%;max-width:380px;box-shadow:0 40px 100px rgba(0,0,0,.3),0 0 0 1px rgba(255,255,255,.5);position:relative;z-index:1;animation:cardIn .6s cubic-bezier(.22,1,.36,1) both}
+.auth-card{background:rgba(255,255,255,.97);backdrop-filter:blur(24px);border-radius:28px;padding:2.5rem 2rem 2rem;width:100%;max-width:380px;box-shadow:0 40px 100px rgba(0,0,0,.25),0 0 0 1px rgba(255,255,255,.5),0 20px 60px rgba(0,104,56,.15),0 20px 60px rgba(192,0,26,.1);position:relative;z-index:1;animation:cardIn .6s cubic-bezier(.22,1,.36,1) both}
 @keyframes cardIn{from{opacity:0;transform:translateY(32px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
 .auth-icon{width:76px;height:76px;background:var(--grad-tri);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 1.25rem;box-shadow:0 8px 24px rgba(0,0,0,.2)}
 .auth-h{font-weight:800;font-size:1.6rem;text-align:center;margin-bottom:.25rem;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
@@ -1114,8 +1114,10 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   <div class="auth-card">
     <canvas id="auth-logo" width="76" height="76" style="display:block;margin:0 auto 1.25rem;border-radius:20px"></canvas>
     <div class="auth-h" style="font-size:1.1rem;letter-spacing:.5px">Quiniela</div>
-    <div class="auth-h" style="font-size:2rem;letter-spacing:-0.5px;margin-top:-4px;margin-bottom:.25rem">Al Ángulo</div>
-    <div class="auth-sub">Copa Mundial FIFA · USA · México · Canadá<br>11 jun – 19 jul 2026</div>
+    <div class="auth-h" style="font-size:2rem;letter-spacing:-0.5px;margin-top:-4px;margin-bottom:.6rem">Al Ángulo</div>
+    <div style="text-align:center;margin-bottom:1.25rem">
+      <span style="display:inline-block;background:var(--grad-tri);color:#fff;font-size:.7rem;font-weight:800;letter-spacing:1px;padding:4px 14px;border-radius:20px;text-transform:uppercase">⚽ Mundial 2026</span>
+    </div>
     <label class="flabel">Usuario</label>
     <input class="finput" id="lu" type="text" placeholder="tu_usuario" autocomplete="off">
     <label class="flabel">PIN</label>
@@ -1127,12 +1129,10 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <button onclick="openPublicRules()" style="width:100%;margin-top:.75rem;padding:9px;background:transparent;border:1.5px solid var(--border);border-radius:10px;color:var(--ink3);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.3px" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink3)'">
       📋 Ver reglas del juego
     </button>
-  </div>
-
-  <!-- Credits floating -->
-  <div style="position:absolute;top:22%;right:6%;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:7px 12px;font-size:.62rem;color:rgba(255,255,255,.45);line-height:1.7;z-index:2;transform:rotate(5deg);pointer-events:none">
-    hecho y desarrollado por:<br>
-    <span style="color:rgba(255,255,255,.65);font-weight:600">Juanpa Gomez · JP Juraidini · Eugenio Mtz Gama</span>
+    <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border);text-align:center;font-size:.65rem;color:var(--ink3);line-height:1.8">
+      hecho y desarrollado por:<br>
+      <span style="color:var(--ink2);font-weight:600">Juanpa Gomez · JP Juraidini · Eugenio Mtz Gama</span>
+    </div>
   </div>
 </div>
 
