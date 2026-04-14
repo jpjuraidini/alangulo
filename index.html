@@ -1092,6 +1092,20 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   <div class="splash-pbar"><div class="splash-pfill" id="splash-pfill"></div></div>
 </div>
 
+<!-- PUBLIC RULES MODAL -->
+<div id="public-rules-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.6);overflow-y:auto;padding:1rem">
+  <div style="max-width:520px;margin:0 auto;background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:0 8px 40px rgba(0,0,0,.3)">
+    <div style="background:var(--grad-tri);padding:1.25rem 1.5rem;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-weight:800;font-size:1.1rem;color:#fff">Reglas del juego 📋</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.8);margin-top:2px">Al Ángulo · Mundial 2026</div>
+      </div>
+      <button onclick="closePublicRules()" style="background:rgba(255,255,255,.2);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;color:#fff;font-size:1.1rem;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div style="padding:1.25rem 1.5rem;display:flex;flex-direction:column;gap:1.25rem" id="public-rules-content"></div>
+  </div>
+</div>
+
 <!-- AUTH -->
 <div id="auth" style="display:none">
   <div class="auth-orb o1"></div>
@@ -1110,6 +1124,9 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <div class="auth-err" id="lerr"></div>
     <input type="hidden" id="lref" value="">
     <div class="auth-hint">Tu acceso lo proporciona el organizador.</div>
+    <button onclick="openPublicRules()" style="width:100%;margin-top:.75rem;padding:10px;background:transparent;border:1.5px solid rgba(255,255,255,.15);border-radius:12px;color:var(--ink3);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='rgba(255,255,255,.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,.15)'">
+      📋 Ver reglas del juego
+    </button>
     <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.08);text-align:center;font-size:.68rem;color:var(--ink3);line-height:1.8">
       Creado con mucho amor por<br>
       <span style="color:var(--ink2);font-weight:600">Juanpa Gomez · JP Juraidini · Eugenio Mtz Gama</span>
@@ -1574,7 +1591,10 @@ function doLogin(){
 
   api('POST','/api/login',{username:u, pin:p, refCode})
     .then(user=>{
-      CU={u:user.username, admin:user.is_admin, code:user.code};
+      // Preserve refSeen from previous session so modal doesn't re-appear
+      const prev = JSON.parse(localStorage.getItem('q26u')||'null');
+      const refSeen = prev?.u === user.username ? (prev.refSeen || false) : false;
+      CU={u:user.username, admin:user.is_admin, code:user.code, refSeen};
       localStorage.setItem('q26u',JSON.stringify(CU));
       boot();
     })
@@ -3674,21 +3694,31 @@ function shouldShowRefModal(){
   if(!CU) return false;
   if(CU.refSeen) return false;
   if(CU.refCode) return false;
+  if(localStorage.getItem(`q26ref_done_${CU.u}`)==='1') return false;
+  if(localStorage.getItem(`q26ref_noshow_${CU.u}`)==='1') return false;
   return true;
 }
 
 function markRefSeen(){
   CU.refSeen = true;
   localStorage.setItem('q26u', JSON.stringify(CU));
+  localStorage.setItem(`q26ref_done_${CU.u}`,'1');
 }
 
 // Check backend on boot — if user already has referrer, mark as seen
 async function checkRefStatus(){
   if(!CU || CU.refSeen) return;
+  // Also check localStorage flags first — avoid unnecessary API call
+  if(localStorage.getItem(`q26ref_done_${CU.u}`)==='1' ||
+     localStorage.getItem(`q26ref_noshow_${CU.u}`)==='1'){
+    markRefSeen();
+    return;
+  }
   try {
     const r = await api('GET', `/api/refs/check/${CU.u}`);
     if(r.hasReferrer){
       markRefSeen();
+      localStorage.setItem(`q26ref_done_${CU.u}`,'1');
     }
   } catch(e){}
 }
@@ -3747,6 +3777,82 @@ function skipRefScreen(){
 function submitRefModal(){ submitRefScreen(); }
 function skipRefModal(){ skipRefScreen(); }
 function saveWelcomeRef(){}
+
+function openPublicRules(){
+  const modal = document.getElementById('public-rules-modal');
+  const content = document.getElementById('public-rules-content');
+  // Use a fixed estimate for bolsa since user isn't logged in yet
+  const bolsa = 250 * 275; // ~250 players estimate
+  content.innerHTML = `
+    <div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:12px;padding:10px 14px;font-size:.78rem;color:var(--b2);line-height:1.5">
+      ⚽ <b>Fecha límite:</b> 11 de junio de 2026 · Costo de entrada: <b>$350 MXN</b>
+    </div>
+
+    <div>
+      <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.5rem">⚽ ¿Cómo se juega?</div>
+      <p style="font-size:.85rem;color:var(--ink2);line-height:1.6;margin-bottom:.5rem"><b>Fase de Grupos:</b> Predice el marcador exacto de los 72 partidos. La app calcula la tabla de posiciones automáticamente usando reglas FIFA. Los dos primeros de cada grupo y los 8 mejores terceros avanzan al bracket.</p>
+      <p style="font-size:.85rem;color:var(--ink2);line-height:1.6"><b>Fase Eliminatoria:</b> Completa el bracket desde Dieciseisavos hasta la Final. El marcador a 90 minutos es obligatorio. Si predices empate, elige quién avanza.</p>
+    </div>
+
+    <div>
+      <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.75rem">🏆 Sistema de puntos</div>
+      <p style="font-weight:700;font-size:.82rem;color:var(--ink);margin-bottom:.4rem">Fase de Grupos</p>
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem;margin-bottom:.75rem">
+        <thead><tr style="background:var(--bg)"><th style="padding:6px 8px;text-align:left;font-size:.72rem;color:var(--ink3)">Condición</th><th style="padding:6px 8px;text-align:right;font-size:.72rem;color:var(--ink3)">Puntos</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Aciertas el resultado (G/E/P)</td><td style="padding:6px 8px;text-align:right;font-weight:800;color:var(--green);border-bottom:1px solid var(--border)">+1</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Bonus marcador exacto</td><td style="padding:6px 8px;text-align:right;font-weight:800;color:#9a6500;border-bottom:1px solid var(--border)">+2</td></tr>
+          <tr style="background:var(--bg)"><td style="padding:6px 8px;color:var(--ink3)">Máximo por partido</td><td style="padding:6px 8px;text-align:right;font-weight:800;color:var(--ink3)">+3</td></tr>
+        </tbody>
+      </table>
+      <p style="font-weight:700;font-size:.82rem;color:var(--ink);margin-bottom:.4rem">Fase Eliminatoria</p>
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem">
+        <thead><tr style="background:var(--bg)"><th style="padding:6px 8px;text-align:left;font-size:.72rem;color:var(--ink3)">Ronda</th><th style="padding:6px 8px;text-align:right;font-size:.72rem;color:var(--ink3)">Ganador</th><th style="padding:6px 8px;text-align:right;font-size:.72rem;color:var(--ink3)">+ Exacto</th><th style="padding:6px 8px;text-align:right;font-size:.72rem;color:var(--ink3)">Máx</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Dieciseisavos</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+2</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+4</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+6</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Octavos</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+3</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+6</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+9</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Cuartos</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+5</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+10</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+15</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Semis</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+7</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+14</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+21</td></tr>
+          <tr style="background:var(--bg)"><td style="padding:6px 8px">Final</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green)">+10</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500">+20</td><td style="padding:6px 8px;text-align:right;font-weight:800">+30</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.75rem;color:var(--ink3);margin-top:.5rem">⚠️ En eliminatoria, si no aciertas al que avanza no ganas ningún punto.</p>
+    </div>
+
+    <div>
+      <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.75rem">💰 Premios</div>
+      <table style="width:100%;border-collapse:collapse;font-size:.82rem">
+        <thead><tr style="background:var(--bg)"><th style="padding:6px 8px;text-align:left;font-size:.72rem;color:var(--ink3)">Posición</th><th style="padding:6px 8px;text-align:right;font-size:.72rem;color:var(--ink3)">%</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">🥇 1er lugar</td><td style="padding:6px 8px;text-align:right;font-weight:800;color:var(--green);border-bottom:1px solid var(--border)">40%</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">🥈 2do lugar</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">25%</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">🥉 3er lugar</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">15%</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">🏅 4to lugar</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">10%</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">🏅 5to lugar</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">5%</td></tr>
+          <tr style="background:var(--bg)"><td style="padding:6px 8px">🪦 Último lugar</td><td style="padding:6px 8px;text-align:right;font-weight:800;color:var(--red)">5%</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:.75rem;color:var(--ink3);margin-top:.5rem">Los montos crecen conforme se registran más participantes ($275 MXN por jugador va a la bolsa).</p>
+    </div>
+
+    <div>
+      <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.5rem">🔗 Referidos</div>
+      <div style="background:var(--gld-bg);border:1.5px solid var(--gld);border-radius:10px;padding:.75rem 1rem;font-size:.82rem;color:var(--ink2);line-height:1.5">
+        🎁 <b>Bono por referido campeón: $500 MXN.</b> Si alguien que registraste con tu código termina en 1er lugar, recibes $500 MXN extra — fuera de la bolsa.
+      </div>
+    </div>
+
+    <button onclick="closePublicRules()" style="width:100%;padding:12px;background:var(--grad-tri);color:#fff;border:none;border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer">
+      Entendido ✓
+    </button>
+  `;
+  modal.style.display = 'block';
+  modal.scrollTop = 0;
+}
+
+function closePublicRules(){
+  document.getElementById('public-rules-modal').style.display = 'none';
+}
 function showWelcomeModal(){}
 function closeWelcomeModal(){}
 
