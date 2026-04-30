@@ -2907,8 +2907,6 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('referidos')">Mis Referidos</button>
     <div class="drawer-item-sep"></div>
-    <button class="drawer-item" onclick="goDrawer('notificaciones')">Notificaciones</button>
-    <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('countdown')">Cuenta Regresiva</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="closeDrawer();openOnboard()">Ver tutorial 🎓</button>
@@ -3262,10 +3260,6 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   </div>
 
   <!-- NOTIFICACIONES -->
-  <div class="page" id="page-notificaciones">
-    <div class="ph"><div class="ph-left"><div class="ph-h">Notificaciones</div><div class="ph-s">Elige qué avisos quieres recibir</div></div></div>
-    <div id="notif-wrap"></div>
-  </div>
   <!-- COUNTDOWN -->
   <div class="page" id="page-countdown">
     <div class="ph">
@@ -8919,7 +8913,6 @@ function _doNavigate(name){
   if(name==='miquiniela')     { renderMiQuiniela(); setupMqSticky(); }
   if(name==='misgrupos')      renderMisGrupos();
   if(name==='referidos')      renderReferidos();
-  if(name==='notificaciones') renderNotificaciones();
   if(name==='countdown')      renderCountdown();
   if(name==='inicio')         renderInicio();
   if(name==='grupos')         { renderGroups(); setupGruposSticky(); }
@@ -9508,62 +9501,6 @@ function renderReferidos(){
   });
 }
 
-
-// ══════════════════════════════════════════════════════
-//  NOTIFICACIONES
-// ══════════════════════════════════════════════════════
-const NOTIF_KEYS={
-  results:   {label:'Nuevos resultados',    desc:'Cuando el admin registra marcadores de partidos'},
-  ranking:   {label:'Cambios en el ranking',desc:'Cuando alguien te supera o baja tu posición'},
-  referidos: {label:'Actividad de referidos',desc:'Cuando alguien usa tu código y se une a la quiniela'},
-  recordatorio:{label:'Recordatorio de picks',desc:'Cuando quedan menos de 24h para el inicio del torneo y tienes partidos sin predecir'},
-  ganador:   {label:'Bono referido',        desc:'Cuando tu referido entra al top 3 del ranking'},
-};
-
-function getNotifPrefs(){
-  return JSON.parse(localStorage.getItem('q26notif')||'{}');
-}
-function setNotifPref(key, val){
-  const p=getNotifPrefs();
-  p[key]=val;
-  localStorage.setItem('q26notif',JSON.stringify(p));
-  renderNotificaciones();
-}
-
-function renderNotificaciones(){
-  const wrap=document.getElementById('notif-wrap');
-  if(!wrap) return;
-  const prefs=getNotifPrefs();
-
-  let html=`<div style="max-width:600px">
-    <div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:10px;padding:12px 16px;font-size:.8rem;color:var(--b2);margin-bottom:1.25rem;line-height:1.6">
-      Las notificaciones son dentro de la app — aparecerán como avisos la próxima vez que abras Al Ángulo.
-    </div>
-    <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh)">`;
-
-  Object.entries(NOTIF_KEYS).forEach(([key,{label,desc}],i,arr)=>{
-    const on=prefs[key]!==false; // default ON
-    html+=`
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:16px 18px;${i<arr.length-1?'border-bottom:1px solid var(--border)':''}">
-        <div>
-          <div style="font-weight:700;font-size:.92rem;color:var(--ink);margin-bottom:3px">${label}</div>
-          <div style="font-size:.76rem;color:var(--ink3);line-height:1.5">${desc}</div>
-        </div>
-        <button onclick="setNotifPref('${key}',${!on})"
-          style="flex-shrink:0;width:48px;height:26px;border-radius:13px;border:none;cursor:pointer;
-          background:${on?'var(--grad-gb)':'var(--border2)'};transition:all .2s;position:relative;">
-          <span style="position:absolute;top:3px;${on?'right:3px':'left:3px'};width:20px;height:20px;
-            border-radius:50%;background:#fff;transition:all .2s;display:block;
-            box-shadow:0 1px 4px rgba(0,0,0,.2)"></span>
-        </button>
-      </div>`;
-  });
-
-  html+=`</div>
-  </div>`;
-
-  wrap.innerHTML=html;
-}
 
 // ══════════════════════════════════════════════════════
 //  INIT
