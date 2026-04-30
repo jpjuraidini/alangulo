@@ -1525,6 +1525,122 @@ body.dark .st-empty{background:#161a2e}
 .st-empty-t{font-weight:800;font-size:1rem;color:var(--ink)}
 .st-empty-s{font-size:.82rem;color:var(--ink3);max-width:340px;line-height:1.5}
 
+/* ── MIS GRUPOS v2 ── */
+
+/* Action buttons en hero */
+.mg-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;position:relative;z-index:1}
+.mg-action{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.82rem;color:var(--ink);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px;text-align:left}
+body.dark .mg-action{background:#161a2e}
+.mg-action:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(10,14,26,.07);border-color:var(--blue2)}
+.mg-action.primary{background:linear-gradient(135deg,#006838,#003087);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(0,48,135,.2)}
+.mg-action.primary:hover{box-shadow:0 8px 22px rgba(0,48,135,.3);border-color:transparent}
+.mg-action-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;background:var(--bg)}
+body.dark .mg-action:not(.primary) .mg-action-icon{background:#0c0f1c}
+.mg-action.primary .mg-action-icon{background:rgba(255,255,255,.18)}
+.mg-action-meta{flex:1;min-width:0}
+.mg-action-title{font-weight:800;font-size:.82rem;line-height:1.2}
+.mg-action-sub{font-size:.66rem;font-weight:700;opacity:.75;margin-top:2px;letter-spacing:.2px}
+@media (max-width:480px){
+  .mg-actions{grid-template-columns:1fr}
+}
+
+/* Section divider */
+.mg-section-h{font-size:.66rem;font-weight:800;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 10px;padding:0 4px;display:flex;align-items:center;gap:7px}
+.mg-section-h::before,.mg-section-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* Group card */
+.mg-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(10,14,26,.04);margin-bottom:12px;transition:transform .2s,box-shadow .2s}
+body.dark .mg-card{background:#161a2e}
+.mg-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(10,14,26,.08)}
+
+/* Reveal */
+.mg-card.mg-reveal{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--mg-i,0) * 80ms)}
+.mg-card.mg-reveal.show{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){
+  .mg-card.mg-reveal{opacity:1;transform:none;transition:none}
+}
+
+.mg-card-hd{padding:16px 18px;display:flex;align-items:center;gap:14px;color:#fff;position:relative;overflow:hidden}
+.mg-card-hd::before{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(255,255,255,.16),transparent 65%);pointer-events:none}
+.mg-glyph{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:800;font-size:1.25rem;color:#fff;letter-spacing:-.5px;position:relative;z-index:1}
+.mg-card-meta{flex:1;min-width:0;position:relative;z-index:1}
+.mg-card-name{font-weight:800;font-size:1.05rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
+.mg-card-info{font-size:.7rem;font-weight:700;opacity:.92;margin-top:3px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mg-role-pill{background:rgba(255,255,255,.22);padding:2px 8px;border-radius:5px;font-size:.55rem;letter-spacing:.5px;text-transform:uppercase;font-weight:800}
+.mg-code-pill{flex-shrink:0;background:rgba(255,255,255,.22);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;padding:7px 12px;cursor:pointer;transition:background .15s;text-align:center;position:relative;z-index:1;font-family:inherit;color:#fff}
+.mg-code-pill:hover{background:rgba(255,255,255,.35)}
+.mg-code-lbl{font-size:.55rem;font-weight:800;letter-spacing:1.3px;text-transform:uppercase;opacity:.85;margin-bottom:1px;line-height:1}
+.mg-code{font-weight:800;font-size:.92rem;letter-spacing:2px;line-height:1;font-family:'SF Mono','Menlo','Monaco',monospace}
+
+/* Ranking interno */
+.mg-rank{padding:6px 0}
+.mg-rank-row{display:grid;grid-template-columns:30px 1fr auto auto;align-items:center;gap:10px;padding:9px 16px;border-bottom:1px solid var(--border);transition:background .15s;cursor:pointer}
+.mg-rank-row:last-child{border-bottom:none}
+.mg-rank-row:hover{background:var(--bg)}
+body.dark .mg-rank-row:hover{background:#0c0f1c}
+.mg-rank-row.me{background:linear-gradient(90deg,rgba(0,196,106,.07),transparent 60%);position:relative}
+.mg-rank-row.me::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green);box-shadow:0 0 8px rgba(0,196,106,.5)}
+.mg-rank-pos{font-size:.92rem;text-align:center;font-weight:800;color:var(--ink3);font-variant-numeric:tabular-nums}
+.mg-rank-pos.medal{font-size:1.05rem}
+.mg-rank-name{font-weight:800;color:var(--ink);font-size:.82rem;line-height:1.2;display:flex;align-items:center;gap:6px}
+.mg-rank-row.me .mg-rank-name{color:var(--green)}
+.mg-pill-me{background:var(--green);color:#fff;font-size:.55rem;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:.5px;text-transform:uppercase}
+.mg-rank-global{font-size:.62rem;font-weight:600;color:var(--ink3);margin-top:1px}
+.mg-rank-pts{font-weight:800;font-size:.82rem;color:var(--ink);font-variant-numeric:tabular-nums;text-align:right;line-height:1.2}
+.mg-rank-pts span{font-size:.6rem;font-weight:700;color:var(--ink3);margin-left:2px}
+.mg-rank-x{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.72rem;padding:4px 6px;border-radius:5px;transition:all .15s;opacity:.5}
+.mg-rank-x:hover{background:rgba(192,0,26,.1);color:var(--r);opacity:1}
+
+/* Card footer */
+.mg-card-ft{padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:6px;justify-content:flex-end;background:var(--bg)}
+body.dark .mg-card-ft{background:#0c0f1c}
+.mg-btn{padding:7px 13px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;font-weight:800;cursor:pointer;border:1px solid;transition:all .15s;letter-spacing:.2px}
+.mg-btn-share{background:var(--b-bg);color:var(--blue2);border-color:rgba(61,135,255,.3)}
+.mg-btn-share:hover{background:rgba(61,135,255,.16)}
+.mg-btn-danger{background:var(--surface);color:var(--r);border-color:rgba(192,0,26,.3)}
+body.dark .mg-btn-danger{background:#161a2e}
+.mg-btn-danger:hover{background:rgba(192,0,26,.08)}
+
+/* Empty state */
+.mg-empty{padding:3rem 1.5rem;text-align:center;background:var(--surface);border:1px dashed var(--border);border-radius:18px;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+body.dark .mg-empty{background:#161a2e}
+.mg-empty-icon{font-size:2.6rem;line-height:1;margin-bottom:6px}
+.mg-empty-t{font-weight:800;font-size:1rem;color:var(--ink)}
+.mg-empty-s{font-size:.82rem;color:var(--ink3);max-width:380px;line-height:1.5}
+
+/* ── MODAL grupo (crear/unirse) ── */
+.grp-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem}
+.grp-modal-bg{position:absolute;inset:0;background:rgba(10,14,26,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.grp-modal-card{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:22px;max-width:380px;width:100%;box-shadow:0 24px 60px rgba(10,14,26,.25);animation:grpIn .25s cubic-bezier(.22,1,.36,1)}
+body.dark .grp-modal-card{background:#161a2e}
+@keyframes grpIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.grp-modal-close{position:absolute;top:12px;right:12px;background:var(--bg);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink3);font-size:.85rem;transition:all .15s}
+body.dark .grp-modal-close{background:#0c0f1c}
+.grp-modal-close:hover{color:var(--ink);transform:scale(1.05)}
+
+.grp-modal-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#fff;margin-bottom:12px;box-shadow:0 8px 20px rgba(0,48,135,.18)}
+.grp-modal-icon.create{background:linear-gradient(135deg,#006838,#003087)}
+.grp-modal-icon.join{background:linear-gradient(135deg,#003087,#3d87ff)}
+.grp-modal-h{font-weight:800;font-size:1.05rem;color:var(--ink);margin-bottom:4px;letter-spacing:-.2px}
+.grp-modal-s{font-size:.78rem;color:var(--ink3);margin-bottom:14px;line-height:1.5;font-weight:500}
+
+.grp-modal-input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:12px 14px;font-size:.92rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;color:var(--ink);outline:none;box-sizing:border-box;transition:border-color .15s,background .15s}
+body.dark .grp-modal-input{background:#0c0f1c}
+.grp-modal-input:focus{border-color:var(--blue2);background:var(--surface)}
+body.dark .grp-modal-input:focus{background:#1a1e34}
+.grp-modal-input.code{font-family:'SF Mono','Menlo','Monaco',monospace;letter-spacing:4px;text-align:center;font-size:1.1rem;text-transform:uppercase}
+
+.grp-modal-hint{font-size:.7rem;color:var(--ink3);margin-top:6px;line-height:1.4}
+
+.grp-modal-btns{display:flex;gap:8px;margin-top:14px}
+.grp-modal-btn{flex:1;padding:11px;border-radius:11px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;border:1.5px solid;transition:all .15s;letter-spacing:.2px}
+.grp-modal-btn.cancel{background:var(--surface);border-color:var(--border);color:var(--ink3)}
+body.dark .grp-modal-btn.cancel{background:#161a2e}
+.grp-modal-btn.cancel:hover{color:var(--ink);background:var(--bg)}
+.grp-modal-btn.go{background:linear-gradient(135deg,#006838,#003087);border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(0,48,135,.2)}
+.grp-modal-btn.go:hover{box-shadow:0 8px 22px rgba(0,48,135,.3)}
+.grp-modal-btn.go:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
+
 /* ADMIN */
 .adm-section{margin-bottom:2rem}
 .adm-title{font-weight:800;font-size:1rem;margin-bottom:.75rem;padding-bottom:6px;display:inline-block;letter-spacing:.3px;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border-bottom:2px solid transparent;border-image:var(--grad-tri) 1}
@@ -3248,8 +3364,36 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
 
   <!-- MIS REFERIDOS -->
   <div class="page" id="page-misgrupos">
-    <div class="ph">
-      <div class="ph-left"><div class="ph-h">Mis Grupos</div><div class="ph-s">Crea o únete a un grupo privado con amigos</div></div>
+    <div class="ph2 mg-page-hero">
+      <div class="ph2-sticky" id="mg-sticky">
+        <div class="ph2-sticky-t">Mis Grupos</div>
+        <div class="ph2-sticky-prog">
+          <span style="font-size:.74rem;font-weight:700;color:var(--ink3)" id="mg-sticky-stat">— grupos</span>
+        </div>
+      </div>
+      <div class="ph2-row">
+        <div class="ph2-l">
+          <div class="ph2-eyebrow"><span class="ph2-eyebrow-dot"></span><span id="mg-eyebrow-txt">Mis grupos</span></div>
+          <h1 class="ph2-h1">Mis Grupos</h1>
+          <p class="ph2-sub">Crea grupos privados con tus amigos o únete con un código. Compite en mini-rankings dentro del torneo principal.</p>
+        </div>
+      </div>
+      <div class="mg-actions" id="mg-actions">
+        <button class="mg-action primary" onclick="showCreateGroup()">
+          <div class="mg-action-icon">➕</div>
+          <div class="mg-action-meta">
+            <div class="mg-action-title">Crear grupo</div>
+            <div class="mg-action-sub">Invita a tu raza con un código</div>
+          </div>
+        </button>
+        <button class="mg-action" onclick="showJoinGroup()">
+          <div class="mg-action-icon">🔗</div>
+          <div class="mg-action-meta">
+            <div class="mg-action-title">Unirme a uno</div>
+            <div class="mg-action-sub">Con código de 6 letras</div>
+          </div>
+        </button>
+      </div>
     </div>
     <div id="misgrupos-wrap"></div>
   </div>
@@ -3350,6 +3494,15 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <div class="prof-card prof-card-wide" id="cmp-card">
     <button class="prof-close" onclick="closeCompare()" aria-label="Cerrar">✕</button>
     <div id="cmp-content"></div>
+  </div>
+</div>
+
+<!-- MODAL: Crear/Unirse a grupo -->
+<div id="grp-modal" class="grp-modal" style="display:none">
+  <div class="grp-modal-bg" onclick="closeGrpModal()"></div>
+  <div class="grp-modal-card" id="grp-modal-card">
+    <button class="grp-modal-close" onclick="closeGrpModal()" aria-label="Cerrar">✕</button>
+    <div id="grp-modal-content"></div>
   </div>
 </div>
 
@@ -4861,7 +5014,13 @@ function saveSc(){
   }, 50);
 }
 document.getElementById('modal').addEventListener('click',e=>{if(e.target===document.getElementById('modal'))closeM();});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    closeM();
+    const grpModal = document.getElementById('grp-modal');
+    if(grpModal && grpModal.style.display !== 'none') closeGrpModal();
+  }
+});
 document.getElementById('mhi').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('mai').focus();});
 document.getElementById('mai').addEventListener('keydown',e=>{if(e.key==='Enter')saveSc();});
 
@@ -8911,7 +9070,7 @@ function _doNavigate(name){
   if(name==='reglas')         { renderReglas(); setupRulesSticky(); }
   if(name==='chat')           { renderChat(); startWallPolling(); setupWallSticky(); }
   if(name==='miquiniela')     { renderMiQuiniela(); setupMqSticky(); }
-  if(name==='misgrupos')      renderMisGrupos();
+  if(name==='misgrupos')      { renderMisGrupos(); setupMisgruposSticky(); }
   if(name==='referidos')      renderReferidos();
   if(name==='countdown')      renderCountdown();
   if(name==='inicio')         renderInicio();
@@ -9057,6 +9216,25 @@ function setupStatsSticky(){
   };
   window.addEventListener('scroll', _statsScrollHandler, { passive: true });
   _statsScrollHandler();
+}
+
+let _misgruposScrollHandler = null;
+function setupMisgruposSticky(){
+  const hero = document.querySelector('#page-misgrupos .mg-page-hero');
+  const sticky = document.getElementById('mg-sticky');
+  if(!hero || !sticky) return;
+  if(_misgruposScrollHandler) window.removeEventListener('scroll', _misgruposScrollHandler);
+  _misgruposScrollHandler = ()=>{
+    if(localStorage.getItem('q26page') !== 'misgrupos'){
+      sticky.classList.remove('show');
+      return;
+    }
+    const rect = hero.getBoundingClientRect();
+    if(rect.bottom < 110) sticky.classList.add('show');
+    else sticky.classList.remove('show');
+  };
+  window.addEventListener('scroll', _misgruposScrollHandler, { passive: true });
+  _misgruposScrollHandler();
 }
 
 // ══════════════════════════════════════════════════════
@@ -9218,6 +9396,9 @@ let _myGroups=[];
 function renderMisGrupos(){
   const wrap=document.getElementById('misgrupos-wrap');
   if(!wrap) return;
+  const stickyEl = document.getElementById('mg-sticky-stat');
+  const eyebrowEl = document.getElementById('mg-eyebrow-txt');
+
   wrap.innerHTML=`<div class="sk-stack" style="padding:.5rem 0">
     ${Array.from({length:2},()=>`
     <div class="sk row" style="display:block;padding:14px">
@@ -9227,82 +9408,115 @@ function renderMisGrupos(){
       <div class="sk" style="width:80%;height:12px"></div>
     </div>`).join('')}
   </div>`;
+
   api('GET',`/api/groups/user/${CU.u}`).then(groups=>{
     _myGroups=groups;
-    let html=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem">
-      <button onclick="showCreateGroup()" style="padding:14px;background:var(--grad-tri);color:#fff;border:none;border-radius:var(--rad);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;box-shadow:var(--sh)">
-        ➕ Crear grupo
-      </button>
-      <button onclick="showJoinGroup()" style="padding:14px;background:var(--surface);color:var(--ink);border:1.5px solid var(--border);border-radius:var(--rad);font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer;box-shadow:var(--sh)">
-        🔗 Unirse al grupo
-      </button>
-    </div>`;
+
+    // Stats para hero
+    const totalMembers = groups.reduce((s,g)=>s+(parseInt(g.member_count)||0), 0);
+    if(eyebrowEl){
+      if(groups.length){
+        eyebrowEl.textContent = `Mis grupos · ${groups.length} grupo${groups.length!==1?'s':''} · ${totalMembers} miembro${totalMembers!==1?'s':''}`;
+      } else {
+        eyebrowEl.textContent = `Mis grupos · sin grupos aún`;
+      }
+    }
+    if(stickyEl) stickyEl.textContent = `${groups.length} grupo${groups.length!==1?'s':''}`;
 
     if(!groups.length){
-      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:2.5rem;text-align:center;box-shadow:var(--sh)">
-        <div style="font-size:2rem;margin-bottom:.75rem">👥</div>
-        <div style="font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.5rem">Aún no estás en ningún grupo</div>
-        <div style="font-size:.82rem;color:var(--ink3);line-height:1.6">Crea un grupo e invita a tus amigos, o únete con un código que alguien te haya compartido.</div>
+      wrap.innerHTML = `<div class="mg-empty">
+        <div class="mg-empty-icon">👥</div>
+        <div class="mg-empty-t">Aún no estás en ningún grupo</div>
+        <div class="mg-empty-s">Crea un grupo e invita a tus amigos, o únete con un código que alguien te haya compartido.</div>
       </div>`;
-    } else {
-      // Generate unique gradient per group from name hash
-      const GROUP_GRADS=[
-        'linear-gradient(135deg,#006838,#003087)',
-        'linear-gradient(135deg,#003087,#c0001a)',
-        'linear-gradient(135deg,#c0001a,#9a6500)',
-        'linear-gradient(135deg,#006838,#c0001a)',
-        'linear-gradient(135deg,#0052cc,#8800cc)',
-        'linear-gradient(135deg,#cc6600,#c0001a)',
-        'linear-gradient(135deg,#006838,#009650)',
-        'linear-gradient(135deg,#003087,#0052cc)',
-      ];
-      function groupGrad(name){ let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;return GROUP_GRADS[h%GROUP_GRADS.length]; }
-
-      html+=`<div style="display:flex;flex-direction:column;gap:1rem">`;
-      groups.forEach(g=>{
-        const isOwner=g.owner===CU.u;
-        const grad=groupGrad(g.name);
-        html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh);transition:transform .2s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform=''">
-          <div style="background:${grad};padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
-            <div style="min-width:0">
-              <div style="font-weight:800;font-size:1.05rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${g.name}</div>
-              <div style="font-size:.7rem;color:rgba(255,255,255,.8);margin-top:3px;display:flex;align-items:center;gap:8px">
-                <span>👥 ${g.member_count} miembro${g.member_count!=1?'s':''}</span>
-                <span>${isOwner?'👑 Creador':'🎮 Miembro'}</span>
-              </div>
-            </div>
-            <div onclick="copyGroupCode('${g.code}')" title="Clic para copiar código"
-              style="flex-shrink:0;background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border:1.5px solid rgba(255,255,255,.3);border-radius:10px;padding:8px 14px;cursor:pointer;transition:background .2s;text-align:center"
-              onmouseenter="this.style.background='rgba(255,255,255,.3)'" onmouseleave="this.style.background='rgba(255,255,255,.2)'">
-              <div style="font-size:.55rem;color:rgba(255,255,255,.7);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px">Código</div>
-              <div style="font-weight:800;font-size:1rem;color:#fff;letter-spacing:3px">${g.code}</div>
-            </div>
-          </div>
-          <div id="group-ranking-${g.id}" style="padding:.5rem">
-            <div class="sk-stack" id="grp-rank-${g.id}" style="padding:.5rem 0">
-              ${Array.from({length:3},(_,i)=>`<div class="sk row" style="background:transparent;border-color:rgba(255,255,255,.15)">
-                <span class="sk circle" style="width:22px;height:22px;flex-shrink:0;background:linear-gradient(90deg,rgba(255,255,255,.15) 25%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.15) 75%);background-size:200% 100%"></span>
-                <span class="sk" style="height:11px;flex:1;background:linear-gradient(90deg,rgba(255,255,255,.15) 25%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.15) 75%);background-size:200% 100%"></span>
-              </div>`).join('')}
-            </div>
-          </div>
-          <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:.5rem;justify-content:flex-end">
-            <button onclick="copyGroupCode('${g.code}')" style="padding:7px 14px;background:var(--b-bg);color:var(--blue2);border:1px solid var(--b2);border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:opacity .15s" onmouseenter="this.style.opacity='.8'" onmouseleave="this.style.opacity='1'">📋 Compartir código</button>
-            ${isOwner
-              ? `<button onclick="deleteGroup(${g.id},'${g.name}')" style="padding:7px 14px;background:var(--r-bg);color:var(--red);border:1px solid var(--red);border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">🗑 Eliminar</button>`
-              : `<button onclick="leaveGroup(${g.id},'${g.name}')" style="padding:7px 14px;background:var(--r-bg);color:var(--red);border:1px solid var(--red);border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">Salir del grupo</button>`
-            }
-          </div>
-        </div>`;
-      });
-      html+=`</div>`;
+      return;
     }
-    wrap.innerHTML=html;
-    // Load rankings for each group
-    groups.forEach(g=>loadGroupRanking(g.id));
+
+    // Gradient único por grupo
+    const GROUP_GRADS = [
+      'linear-gradient(135deg,#006838,#003087)',
+      'linear-gradient(135deg,#003087,#c0001a)',
+      'linear-gradient(135deg,#c0001a,#9a6500)',
+      'linear-gradient(135deg,#006838,#c0001a)',
+      'linear-gradient(135deg,#0052cc,#8800cc)',
+      'linear-gradient(135deg,#cc6600,#c0001a)',
+      'linear-gradient(135deg,#006838,#009650)',
+      'linear-gradient(135deg,#003087,#0052cc)',
+    ];
+    function groupGrad(name){ let h=0;for(let i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))>>>0;return GROUP_GRADS[h%GROUP_GRADS.length]; }
+    function groupGlyph(name){ return (name||'?').trim().charAt(0).toUpperCase() || '?'; }
+
+    let html = `<div class="mg-section-h">Tus grupos</div>`;
+    groups.forEach((g, idx)=>{
+      const isOwner = g.owner===CU.u;
+      const grad = groupGrad(g.name);
+      const glyph = groupGlyph(g.name);
+      const safeCode = g.code.replace(/'/g, "\\'");
+      const safeName = g.name.replace(/'/g, "\\'");
+      html += `<div class="mg-card mg-reveal" style="--mg-i:${Math.min(idx,8)}">
+        <div class="mg-card-hd" style="background:${grad}">
+          <div class="mg-glyph">${escHtml(glyph)}</div>
+          <div class="mg-card-meta">
+            <div class="mg-card-name">${escHtml(g.name)}</div>
+            <div class="mg-card-info">
+              <span>👥 ${g.member_count} miembro${g.member_count!=1?'s':''}</span>
+              <span class="mg-role-pill">${isOwner?'👑 Creador':'🎮 Miembro'}</span>
+            </div>
+          </div>
+          <button class="mg-code-pill" onclick="copyGroupCode('${safeCode}')" title="Clic para copiar código">
+            <div class="mg-code-lbl">Código</div>
+            <div class="mg-code">${escHtml(g.code)}</div>
+          </button>
+        </div>
+        <div id="group-ranking-${g.id}" class="mg-rank">
+          <div class="sk-stack" style="padding:.5rem">
+            ${Array.from({length:3},()=>`<div class="sk" style="height:32px;margin-bottom:4px"></div>`).join('')}
+          </div>
+        </div>
+        <div class="mg-card-ft">
+          <button class="mg-btn mg-btn-share" onclick="copyGroupCode('${safeCode}')">📋 Compartir código</button>
+          ${isOwner
+            ? `<button class="mg-btn mg-btn-danger" onclick="deleteGroup(${g.id},'${safeName}')">🗑 Eliminar</button>`
+            : `<button class="mg-btn mg-btn-danger" onclick="leaveGroup(${g.id},'${safeName}')">Salir</button>`
+          }
+        </div>
+      </div>`;
+    });
+
+    wrap.innerHTML = html;
+
+    // Cargar rankings
+    groups.forEach(g => loadGroupRanking(g.id));
+
+    // Reveal on-scroll
+    observeMisGruposCards();
+
   }).catch(()=>{
     wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Error cargando grupos.</div>`;
+  });
+}
+
+let _mgObserver = null;
+function observeMisGruposCards(){
+  if(_mgObserver) _mgObserver.disconnect();
+  const cards = document.querySelectorAll('#misgrupos-wrap .mg-card.mg-reveal');
+  if(!cards.length) return;
+  if(!('IntersectionObserver' in window)){
+    cards.forEach(c=>c.classList.add('show'));
+    return;
+  }
+  _mgObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        _mgObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -3% 0px' });
+  cards.forEach(c=>{
+    const rect = c.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.95) c.classList.add('show');
+    else _mgObserver.observe(c);
   });
 }
 
@@ -9310,20 +9524,17 @@ function loadGroupRanking(groupId){
   const el=document.getElementById(`group-ranking-${groupId}`);
   if(!el) return;
 
-  // Fetch group ranking AND global ranking in parallel
   Promise.all([
     api('GET',`/api/groups/${groupId}/ranking`),
     api('GET','/api/ranking')
   ]).then(([data, globalRanking])=>{
     const {members, picks:gPicks}=data;
 
-    // Build global position map: { username -> { pos, total } }
     const globalMap={};
     globalRanking.forEach((r,i)=>{ globalMap[r.username]={pos:i+1, total:globalRanking.length}; });
     const totalPlayers=globalRanking.length;
 
-    // Calculate group scores
-    const board=members
+    const board = members
       .filter(u=>!isAdminUser(u))
       .map(u=>{
         const saved=picks[u];
@@ -9334,57 +9545,155 @@ function loadGroupRanking(groupId){
       })
       .sort((a,b)=>b.total-a.total);
 
-    const isOwner=_myGroups.find(g=>g.id===groupId)?.owner===CU.u;
-    if(!board.length){el.innerHTML=`<div style="padding:.75rem;font-size:.8rem;color:var(--ink3)">Sin miembros aún.</div>`;return;}
+    const isOwner = _myGroups.find(g=>g.id===groupId)?.owner===CU.u;
+    if(!board.length){
+      el.innerHTML=`<div style="padding:14px;font-size:.78rem;color:var(--ink3);text-align:center">Sin miembros aún.</div>`;
+      return;
+    }
+
     const medals=['🥇','🥈','🥉'];
-    el.innerHTML=`<table style="width:100%;border-collapse:collapse">
-      ${board.map((p,i)=>{
-        const gp=globalMap[p.name];
-        const globalLine=gp
-          ? `<div style="font-size:.68rem;color:var(--ink3);font-weight:600;margin-top:2px">#${gp.pos} de ${totalPlayers} en general</div>`
-          : '';
-        return `
-        <tr style="${p.isMe?'background:var(--g-bg)':i%2===0?'background:var(--bg)':''}">
-          <td style="padding:8px 12px;font-size:.9rem;width:32px;vertical-align:top;padding-top:10px">${medals[i]||`${i+1}`}</td>
-          <td style="padding:8px 4px;vertical-align:top">
-            <div style="font-weight:${p.isMe?'800':'600'};font-size:.85rem;color:${p.isMe?'var(--green)':'var(--ink)'}">
-              ${p.name}${p.isMe?' <span style="font-size:.6rem;background:var(--green);color:#fff;padding:1px 5px;border-radius:4px">tú</span>':''}
-            </div>
-            ${globalLine}
-          </td>
-          <td style="padding:8px 12px;text-align:right;font-weight:800;font-size:.88rem;color:var(--ink);vertical-align:top;padding-top:10px">${p.total} <span style="font-size:.65rem;opacity:.6">pts</span></td>
-          <td style="padding:8px 8px;width:28px;vertical-align:top;padding-top:10px">${isOwner&&!p.isMe?`<button onclick="removeMemberFromGroup(${groupId},'${p.name}')" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 5px;border-radius:4px" title="Eliminar del grupo">✕</button>`:''}
-          </td>
-        </tr>`;
-      }).join('')}
-    </table>`;
+    el.innerHTML = board.map((p,i)=>{
+      const gp=globalMap[p.name];
+      const globalLine = gp ? `<div class="mg-rank-global">#${gp.pos} de ${totalPlayers} en general</div>` : '';
+      const posMarkup = i<3
+        ? `<div class="mg-rank-pos medal">${medals[i]}</div>`
+        : `<div class="mg-rank-pos">${i+1}</div>`;
+      const safeName = p.name.replace(/'/g, "\\'");
+      const xBtn = (isOwner && !p.isMe)
+        ? `<button class="mg-rank-x" onclick="event.stopPropagation();removeMemberFromGroup(${groupId},'${safeName}')" title="Eliminar del grupo">✕</button>`
+        : `<div></div>`;
+      return `<div class="mg-rank-row${p.isMe?' me':''}" onclick="openProfile('${safeName}')">
+        ${posMarkup}
+        <div>
+          <div class="mg-rank-name">${escHtml(p.name)}${p.isMe?' <span class="mg-pill-me">tú</span>':''}</div>
+          ${globalLine}
+        </div>
+        <div class="mg-rank-pts">${p.total}<span>pts</span></div>
+        ${xBtn}
+      </div>`;
+    }).join('');
   }).catch(()=>{
-    if(el) el.innerHTML=`<div style="padding:.75rem;font-size:.8rem;color:var(--ink3)">Error cargando ranking.</div>`;
+    if(el) el.innerHTML=`<div style="padding:14px;font-size:.78rem;color:var(--ink3);text-align:center">Error cargando ranking.</div>`;
   });
 }
 
+// ── MODAL grupo (crear/unirse) ──
+function openGrpModal(html){
+  const m = document.getElementById('grp-modal');
+  const c = document.getElementById('grp-modal-content');
+  if(!m || !c) return;
+  c.innerHTML = html;
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  // Focus en el primer input automáticamente
+  setTimeout(()=>{
+    const inp = c.querySelector('input');
+    if(inp) inp.focus();
+  }, 50);
+}
+
+function closeGrpModal(){
+  const m = document.getElementById('grp-modal');
+  if(!m) return;
+  m.style.display = 'none';
+  document.body.style.overflow = '';
+  const c = document.getElementById('grp-modal-content');
+  if(c) c.innerHTML = '';
+}
+
 function showCreateGroup(){
-  const name=prompt('Nombre del grupo:','');
-  if(!name||!name.trim()) return;
-  api('POST','/api/groups',{name:name.trim(),username:CU.u})
+  openGrpModal(`
+    <div class="grp-modal-icon create">➕</div>
+    <div class="grp-modal-h">Crear grupo nuevo</div>
+    <div class="grp-modal-s">Dale un nombre a tu grupo y compártelo con tu raza usando el código que generaremos.</div>
+    <input id="grp-create-input" class="grp-modal-input" type="text" maxlength="40" placeholder="Ej. Los Compas del Mundial" autocomplete="off">
+    <div class="grp-modal-hint">Hasta 40 caracteres</div>
+    <div class="grp-modal-btns">
+      <button class="grp-modal-btn cancel" onclick="closeGrpModal()">Cancelar</button>
+      <button class="grp-modal-btn go" id="grp-create-btn" onclick="submitCreateGroup()">Crear</button>
+    </div>
+  `);
+  // Enter para enviar
+  setTimeout(()=>{
+    const inp = document.getElementById('grp-create-input');
+    if(inp){
+      inp.addEventListener('keydown', e=>{
+        if(e.key==='Enter') submitCreateGroup();
+      });
+    }
+  }, 60);
+}
+
+function submitCreateGroup(){
+  const inp = document.getElementById('grp-create-input');
+  const btn = document.getElementById('grp-create-btn');
+  if(!inp) return;
+  const name = inp.value.trim();
+  if(!name){
+    inp.style.borderColor = 'var(--r)';
+    inp.focus();
+    return;
+  }
+  if(btn){ btn.disabled = true; btn.textContent = 'Creando...'; }
+  api('POST','/api/groups',{name, username:CU.u})
     .then(g=>{
+      closeGrpModal();
       toast(`Grupo "${g.name}" creado · Código: ${g.code}`);
-      // Copy code to clipboard
       navigator.clipboard?.writeText(g.code).catch(()=>{});
       renderMisGrupos();
     })
-    .catch(e=>toast('Error: '+e.message));
+    .catch(e=>{
+      toast('Error: '+e.message);
+      if(btn){ btn.disabled = false; btn.textContent = 'Crear'; }
+    });
 }
 
 function showJoinGroup(){
-  const code=prompt('Ingresa el código del grupo (6 letras):','');
-  if(!code||!code.trim()) return;
-  api('POST','/api/groups/join',{code:code.trim().toUpperCase(),username:CU.u})
+  openGrpModal(`
+    <div class="grp-modal-icon join">🔗</div>
+    <div class="grp-modal-h">Unirme a un grupo</div>
+    <div class="grp-modal-s">Pídele a quien creó el grupo el código de 6 letras y pégalo aquí.</div>
+    <input id="grp-join-input" class="grp-modal-input code" type="text" maxlength="6" placeholder="ABC123" autocomplete="off" autocapitalize="characters">
+    <div class="grp-modal-hint">6 caracteres · letras y números</div>
+    <div class="grp-modal-btns">
+      <button class="grp-modal-btn cancel" onclick="closeGrpModal()">Cancelar</button>
+      <button class="grp-modal-btn go" id="grp-join-btn" onclick="submitJoinGroup()">Unirme</button>
+    </div>
+  `);
+  setTimeout(()=>{
+    const inp = document.getElementById('grp-join-input');
+    if(inp){
+      inp.addEventListener('input', e=>{
+        e.target.value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      });
+      inp.addEventListener('keydown', e=>{
+        if(e.key==='Enter') submitJoinGroup();
+      });
+    }
+  }, 60);
+}
+
+function submitJoinGroup(){
+  const inp = document.getElementById('grp-join-input');
+  const btn = document.getElementById('grp-join-btn');
+  if(!inp) return;
+  const code = inp.value.trim().toUpperCase();
+  if(!code){
+    inp.style.borderColor = 'var(--r)';
+    inp.focus();
+    return;
+  }
+  if(btn){ btn.disabled = true; btn.textContent = 'Buscando...'; }
+  api('POST','/api/groups/join',{code, username:CU.u})
     .then(g=>{
+      closeGrpModal();
       toast(`¡Te uniste a "${g.name}"! 🎉`);
       renderMisGrupos();
     })
-    .catch(e=>toast('Error: '+e.message));
+    .catch(e=>{
+      toast('Error: '+e.message);
+      if(btn){ btn.disabled = false; btn.textContent = 'Unirme'; }
+    });
 }
 
 function copyGroupCode(code){
