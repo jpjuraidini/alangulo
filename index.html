@@ -85,6 +85,15 @@ body{
 /* GRADIENT TEXT UTILITY */
 .grad-text{background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 
+/* SKELETON LOADING — placeholders animados que reemplazan los "Cargando..." */
+@keyframes skShimmer{from{background-position:-200% 0}to{background-position:200% 0}}
+.sk{display:block;border-radius:8px;background:linear-gradient(90deg,var(--bg) 25%,var(--border) 50%,var(--bg) 75%);background-size:200% 100%;animation:skShimmer 1.4s linear infinite;height:14px;width:100%;margin:0}
+body.dark .sk{background:linear-gradient(90deg,#13182a 25%,#1f2540 50%,#13182a 75%);background-size:200% 100%}
+.sk.circle{border-radius:50%}
+.sk.row{display:flex;gap:10px;align-items:center;background:none;animation:none;height:auto;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background-color:var(--surface);margin-bottom:8px}
+.sk.row .sk{margin:0}
+.sk-stack{display:flex;flex-direction:column;gap:8px}
+
 /* NAV */
 .nav{
   height:62px;
@@ -102,6 +111,31 @@ body{
 .ntab:hover{color:var(--ink);background:var(--border)}
 .ntab.on{background:var(--grad-tri);color:#fff;box-shadow:0 3px 12px rgba(0,104,56,.3);transform:translateY(-1px)}
 .nav-user{font-size:.8rem;color:var(--ink3);display:flex;align-items:center;gap:8px}
+
+/* Notificaciones — bell button */
+.bell-btn{position:relative;background:transparent;border:none;width:36px;height:36px;border-radius:10px;cursor:pointer;color:var(--ink2);display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;padding:0;font-family:inherit}
+.bell-btn:hover{background:var(--bg);color:var(--ink)}
+.bell-btn.has-new svg{animation:bellRing 2s ease-in-out 2}
+@keyframes bellRing{0%,100%{transform:rotate(0)}10%,30%,50%{transform:rotate(-12deg)}20%,40%,60%{transform:rotate(12deg)}80%{transform:rotate(0)}}
+.bell-badge{position:absolute;top:3px;right:3px;background:var(--r);color:#fff;font-size:.55rem;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--surface);line-height:1}
+body.dark .bell-badge{border-color:var(--bg)}
+
+.bell-panel{position:fixed;top:60px;right:14px;width:340px;max-width:calc(100vw - 28px);max-height:60vh;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:0 24px 60px rgba(10,14,26,.18);z-index:200;overflow:hidden;display:flex;flex-direction:column;animation:bellIn .25s cubic-bezier(.22,1,.36,1) both}
+@keyframes bellIn{from{opacity:0;transform:translateY(-8px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+.bell-panel-h{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;font-weight:800;font-size:.95rem;color:var(--ink);border-bottom:1px solid var(--border)}
+.bell-panel-clear{background:none;border:none;color:var(--blue2);font-size:.74rem;font-weight:700;cursor:pointer;font-family:inherit;padding:4px 8px;border-radius:6px}
+.bell-panel-clear:hover{background:var(--bg)}
+.bell-panel-body{flex:1;overflow-y:auto;padding:6px}
+.bell-empty{padding:2.5rem 1rem;text-align:center;color:var(--ink3);font-size:.82rem}
+.bell-item{display:flex;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;transition:background .15s;align-items:flex-start}
+.bell-item:hover{background:var(--bg)}
+.bell-item.unread{background:linear-gradient(90deg,rgba(0,82,204,.06),transparent)}
+.bell-item.unread::before{content:"";display:block;width:7px;height:7px;border-radius:50%;background:var(--blue2);margin:7px 0 0;flex-shrink:0}
+.bell-item.read::before{content:"";display:block;width:7px;flex-shrink:0}
+.bell-icon{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.bell-text{flex:1;min-width:0;font-size:.82rem;line-height:1.45;color:var(--ink2)}
+.bell-text strong{color:var(--ink);font-weight:800}
+.bell-time{font-size:.66rem;color:var(--ink3);font-weight:600;margin-top:3px}
 .nav-user b{color:var(--ink);font-weight:700}
 .nav-out{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.72rem;text-decoration:underline}
 
@@ -681,6 +715,21 @@ body.dark .lp-trail{mix-blend-mode:screen;opacity:.7}
   box-shadow:0 6px 20px rgba(0,82,204,.18);
   transform:translateY(-2px);
 }
+
+/* Bracket bloqueado — espera a que se conozcan los equipos */
+.br-m.br-locked{
+  opacity:.55;
+  cursor:not-allowed;
+  background:repeating-linear-gradient(45deg,var(--surface) 0px,var(--surface) 8px,var(--bg) 8px,var(--bg) 16px);
+}
+.br-m.br-locked::before{filter:saturate(0)}
+.br-m.br-locked:hover{
+  border-color:var(--border);
+  box-shadow:0 2px 8px rgba(10,14,26,.08);
+  transform:none;
+}
+.br-m.br-locked .br-t{filter:grayscale(.6)}
+.br-lock-icon{display:block;font-size:.65rem;margin-top:4px;writing-mode:horizontal-tb;text-orientation:upright;line-height:1}
 
 .br-mid{
   writing-mode:vertical-lr;
@@ -2082,9 +2131,27 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       <button class="ntab"     onclick="go('ranking')"    data-p="ranking">Ranking</button>
     </div>
     <div class="nav-user">
+      <button class="bell-btn" onclick="toggleBell(event)" aria-label="Notificaciones">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/>
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+        </svg>
+        <span class="bell-badge" id="bell-badge" style="display:none">0</span>
+      </button>
       Hola, <b id="nav-u"></b>
     </div>
   </nav>
+
+  <!-- Dropdown notificaciones -->
+  <div id="bell-panel" class="bell-panel" style="display:none">
+    <div class="bell-panel-h">
+      <span>Notificaciones</span>
+      <button class="bell-panel-clear" onclick="markAllNotifsRead()">Marcar leídas</button>
+    </div>
+    <div class="bell-panel-body" id="bell-list">
+      <div class="bell-empty">Sin notificaciones nuevas</div>
+    </div>
+  </div>
 
   <!-- GRUPOS -->
   <div class="page on" id="page-grupos">
@@ -2982,6 +3049,11 @@ function logout(){
   localStorage.removeItem('q26u');
   picks={};results={};refs={};dynUsers=[];
   closeDrawer();
+  // Cerrar panel de notifs y detener loop
+  const bp = document.getElementById('bell-panel');
+  if(bp) bp.style.display = 'none';
+  stopNotifLoop();
+  _notifs = [];
   document.querySelectorAll('.admin-only').forEach(e=>e.style.display='none');
   document.getElementById('app').style.display='none';
   const authEl=document.getElementById('auth');
@@ -2995,6 +3067,182 @@ function logout(){
   // Re-iniciar countdown del landing y observers
   initLanding();
 }
+
+// ══════════════════════════════════════════════════════
+//  NOTIFICACIONES IN-APP — derivadas del muro y partidos
+// ══════════════════════════════════════════════════════
+let _notifs = [];        // [{id, icon, text, time, read, target}]
+let _notifTimer = null;
+let _notifSeenKey = ()=> CU ? `q26_notifs_seen_${CU.u}` : null;
+
+function getSeenIds(){
+  const k = _notifSeenKey();
+  if(!k) return new Set();
+  try { return new Set(JSON.parse(localStorage.getItem(k) || '[]')); } catch(_){ return new Set(); }
+}
+function saveSeenIds(set){
+  const k = _notifSeenKey();
+  if(!k) return;
+  try { localStorage.setItem(k, JSON.stringify([...set])); } catch(_){}
+}
+
+function buildNotifications(){
+  if(!CU) return [];
+  const out = [];
+  const me = CU.u;
+
+  // 1) Reacciones a mis posts del muro
+  if(Array.isArray(_wallPosts)){
+    _wallPosts.forEach(p=>{
+      if(p.username !== me) return;
+      const reacts = p.reactions || {};
+      Object.entries(reacts).forEach(([emoji, data])=>{
+        const users = data?.users || [];
+        users.forEach(u=>{
+          if(u === me) return;
+          out.push({
+            id: `react:${p.id}:${emoji}:${u}`,
+            icon: emoji,
+            iconBg: '#fce8ea',
+            text: `<strong>${escHtml(u)}</strong> reaccionó con ${emoji} a tu publicación`,
+            time: p.created_at || new Date().toISOString(),
+            target: 'muro'
+          });
+        });
+      });
+    });
+  }
+
+  // 2) Posts recientes del muro (últimos 4) — solo si no son míos
+  if(Array.isArray(_wallPosts)){
+    const recent = _wallPosts
+      .filter(p=>p.username !== me)
+      .slice(0, 4);
+    recent.forEach(p=>{
+      out.push({
+        id: `newpost:${p.id}`,
+        icon: '💬',
+        iconBg: '#e0eaff',
+        text: `<strong>${escHtml(p.username)}</strong> publicó algo en el muro`,
+        time: p.created_at || new Date().toISOString(),
+        target: 'muro'
+      });
+    });
+  }
+
+  // Ordenar por fecha desc, marcar leídos vs no leídos
+  out.sort((a,b)=>{
+    const ta = new Date(a.time).getTime() || 0;
+    const tb = new Date(b.time).getTime() || 0;
+    return tb - ta;
+  });
+  const seen = getSeenIds();
+  out.forEach(n => n.read = seen.has(n.id));
+
+  return out.slice(0, 20); // máximo 20
+}
+
+function refreshNotifications(){
+  if(!CU) return;
+  _notifs = buildNotifications();
+  renderNotifBadge();
+  // Si el panel está abierto, refresca su contenido
+  const panel = document.getElementById('bell-panel');
+  if(panel && panel.style.display !== 'none') renderNotifPanel();
+}
+
+function renderNotifBadge(){
+  const badge = document.getElementById('bell-badge');
+  const btn = document.querySelector('.bell-btn');
+  if(!badge || !btn) return;
+  const unread = _notifs.filter(n=>!n.read).length;
+  if(unread > 0){
+    badge.textContent = unread > 9 ? '9+' : String(unread);
+    badge.style.display = 'flex';
+    btn.classList.add('has-new');
+  } else {
+    badge.style.display = 'none';
+    btn.classList.remove('has-new');
+  }
+}
+
+function renderNotifPanel(){
+  const list = document.getElementById('bell-list');
+  if(!list) return;
+  if(!_notifs.length){
+    list.innerHTML = '<div class="bell-empty">Sin notificaciones nuevas</div>';
+    return;
+  }
+  list.innerHTML = _notifs.map(n=>{
+    const ago = n.time ? notifTimeAgo(new Date(n.time)) : '';
+    return `<div class="bell-item ${n.read?'read':'unread'}" onclick="openNotif('${n.id}','${n.target||''}')">
+      <div class="bell-icon" style="background:${n.iconBg||'var(--bg)'}">${n.icon||'🔔'}</div>
+      <div class="bell-text">${n.text}<div class="bell-time">${ago}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function notifTimeAgo(date){
+  const d = (Date.now() - date.getTime()) / 1000;
+  if(d < 60) return 'hace un momento';
+  if(d < 3600) return `hace ${Math.floor(d/60)} min`;
+  if(d < 86400) return `hace ${Math.floor(d/3600)} h`;
+  if(d < 604800) return `hace ${Math.floor(d/86400)} días`;
+  return date.toLocaleDateString('es-MX',{day:'numeric',month:'short'});
+}
+
+function toggleBell(ev){
+  if(ev) ev.stopPropagation();
+  const panel = document.getElementById('bell-panel');
+  if(!panel) return;
+  const open = panel.style.display !== 'none';
+  if(open){
+    panel.style.display = 'none';
+  } else {
+    refreshNotifications();
+    renderNotifPanel();
+    panel.style.display = 'flex';
+  }
+}
+
+function openNotif(id, target){
+  // Marcar individual como leída
+  const seen = getSeenIds();
+  seen.add(id);
+  saveSeenIds(seen);
+  // Cerrar panel y navegar
+  document.getElementById('bell-panel').style.display = 'none';
+  refreshNotifications();
+  if(target && typeof go === 'function'){
+    try { go(target); } catch(_){}
+  }
+}
+
+function markAllNotifsRead(){
+  const seen = getSeenIds();
+  _notifs.forEach(n=>seen.add(n.id));
+  saveSeenIds(seen);
+  refreshNotifications();
+}
+
+function startNotifLoop(){
+  if(_notifTimer) clearInterval(_notifTimer);
+  refreshNotifications();
+  _notifTimer = setInterval(refreshNotifications, 60000);
+}
+function stopNotifLoop(){
+  if(_notifTimer){ clearInterval(_notifTimer); _notifTimer = null; }
+}
+
+// Cerrar panel al click fuera
+document.addEventListener('click', (e)=>{
+  const panel = document.getElementById('bell-panel');
+  const btn = document.querySelector('.bell-btn');
+  if(!panel || panel.style.display === 'none') return;
+  if(panel.contains(e.target) || (btn && btn.contains(e.target))) return;
+  panel.style.display = 'none';
+});
+
 function boot(){
   // Cerrar el modal de login si está abierto
   closeLoginModal();
@@ -3083,6 +3331,8 @@ function boot(){
   setTimeout(showInstallBannerIfNeeded, 3000);
   // Connect online counter
   setTimeout(connectOnlineCounter, 1500);
+  // Notificaciones in-app
+  setTimeout(startNotifLoop, 2000);
 }
 
 // ══════════════════════════════════════════════════════
@@ -3456,19 +3706,34 @@ function renderBracket(){
 function mkBrMatch(id,h,a,w){
   const el=document.createElement('div');
   el.className='br-m';
-  el.style.cursor='pointer';
-  el.title='Clic para predecir resultado';
   const label=MATCH_NUM[id]||id;
   const sc=picks[CU.u]?.sc?.[id];
   const hasScore=sc!=null&&sc.h!=null;
+
+  // Bloqueado si NO se conocen ambos equipos (depende de partidos previos sin completar)
+  const bothKnown = !!(h && a);
+  if(bothKnown){
+    el.style.cursor='pointer';
+    el.title='Clic para predecir resultado';
+  } else {
+    el.classList.add('br-locked');
+    el.title='Disponible cuando se definan los equipos de la fase anterior';
+  }
+
   el.innerHTML=`
-    <div class="br-mid">${label}</div>
+    <div class="br-mid">${label}${!bothKnown?'<span class="br-lock-icon" aria-hidden="true">🔒</span>':''}</div>
     <div class="br-teams">
       ${brT(id,'h',h,w,sc)}
       ${brT(id,'a',a,w,sc)}
     </div>`;
-  // Click on the whole card opens the modal
-  el.addEventListener('click', ()=>openBrModal(id,h,a));
+
+  if(bothKnown){
+    el.addEventListener('click', ()=>openBrModal(id,h,a));
+  } else {
+    el.addEventListener('click', ()=>{
+      toast('Define el ganador de los partidos anteriores para desbloquear este');
+    });
+  }
   return el;
 }
 
@@ -3630,7 +3895,15 @@ function calcScore(u){
 
 function renderRanking(){
   const wrap=document.getElementById('rk-wrap');
-  wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--ink3);font-size:.85rem">Cargando ranking...</div>`;
+  wrap.innerHTML=`<div class="sk-stack" style="padding:6px 0">
+    ${Array.from({length:6},(_,i)=>`
+    <div class="sk row">
+      <span class="sk" style="width:18px;height:18px;flex-shrink:0"></span>
+      <span class="sk circle" style="width:30px;height:30px;flex-shrink:0"></span>
+      <span class="sk" style="height:14px;flex:1;max-width:${120 + (i%3)*20}px"></span>
+      <span class="sk" style="width:32px;height:14px;flex-shrink:0"></span>
+    </div>`).join('')}
+  </div>`;
 
   api('GET','/api/ranking').then(board=>{
     // Always render the real board from the server.
@@ -3908,7 +4181,22 @@ function renderPendingApprovals(){
   const list = document.getElementById('pending-list');
   const countBadge = document.getElementById('pending-count');
   if(!list) return;
-  list.innerHTML = `<div style="color:var(--ink3);font-size:.82rem;padding:.5rem 0">Cargando…</div>`;
+  list.innerHTML = `<div class="sk-stack">
+    ${Array.from({length:2},()=>`
+    <div class="sk row" style="display:block">
+      <div style="display:flex;justify-content:space-between;align-items:start;gap:10px">
+        <div style="flex:1">
+          <div class="sk" style="width:60%;height:14px;margin-bottom:6px"></div>
+          <div class="sk" style="width:40%;height:11px;margin-bottom:8px"></div>
+          <div class="sk" style="width:50%;height:11px"></div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <div class="sk" style="width:64px;height:30px"></div>
+          <div class="sk" style="width:74px;height:30px"></div>
+        </div>
+      </div>
+    </div>`).join('')}
+  </div>`;
 
   api('GET','/api/users').then(users=>{
     const pending = (users||[]).filter(u => u.approved === false && !u.is_admin);
@@ -4917,7 +5205,13 @@ function loadComments(postId){
   const wrap = document.getElementById(`comments-${postId}`);
   if(!wrap) return;
   wrap.style.display='block';
-  wrap.innerHTML=`<div style="color:var(--ink3);font-size:.78rem;padding:.5rem 0">Cargando...</div>`;
+  wrap.innerHTML=`<div class="sk-stack" style="padding:.25rem 0">
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="sk circle" style="width:24px;height:24px;flex-shrink:0"></div>
+      <div class="sk" style="height:12px;width:40%"></div>
+    </div>
+    <div class="sk" style="height:11px;width:80%;margin-left:32px"></div>
+  </div>`;
   api('GET',`/api/wall/${postId}/comments`).then(comments=>{
     wrap.innerHTML = renderComments(comments, postId, null) + commentInput(postId, null);
   }).catch(()=>{ wrap.innerHTML=`<div style="color:var(--red);font-size:.78rem">Error</div>`; });
@@ -6155,7 +6449,15 @@ let _myGroups=[];
 function renderMisGrupos(){
   const wrap=document.getElementById('misgrupos-wrap');
   if(!wrap) return;
-  wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Cargando grupos...</div>`;
+  wrap.innerHTML=`<div class="sk-stack" style="padding:.5rem 0">
+    ${Array.from({length:2},()=>`
+    <div class="sk row" style="display:block;padding:14px">
+      <div class="sk" style="width:55%;height:18px;margin-bottom:10px"></div>
+      <div class="sk" style="width:30%;height:12px;margin-bottom:14px"></div>
+      <div class="sk" style="width:100%;height:12px;margin-bottom:8px"></div>
+      <div class="sk" style="width:80%;height:12px"></div>
+    </div>`).join('')}
+  </div>`;
   api('GET',`/api/groups/user/${CU.u}`).then(groups=>{
     _myGroups=groups;
     let html=`
@@ -6209,7 +6511,12 @@ function renderMisGrupos(){
             </div>
           </div>
           <div id="group-ranking-${g.id}" style="padding:.5rem">
-            <div style="color:var(--ink3);font-size:.8rem;font-style:italic;padding:.5rem">Cargando ranking...</div>
+            <div class="sk-stack" id="grp-rank-${g.id}" style="padding:.5rem 0">
+              ${Array.from({length:3},(_,i)=>`<div class="sk row" style="background:transparent;border-color:rgba(255,255,255,.15)">
+                <span class="sk circle" style="width:22px;height:22px;flex-shrink:0;background:linear-gradient(90deg,rgba(255,255,255,.15) 25%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.15) 75%);background-size:200% 100%"></span>
+                <span class="sk" style="height:11px;flex:1;background:linear-gradient(90deg,rgba(255,255,255,.15) 25%,rgba(255,255,255,.3) 50%,rgba(255,255,255,.15) 75%);background-size:200% 100%"></span>
+              </div>`).join('')}
+            </div>
           </div>
           <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:.5rem;justify-content:flex-end">
             <button onclick="copyGroupCode('${g.code}')" style="padding:7px 14px;background:var(--b-bg);color:var(--blue2);border:1px solid var(--b2);border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:opacity .15s" onmouseenter="this.style.opacity='.8'" onmouseleave="this.style.opacity='1'">📋 Compartir código</button>
@@ -6344,7 +6651,17 @@ function renderReferidos(){
   const wrap=document.getElementById('referidos-wrap');
   if(!wrap) return;
   const myCode=CU.code||genCode(CU.u);
-  wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Cargando...</div>`;
+  wrap.innerHTML=`<div class="sk-stack" style="padding:.5rem 0">
+    <div class="sk row" style="display:block;padding:18px">
+      <div class="sk" style="width:35%;height:14px;margin-bottom:10px"></div>
+      <div class="sk" style="width:55%;height:32px"></div>
+    </div>
+    ${Array.from({length:3},()=>`<div class="sk row">
+      <span class="sk circle" style="width:30px;height:30px;flex-shrink:0"></span>
+      <span class="sk" style="height:14px;flex:1;max-width:140px"></span>
+      <span class="sk" style="width:48px;height:14px;flex-shrink:0"></span>
+    </div>`).join('')}
+  </div>`;
 
   api('GET',`/api/refs/${myCode}`).then(myRefs=>{
     refs[myCode]=myRefs||[];
@@ -6588,7 +6905,22 @@ function renderRankingHistory(){
 
 function renderStats(){
   const wrap = document.getElementById('stats-wrap');
-  wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--ink3);font-size:.85rem">Cargando estadísticas...</div>`;
+  wrap.innerHTML=`<div class="sk-stack" style="padding:.5rem 0">
+    <div class="sk row" style="display:block;padding:14px">
+      <div class="sk" style="width:35%;height:14px;margin-bottom:12px"></div>
+      <div style="display:flex;gap:8px">
+        <div class="sk" style="height:80px;flex:1"></div>
+        <div class="sk" style="height:80px;flex:1"></div>
+        <div class="sk" style="height:80px;flex:1"></div>
+      </div>
+    </div>
+    <div class="sk row" style="display:block;padding:14px">
+      <div class="sk" style="width:25%;height:14px;margin-bottom:12px"></div>
+      <div class="sk-stack">
+        ${Array.from({length:3},()=>`<div class="sk" style="height:34px"></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
 
   api('GET','/api/stats').then(d=>{
     if(d.empty){
