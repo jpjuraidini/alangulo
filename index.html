@@ -139,6 +139,62 @@ body.dark .bell-badge{border-color:var(--bg)}
 .nav-user b{color:var(--ink);font-weight:700}
 .nav-out{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.72rem;text-decoration:underline}
 
+/* ONBOARDING MODAL */
+.onb-modal{position:fixed;inset:0;z-index:9500;display:flex;align-items:center;justify-content:center;padding:16px;animation:profIn .25s ease-out}
+.onb-bg{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px)}
+.onb-card{position:relative;background:var(--surface);border-radius:24px;width:100%;max-width:420px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.4);animation:profCardIn .4s cubic-bezier(.22,1,.36,1) both}
+body.dark .onb-card{background:#111525;border:1px solid var(--border)}
+.onb-skip{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--ink3);font-family:"Plus Jakarta Sans";font-size:.78rem;font-weight:700;cursor:pointer;padding:6px 12px;border-radius:8px;z-index:5}
+.onb-skip:hover{background:var(--bg);color:var(--ink)}
+.onb-body{flex:1;overflow-y:auto;padding:38px 28px 24px;min-height:380px;display:flex;flex-direction:column;justify-content:center}
+.onb-slide{animation:onbSlideIn .45s cubic-bezier(.22,1,.36,1) both}
+@keyframes onbSlideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.onb-illus{display:flex;align-items:center;justify-content:center;margin-bottom:24px;height:140px;position:relative}
+.onb-emoji{font-size:5rem;animation:onbEmoji 3s ease-in-out infinite}
+@keyframes onbEmoji{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-5deg)}}
+.onb-h{font-weight:800;font-size:1.5rem;text-align:center;color:var(--ink);margin:0 0 10px;letter-spacing:-.4px;line-height:1.15}
+.onb-h .grad{background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.onb-p{text-align:center;font-size:.92rem;line-height:1.55;color:var(--ink2);margin:0 auto;max-width:320px;font-weight:500}
+
+/* mini cards demo dentro del onboarding */
+.onb-demo-card{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:14px;margin:18px auto 0;max-width:300px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+body.dark .onb-demo-card{background:#161a2e}
+.onb-demo-team{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;text-align:center}
+.onb-demo-flag{font-size:1.6rem;line-height:1}
+.onb-demo-name{font-weight:800;font-size:.78rem;color:var(--ink)}
+.onb-demo-score{display:flex;align-items:center;gap:6px}
+.onb-demo-inp{width:30px;height:36px;background:var(--surface);border:1.5px solid var(--green2);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--green);font-weight:800;font-size:1.1rem}
+.onb-demo-dash{color:var(--ink3);font-weight:700}
+.onb-demo-pulse{animation:onbPulse 2s ease-in-out infinite}
+@keyframes onbPulse{0%,100%{box-shadow:0 0 0 0 rgba(0,196,106,.4)}50%{box-shadow:0 0 0 6px rgba(0,196,106,0)}}
+
+.onb-demo-rank{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:10px;margin:18px auto 0;max-width:300px}
+body.dark .onb-demo-rank{background:#161a2e}
+.onb-rank-row{display:flex;align-items:center;gap:8px;padding:5px 4px;font-size:.78rem;border-bottom:1px solid var(--border)}
+.onb-rank-row:last-child{border-bottom:none}
+.onb-rank-row.me{background:linear-gradient(90deg,rgba(0,196,106,.12),transparent);border-radius:6px;border-bottom-color:transparent}
+.onb-rank-pos{font-weight:800;color:var(--ink3);width:18px;text-align:center}
+.onb-rank-row.first .onb-rank-pos{color:#d18800}
+.onb-rank-name{flex:1;font-weight:700;color:var(--ink)}
+.onb-rank-pts{font-weight:800;color:var(--green2)}
+
+.onb-demo-feats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px;max-width:300px;margin-left:auto;margin-right:auto}
+.onb-feat{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:10px;text-align:center}
+body.dark .onb-feat{background:#161a2e}
+.onb-feat-i{font-size:1.5rem;margin-bottom:3px}
+.onb-feat-t{font-weight:800;font-size:.7rem;color:var(--ink)}
+
+.onb-foot{padding:18px 24px 24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:14px}
+.onb-dots{display:flex;gap:7px}
+.onb-dot{width:8px;height:8px;border-radius:50%;background:var(--border);transition:all .25s;cursor:pointer;border:none;padding:0}
+.onb-dot.on{background:var(--grad-tri);width:26px;border-radius:4px}
+.onb-next{background:var(--grad-tri);color:#fff;border:none;padding:11px 22px;border-radius:12px;font-family:"Plus Jakarta Sans";font-weight:800;font-size:.88rem;cursor:pointer;letter-spacing:.2px;box-shadow:0 6px 16px rgba(0,48,135,.25);transition:transform .15s}
+.onb-next:hover{transform:translateY(-1px)}
+
+@media (prefers-reduced-motion:reduce){
+  .onb-emoji,.onb-demo-pulse{animation:none}
+}
+
 /* PROFILE / COMPARE MODAL */
 .prof-modal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;animation:profIn .22s ease-out}
 @keyframes profIn{from{opacity:0}to{opacity:1}}
@@ -1491,6 +1547,7 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       <button onclick="saveBrScore()" style="flex:1;padding:11px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.88rem;cursor:pointer">Guardar ✓</button>
       <button onclick="closeBrScoreModal()" style="padding:11px 14px;background:var(--surface);color:var(--ink3);border:1.5px solid var(--border);border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer">✕</button>
     </div>
+    <button id="br-share-btn" onclick="openSharePrediction(_brId)" style="display:none;width:100%;margin-top:.6rem;padding:9px;background:transparent;border:1.5px solid var(--border);border-radius:8px;color:var(--ink2);font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--blue2)';this.style.color='var(--blue2)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink2)'">📤 Compartir esta predicción</button>
     <button onclick="clearBrScore()" style="width:100%;margin-top:.5rem;padding:7px;background:transparent;color:var(--ink3);border:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;cursor:pointer;opacity:.7">Borrar predicción</button>
   </div>
 </div>
@@ -2166,6 +2223,8 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
     <button class="drawer-item" onclick="goDrawer('notificaciones')">Notificaciones</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('countdown')">Cuenta Regresiva</button>
+    <div class="drawer-item-sep"></div>
+    <button class="drawer-item" onclick="closeDrawer();openOnboard()">Ver tutorial 🎓</button>
     <div class="drawer-item-sep admin-only drawer-admin-item" style="display:none"></div>
     <button class="drawer-item admin-only drawer-admin-item" onclick="goDrawer('admin')" style="display:none">Admin</button>
     <div class="drawer-item-sep"></div>
@@ -2372,9 +2431,42 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
       <button class="mbtn mbtn-cancel" onclick="closeM()">Cancelar</button>
       <button class="mbtn mbtn-save" onclick="saveSc()">Guardar ✓</button>
     </div>
+    <button id="m-share-btn" onclick="openSharePrediction(_m.id)" style="display:none;width:100%;margin-top:10px;padding:10px;background:transparent;border:1.5px solid var(--border);border-radius:10px;color:var(--ink2);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--blue2)';this.style.color='var(--blue2)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--ink2)'">📤 Compartir esta predicción</button>
   </div>
 </div>
 
+
+<!-- MODAL: ONBOARDING (primera vez) -->
+<div id="onboard-modal" class="onb-modal" style="display:none">
+  <div class="onb-bg"></div>
+  <div class="onb-card">
+    <button class="onb-skip" onclick="closeOnboard(true)">Saltar</button>
+    <div class="onb-body" id="onb-body"></div>
+    <div class="onb-foot">
+      <div class="onb-dots" id="onb-dots"></div>
+      <button class="onb-next" id="onb-next-btn" onclick="onbNext()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: COMPARTIR PREDICCIÓN -->
+<div id="share-modal" class="prof-modal" style="display:none">
+  <div class="prof-bg" onclick="closeShare()"></div>
+  <div class="prof-card" id="share-card" style="max-width:380px">
+    <button class="prof-close" onclick="closeShare()" aria-label="Cerrar">✕</button>
+    <div style="padding:24px 22px 22px">
+      <div style="font-weight:800;font-size:1.1rem;color:var(--ink);margin-bottom:4px;letter-spacing:-.3px">Compartir predicción</div>
+      <div style="font-size:.78rem;color:var(--ink3);margin-bottom:18px">Vista previa de la imagen que se va a compartir</div>
+      <div id="share-preview-wrap" style="background:var(--bg);border-radius:14px;padding:12px;display:flex;align-items:center;justify-content:center;min-height:200px">
+        <canvas id="share-canvas" width="900" height="600" style="max-width:100%;height:auto;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.18);display:block"></canvas>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:18px">
+        <button class="prof-btn" onclick="closeShare()" style="flex:1">Cancelar</button>
+        <button class="prof-btn prof-btn-vs" id="share-do-btn" onclick="doShare()" style="flex:2">📤 Compartir</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL: PERFIL DE USUARIO -->
 <div id="profile-modal" class="prof-modal" style="display:none">
@@ -3434,6 +3526,10 @@ function boot(){
   setTimeout(connectOnlineCounter, 1500);
   // Notificaciones in-app
   setTimeout(startNotifLoop, 2000);
+  // Onboarding: primera vez del usuario
+  setTimeout(()=>{
+    if(shouldShowOnboarding()) openOnboard();
+  }, 1800);
 }
 
 // ══════════════════════════════════════════════════════
@@ -3547,6 +3643,9 @@ function openM(id,h,a,g,ex){
   document.getElementById('man').textContent=NM[a]||a;
   document.getElementById('mhi').value=ex!=null?ex.h:'';
   document.getElementById('mai').value=ex!=null?ex.a:'';
+  // Mostrar botón compartir solo si ya hay predicción guardada
+  const sh = document.getElementById('m-share-btn');
+  if(sh) sh.style.display = (ex!=null && ex.h!=null && ex.a!=null) ? 'block' : 'none';
   document.getElementById('modal').classList.add('open');
   setTimeout(()=>document.getElementById('mhi').focus(),60);
 }
@@ -3864,6 +3963,12 @@ function openBrModal(id,h,a){
   document.getElementById('br-sm-aflag').textContent=FL[a]||'🏳';
   document.getElementById('br-sm-h').value=sc?.h??'';
   document.getElementById('br-sm-a').value=sc?.a??'';
+  // Botón compartir solo si ya hay marcador o ganador guardado
+  const brSh = document.getElementById('br-share-btn');
+  if(brSh){
+    const hasPrediction = (sc!=null && sc.h!=null && sc.a!=null);
+    brSh.style.display = hasPrediction ? 'block' : 'none';
+  }
   // Show/hide tie-breaker based on current score
   updateBrTiebreaker();
   // Pre-select winner if already set
@@ -5982,11 +6087,346 @@ function closeCompare(){
   }
 }
 
+// ══════════════════════════════════════════════════════
+//  ONBOARDING — primera vez que entra el usuario
+// ══════════════════════════════════════════════════════
+let _onbStep = 0;
+
+const ONB_SLIDES = [
+  {
+    illus: '<div class="onb-emoji">⚽</div>',
+    title: 'Bienvenido a <span class="grad">Al Ángulo</span>',
+    body: 'Tu quiniela del Mundial 2026. Predice los partidos, súbele al ranking y pícate con tus amigos. Te explicamos rápido cómo funciona.',
+  },
+  {
+    illus: `<div class="onb-emoji">🎯</div>`,
+    title: 'Predice los <span class="grad">104 partidos</span>',
+    body: 'Llena el marcador exacto de cada partido antes del kickoff. Si aciertas el ganador, sumas. Si aciertas el marcador exacto, bonus.',
+    extra: `<div class="onb-demo-card">
+      <div class="onb-demo-team"><span class="onb-demo-flag">🇲🇽</span><span class="onb-demo-name">México</span></div>
+      <div class="onb-demo-score"><div class="onb-demo-inp onb-demo-pulse">2</div><span class="onb-demo-dash">−</span><div class="onb-demo-inp onb-demo-pulse">1</div></div>
+      <div class="onb-demo-team"><span class="onb-demo-flag">🇿🇦</span><span class="onb-demo-name">Sudáfrica</span></div>
+    </div>`,
+  },
+  {
+    illus: '<div class="onb-emoji">🏆</div>',
+    title: 'Sube en el <span class="grad">ranking en vivo</span>',
+    body: 'Cada acierto te sube en el podio. Las eliminatorias dan más puntos que la fase de grupos.',
+    extra: `<div class="onb-demo-rank">
+      <div class="onb-rank-row first"><div class="onb-rank-pos">1</div><div class="onb-rank-name">usuario_01</div><div class="onb-rank-pts">42</div></div>
+      <div class="onb-rank-row"><div class="onb-rank-pos">2</div><div class="onb-rank-name">usuario_02</div><div class="onb-rank-pts">38</div></div>
+      <div class="onb-rank-row me"><div class="onb-rank-pos">3</div><div class="onb-rank-name">tú 🔥</div><div class="onb-rank-pts">36</div></div>
+    </div>`,
+  },
+  {
+    illus: '<div class="onb-emoji">🎉</div>',
+    title: 'Crea grupos y <span class="grad">picotea</span>',
+    body: 'Arma una liga privada con tus amigos, comenta en el muro social, comparte tus predicciones. Que empiece la fiesta.',
+    extra: `<div class="onb-demo-feats">
+      <div class="onb-feat"><div class="onb-feat-i">👥</div><div class="onb-feat-t">Grupos privados</div></div>
+      <div class="onb-feat"><div class="onb-feat-i">💬</div><div class="onb-feat-t">Muro social</div></div>
+      <div class="onb-feat"><div class="onb-feat-i">📤</div><div class="onb-feat-t">Compartir</div></div>
+      <div class="onb-feat"><div class="onb-feat-i">⚔️</div><div class="onb-feat-t">Comparar 1v1</div></div>
+    </div>`,
+  },
+];
+
+function shouldShowOnboarding(){
+  if(!CU) return false;
+  if(CU.admin) return false; // admins se la saltan
+  const k = `q26_onboarded_${CU.u}`;
+  return !localStorage.getItem(k);
+}
+
+function markOnboarded(){
+  if(!CU) return;
+  localStorage.setItem(`q26_onboarded_${CU.u}`, '1');
+}
+
+function openOnboard(){
+  _onbStep = 0;
+  renderOnbSlide();
+  const m = document.getElementById('onboard-modal');
+  if(m){ m.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+}
+
+function renderOnbSlide(){
+  const s = ONB_SLIDES[_onbStep];
+  if(!s) return;
+  const body = document.getElementById('onb-body');
+  const dots = document.getElementById('onb-dots');
+  const nextBtn = document.getElementById('onb-next-btn');
+  if(!body || !dots || !nextBtn) return;
+  body.innerHTML = `<div class="onb-slide">
+    <div class="onb-illus">${s.illus}</div>
+    <h2 class="onb-h">${s.title}</h2>
+    <p class="onb-p">${s.body}</p>
+    ${s.extra || ''}
+  </div>`;
+  dots.innerHTML = ONB_SLIDES.map((_, i)=>
+    `<button class="onb-dot ${i===_onbStep?'on':''}" onclick="onbGo(${i})" aria-label="Slide ${i+1}"></button>`
+  ).join('');
+  const isLast = _onbStep === ONB_SLIDES.length - 1;
+  nextBtn.textContent = isLast ? '¡Empezar! ⚽' : 'Siguiente →';
+}
+
+function onbNext(){
+  if(_onbStep < ONB_SLIDES.length - 1){
+    _onbStep++;
+    renderOnbSlide();
+  } else {
+    closeOnboard(false);
+  }
+}
+
+function onbGo(i){
+  if(i < 0 || i >= ONB_SLIDES.length) return;
+  _onbStep = i;
+  renderOnbSlide();
+}
+
+function closeOnboard(skipped){
+  markOnboarded();
+  const m = document.getElementById('onboard-modal');
+  if(m) m.style.display = 'none';
+  document.body.style.overflow = '';
+  if(!skipped){
+    toast('¡Listo! Empieza a predecir 🎯');
+  }
+}
+
+// ══════════════════════════════════════════════════════
+//  COMPARTIR PREDICCIÓN — genera imagen PNG y comparte
+// ══════════════════════════════════════════════════════
+let _shareCtx = null;
+
+// Render del canvas con la predicción
+function renderShareCanvas(opts){
+  // opts: {homeName, awayName, homeFlag, awayFlag, scoreH, scoreA, username, matchLabel}
+  const cv = document.getElementById('share-canvas');
+  if(!cv) return null;
+  const ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  ctx.clearRect(0,0,W,H);
+
+  // Fondo gradiente tricolor
+  const grad = ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0, '#006838');
+  grad.addColorStop(0.5, '#003087');
+  grad.addColorStop(1, '#c0001a');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  // Capa de overlay sutil para profundidad
+  const ov = ctx.createRadialGradient(W*0.7, H*0.2, 0, W*0.7, H*0.2, W*0.6);
+  ov.addColorStop(0,'rgba(255,255,255,.12)');
+  ov.addColorStop(1,'rgba(255,255,255,0)');
+  ctx.fillStyle = ov;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#fff';
+
+  // Logo + brand
+  ctx.font = '700 22px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.globalAlpha = .85;
+  ctx.fillText('⚽  Al Ángulo · Mundial 2026', W/2, 60);
+  ctx.globalAlpha = 1;
+
+  // Etiqueta "MI PREDICCIÓN"
+  ctx.font = '800 18px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.78)';
+  const tag = (opts.matchLabel || 'Mi predicción').toUpperCase();
+  ctx.fillText(tag, W/2, 110);
+  // Subrayado
+  const tagW = ctx.measureText(tag).width;
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.fillRect(W/2 - tagW/2 - 6, 128, tagW + 12, 2);
+
+  // Banderas y nombres
+  const yTeams = 280;
+  const flagSize = 110;
+  ctx.font = `${flagSize}px "Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif`;
+  ctx.fillStyle = '#fff';
+  ctx.fillText(opts.homeFlag || '🏳', W*0.18 + 50, yTeams);
+  ctx.fillText(opts.awayFlag || '🏳', W*0.82 - 50, yTeams);
+
+  ctx.font = '800 32px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(opts.homeName || 'Equipo 1', W*0.18 + 50, yTeams + 95);
+  ctx.fillText(opts.awayName || 'Equipo 2', W*0.82 - 50, yTeams + 95);
+
+  // Marcador en el centro con caja
+  const boxX = W/2 - 110, boxY = yTeams - 60, boxW = 220, boxH = 130;
+  ctx.fillStyle = 'rgba(255,255,255,.16)';
+  // rounded rect
+  const r = 22;
+  ctx.beginPath();
+  ctx.moveTo(boxX+r, boxY);
+  ctx.arcTo(boxX+boxW, boxY, boxX+boxW, boxY+boxH, r);
+  ctx.arcTo(boxX+boxW, boxY+boxH, boxX, boxY+boxH, r);
+  ctx.arcTo(boxX, boxY+boxH, boxX, boxY, r);
+  ctx.arcTo(boxX, boxY, boxX+boxW, boxY, r);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(255,255,255,.35)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.font = '800 76px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(String(opts.scoreH ?? '?'), boxX + 55, boxY + boxH/2 + 4);
+  ctx.fillText(String(opts.scoreA ?? '?'), boxX + boxW - 55, boxY + boxH/2 + 4);
+  ctx.fillStyle = 'rgba(255,255,255,.55)';
+  ctx.font = '700 38px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.fillText('−', boxX + boxW/2, boxY + boxH/2 + 2);
+
+  // Footer: usuario
+  ctx.font = '600 18px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.85)';
+  ctx.fillText(`Por @${opts.username || 'usuario'}`, W/2, H - 60);
+  // sub
+  ctx.font = '500 14px "Plus Jakarta Sans", system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.55)';
+  ctx.fillText('alangulo.lat', W/2, H - 32);
+
+  return cv;
+}
+
+// Lookup de equipo: nombre + bandera
+function shareTeamInfo(teamCode){
+  if(!teamCode) return {name:'?', flag:'🏳'};
+  const name = (typeof NM !== 'undefined' && NM[teamCode]) || teamCode;
+  const flag = (typeof FL !== 'undefined' && FL[teamCode]) || '🏳';
+  return {name, flag};
+}
+
+function openSharePrediction(matchId){
+  if(!CU) return;
+  const up = picks[CU.u];
+  if(!up){ toast('No tienes predicciones aún'); return; }
+  const sc = up.sc?.[matchId];
+  if(!sc || sc.h==null || sc.a==null){
+    toast('Aún no has predicho este partido');
+    return;
+  }
+  // Buscar info del partido (grupos o bracket)
+  let homeCode = null, awayCode = null, label = 'Mi predicción';
+  // Grupos: buscar en GM
+  if(typeof GM !== 'undefined'){
+    Object.entries(GM).forEach(([gKey, ms])=>{
+      ms.forEach(m=>{
+        if(m.id === matchId){ homeCode = m.h; awayCode = m.a; label = `Grupo ${gKey}`; }
+      });
+    });
+  }
+  // Bracket: usar BRACKET_FEEDS / R32 matchups o picks del usuario
+  if(!homeCode || !awayCode){
+    if(matchId.startsWith('r32_') && typeof buildR32Matchups === 'function'){
+      try{
+        const mu = buildR32Matchups();
+        const m = mu[matchId];
+        if(m){ homeCode = m.home; awayCode = m.away; label = 'Dieciseisavos'; }
+      }catch(_){}
+    } else if(typeof BRACKET_FEEDS !== 'undefined'){
+      const feed = BRACKET_FEEDS[matchId];
+      if(feed && up.br){
+        homeCode = up.br[feed[0]];
+        awayCode = up.br[feed[1]];
+        const stage = matchId.split('_')[0];
+        const stageLbl = {r16:'Octavos',qf:'Cuartos',sf:'Semifinal',f:'Final'}[stage] || 'Eliminatoria';
+        label = stageLbl;
+      }
+    }
+  }
+
+  const home = shareTeamInfo(homeCode);
+  const away = shareTeamInfo(awayCode);
+
+  // Render canvas
+  renderShareCanvas({
+    homeName: home.name,
+    awayName: away.name,
+    homeFlag: home.flag,
+    awayFlag: away.flag,
+    scoreH: sc.h,
+    scoreA: sc.a,
+    username: CU.u,
+    matchLabel: label,
+  });
+
+  // Guardar contexto para doShare()
+  _shareCtx = {
+    matchId, homeName: home.name, awayName: away.name,
+    scoreH: sc.h, scoreA: sc.a, label
+  };
+
+  document.getElementById('share-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeShare(){
+  const m = document.getElementById('share-modal');
+  if(m) m.style.display = 'none';
+  document.body.style.overflow = '';
+  _shareCtx = null;
+}
+
+async function doShare(){
+  const cv = document.getElementById('share-canvas');
+  if(!cv) return;
+  const ctx = _shareCtx || {};
+  const filename = `prediccion-${ctx.matchId || 'al-angulo'}.png`;
+  const shareText = ctx.scoreH != null
+    ? `Mi predicción: ${ctx.homeName} ${ctx.scoreH} - ${ctx.scoreA} ${ctx.awayName} ⚽\n¿Y tú? alangulo.lat`
+    : 'Mi predicción del Mundial 2026 — alangulo.lat';
+
+  // Try Web Share API with files
+  try {
+    const blob = await new Promise(resolve => cv.toBlob(resolve, 'image/png'));
+    if(!blob){ throw new Error('blob fallido'); }
+    const file = new File([blob], filename, { type: 'image/png' });
+
+    if(navigator.canShare && navigator.canShare({ files: [file] })){
+      await navigator.share({
+        files: [file],
+        title: 'Mi predicción · Al Ángulo',
+        text: shareText,
+      });
+      closeShare();
+      return;
+    }
+
+    // Fallback: descargar PNG
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+    toast('Imagen descargada · ¡súbela donde quieras!');
+    closeShare();
+  } catch(e){
+    if(e.name === 'AbortError'){
+      // Usuario canceló el share — no hacer nada
+      return;
+    }
+    console.error('share error:', e);
+    toast('No se pudo compartir, intenta descargar');
+  }
+}
+
 // Cerrar con Escape
 document.addEventListener('keydown', (e)=>{
   if(e.key !== 'Escape') return;
+  const sm = document.getElementById('share-modal');
   const cm = document.getElementById('compare-modal');
   const pm = document.getElementById('profile-modal');
+  // El onboarding NO se cierra con Escape — el usuario debe usar Saltar / Siguiente
+  if(sm && sm.style.display !== 'none'){ closeShare(); return; }
   if(cm && cm.style.display !== 'none'){ closeCompare(); return; }
   if(pm && pm.style.display !== 'none'){ closeProfile(); return; }
 });
