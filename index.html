@@ -2901,7 +2901,7 @@ function startPhoneRotator(){
     muro: '💬 Muro',
     predicciones: '⚽ Predicciones',
     grupos: '📊 Grupos',
-    bracket: '🌳 Bracket'
+    bracket: '📈 Bracket'
   };
   const phone = document.querySelector('.lp-phone');
   const tabsWrap = document.getElementById('lp-phone-tabs');
@@ -3207,7 +3207,7 @@ function buildNotifications(){
             iconBg: '#fce8ea',
             text: `<strong>${escHtml(u)}</strong> reaccionó con ${emoji} a tu publicación`,
             time: p.created_at || new Date().toISOString(),
-            target: 'muro'
+            target: 'chat'
           });
         });
       });
@@ -3226,7 +3226,7 @@ function buildNotifications(){
         iconBg: '#e0eaff',
         text: `<strong>${escHtml(p.username)}</strong> publicó algo en el muro`,
         time: p.created_at || new Date().toISOString(),
-        target: 'muro'
+        target: 'chat'
       });
     });
   }
@@ -5863,7 +5863,7 @@ function openProfile(username){
           <div class="prof-bd-lbl">Grupos · ${s.grpHits}/${s.grpJudged||'?'}</div>
         </div>
         <div class="prof-bd-item">
-          <div class="prof-bd-icon">🌳</div>
+          <div class="prof-bd-icon">📈</div>
           <div class="prof-bd-pts">${s.bracket}</div>
           <div class="prof-bd-lbl">Bracket · ${s.brHits}/${s.brJudged||'?'}</div>
         </div>
@@ -5965,7 +5965,7 @@ function openCompare(userA, userB){
       ${row('🎰', 'Marcadores exactos', a.totalExacts, b.totalExacts, exactsCmp)}
       ${row('🔥', 'Racha bracket', a.streak, b.streak, streakCmp)}
       ${row('📊', 'Puntos grupos', a.grupos, b.grupos, grpCmp)}
-      ${row('🌳', 'Puntos bracket', a.bracket, b.bracket, brCmp)}
+      ${row('📈', 'Puntos bracket', a.bracket, b.bracket, brCmp)}
       <div class="cmp-summary">${summary}</div>
     </div>`;
 
