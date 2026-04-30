@@ -1427,31 +1427,79 @@ body.dark .bono-sub{color:#c09040}
 .rpt-label{font-size:.78rem;color:var(--ink2);line-height:1.4}
 
 /* WALL — Design A */
-.wall-compose{background:var(--surface);border-radius:20px;padding:14px 16px;margin-bottom:14px;border:1.5px solid var(--border);box-shadow:0 2px 14px rgba(0,0,0,.06)}
-.wall-compose-top{display:flex;gap:10px;align-items:flex-start}
-.wall-compose textarea{flex:1;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;min-height:64px;box-sizing:border-box;padding-top:6px}
-.wall-compose-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--border)}
-.wall-char-count{font-size:.72rem;color:var(--ink3)}
-.wall-post-btn{padding:7px 20px;background:var(--grad-gb);color:#fff;border:none;border-radius:20px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;letter-spacing:.2px}
-.wall-post-btn:disabled{opacity:.4;cursor:not-allowed}
-.wall-post{background:var(--surface);border-radius:20px;padding:14px 16px;box-shadow:0 2px 14px rgba(0,0,0,.06);margin-bottom:10px;border:1.5px solid var(--border)}
+/* ── MURO v2 ── */
+
+/* Disclaimer (más sutil) */
+.wall-disclaimer{font-size:.72rem;color:var(--ink3);text-align:center;padding:8px 14px;margin-bottom:12px;line-height:1.5;background:var(--bg);border-radius:12px;border:1px solid var(--border)}
+body.dark .wall-disclaimer{background:#0c0f1c}
+.wall-disclaimer strong{color:var(--ink);font-weight:700}
+
+/* Compose */
+.wall-compose{background:var(--surface);border-radius:20px;padding:14px 16px;margin-bottom:14px;border:1.5px solid var(--border);box-shadow:0 4px 14px rgba(10,14,26,.04);transition:border-color .2s,box-shadow .2s}
+body.dark .wall-compose{background:#161a2e}
+.wall-compose:focus-within{border-color:var(--blue2);box-shadow:0 8px 24px rgba(0,82,204,.1)}
+.wall-compose-top{display:flex;gap:10px;align-items:flex-start;position:relative}
+.wall-compose textarea{flex:1;border:none;outline:none;font-family:'Plus Jakarta Sans',sans-serif;font-size:.88rem;color:var(--ink);background:transparent;resize:none;line-height:1.5;min-height:48px;box-sizing:border-box;padding-top:6px}
+.wall-compose textarea::placeholder{color:var(--ink3);opacity:.7}
+.wall-compose-footer{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+.wall-char-count{font-size:.7rem;color:var(--ink3);font-weight:600}
+.wall-post-btn{padding:8px 22px;background:var(--grad-tri);color:#fff;border:none;border-radius:14px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.82rem;cursor:pointer;letter-spacing:.3px;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(0,82,204,.18);transition:transform .15s}
+.wall-post-btn:hover{transform:translateY(-1px)}
+.wall-post-btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* Section title (Recientes) */
+.wall-section-h{font-size:.66rem;font-weight:800;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;padding:8px 4px 10px;display:flex;align-items:center;gap:7px}
+.wall-section-h::before,.wall-section-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* Post */
+.wall-post{background:var(--surface);border-radius:20px;padding:16px 18px;box-shadow:0 4px 14px rgba(10,14,26,.04);margin-bottom:10px;border:1px solid var(--border);transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .2s,border-color .2s}
+body.dark .wall-post{background:#161a2e}
+.wall-post:hover{box-shadow:0 8px 22px rgba(10,14,26,.07)}
+
+/* Reveal on-scroll */
+.wall-post.wp-reveal{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--wp-i,0) * 50ms)}
+.wall-post.wp-reveal.show{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){
+  .wall-post.wp-reveal{opacity:1;transform:none;transition:none}
+}
+
+/* Mention links */
+.wall-mention{display:inline-block;color:var(--blue2);font-weight:700;cursor:pointer;text-decoration:none;transition:color .15s}
+.wall-mention:hover{color:var(--green);text-decoration:underline}
+body.dark .wall-mention{color:#3d87ff}
+body.dark .wall-mention:hover{color:#00c46a}
+
+/* Mention picker (autocompletado al escribir @) */
+.wall-mention-picker{position:absolute;background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 28px rgba(10,14,26,.16);z-index:100;min-width:200px;max-width:280px;max-height:240px;overflow-y:auto;padding:6px;animation:wmpIn .18s ease-out}
+body.dark .wall-mention-picker{background:#1a1f33}
+@keyframes wmpIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.wall-mention-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:10px;cursor:pointer;transition:background .12s}
+.wall-mention-item:hover,.wall-mention-item.active{background:var(--bg)}
+body.dark .wall-mention-item:hover,body.dark .wall-mention-item.active{background:#0c0f1c}
+.wall-mention-av{width:26px;height:26px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.6rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.wall-mention-name{font-weight:800;font-size:.82rem;color:var(--ink);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wall-mention-empty{padding:14px 12px;text-align:center;color:var(--ink3);font-size:.78rem;font-weight:600}
+
+/* Comments */
 .wall-comment-body{flex:1;background:var(--bg);border-radius:4px 14px 14px 14px;padding:7px 11px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.wall-comment-user{font-weight:700;font-size:.74rem;color:var(--green);margin-bottom:2px}
+body.dark .wall-comment-body{background:#0c0f1c}
+.wall-comment-user{font-weight:800;font-size:.74rem;color:var(--blue2);margin-bottom:2px}
 .wall-comment-text{font-size:.82rem;color:var(--ink2);line-height:1.5;word-break:break-word}
 .wall-comment-footer{display:flex;gap:.75rem;align-items:center;margin-top:4px}
-.wall-comment-time{font-size:.63rem;color:var(--ink3)}
-.wall-comment-input{display:none;margin-top:.5rem;gap:.5rem}
+.wall-comment-time{font-size:.63rem;color:var(--ink3);font-weight:600}
+.wall-comment-input{display:none;margin-top:.5rem;gap:.5rem;position:relative}
 .wall-comment-input.open{display:flex}
-.wall-comment-input input{flex:1;padding:7px 12px;border:1.5px solid var(--border);border-radius:20px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none}
-.wall-comment-input input:focus{border-color:var(--green)}
-.wall-comment-input button{padding:7px 16px;background:var(--grad-gb);color:#fff;border:none;border-radius:20px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer}
+.wall-comment-input input{flex:1;padding:8px 14px;border:1.5px solid var(--border);border-radius:20px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none;transition:border-color .15s}
+body.dark .wall-comment-input input{background:#0c0f1c}
+.wall-comment-input input:focus{border-color:var(--blue2)}
+.wall-comment-input button{padding:8px 18px;background:var(--grad-tri);color:#fff;border:none;border-radius:20px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.78rem;cursor:pointer;flex-shrink:0}
+
 .wall-muted-banner{background:var(--r-bg);border:1.5px solid var(--red);border-radius:16px;padding:1rem 1.25rem;margin-bottom:1rem;font-size:.85rem;color:var(--red);font-weight:600;line-height:1.5}
 .wall-comment{display:flex;gap:8px;align-items:flex-start}
 .wall-comment.reply{margin-left:1.5rem;padding-left:.75rem;border-left:2px solid var(--border)}
 .wall-comments{margin-top:.75rem;padding-top:.75rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:.5rem}
-.wall-action-btn{background:none;border:none;cursor:pointer;font-size:.78rem;font-weight:600;color:var(--ink3);padding:0;font-family:'Plus Jakarta Sans',sans-serif;transition:color .15s}
-.wall-action-btn:hover{color:var(--green)}
-.wall-disclaimer{background:var(--grad-light);border:1px solid rgba(0,104,56,.15);border-radius:16px;padding:10px 14px;font-size:.76rem;color:var(--ink3);margin-bottom:14px;line-height:1.5}
+.wall-action-btn{background:none;border:none;cursor:pointer;font-size:.78rem;font-weight:700;color:var(--ink3);padding:0;font-family:'Plus Jakarta Sans',sans-serif;transition:color .15s}
+.wall-action-btn:hover{color:var(--blue2)}
 
 /* CHANGELOG */
 .changelog-list{display:flex;flex-direction:column;gap:.5rem;max-height:400px;overflow-y:auto}
@@ -2864,8 +2912,24 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <!-- MURO -->
   <!-- MURO -->
   <div class="page" id="page-chat">
-    <div class="ph">
-      <div class="ph-left"><div class="ph-h">Muro</div><div class="ph-s">Comparte algo con todos los participantes</div></div>
+    <div class="ph2 wp-page-hero">
+      <div class="ph2-sticky" id="wp-sticky">
+        <div class="ph2-sticky-t">Muro</div>
+        <div class="ph2-sticky-prog">
+          <span style="font-size:.74rem;font-weight:700;color:var(--ink3)" id="wp-sticky-stat">— publicaciones</span>
+        </div>
+      </div>
+      <div class="ph2-row">
+        <div class="ph2-l">
+          <div class="ph2-eyebrow r"><span class="ph2-eyebrow-dot"></span><span id="wp-eyebrow-txt">En vivo</span></div>
+          <h1 class="ph2-h1">Muro</h1>
+          <p class="ph2-sub">Comparte cómo va tu quiniela, reacciona a las jugadas, comenta los partidos del Mundial.</p>
+          <div class="ph2-stats" id="wp-stats">
+            <div class="ph2-stat"><strong id="wp-stat-posts">—</strong>publicaciones</div>
+            <div class="ph2-stat"><strong id="wp-stat-reactions">—</strong>reacciones</div>
+          </div>
+        </div>
+      </div>
     </div>
     <div id="wall-wrap"></div>
   </div>
@@ -3819,6 +3883,46 @@ function buildNotifications(){
             target: 'chat'
           });
         });
+      });
+    });
+  }
+
+  // 1.5) Menciones a mí en posts del muro
+  if(Array.isArray(_wallPosts) && typeof extractMentions === 'function'){
+    const meLower = me.toLowerCase();
+    _wallPosts.forEach(p=>{
+      if(p.username === me) return; // mis propias menciones no
+      const mentions = extractMentions(p.content || '');
+      if(mentions.has(meLower)){
+        out.push({
+          id: `mention:post:${p.id}`,
+          icon: '@',
+          iconBg: '#e0eaff',
+          text: `<strong>${escHtml(p.username)}</strong> te etiquetó en una publicación`,
+          time: p.created_at || new Date().toISOString(),
+          target: 'chat'
+        });
+      }
+    });
+  }
+
+  // 1.6) Menciones a mí en comentarios cacheados (cargados al menos una vez)
+  if(window._wallCommentCache && typeof extractMentions === 'function'){
+    const meLower = me.toLowerCase();
+    Object.entries(window._wallCommentCache).forEach(([postId, comments])=>{
+      (comments || []).forEach(c=>{
+        if(c.username === me) return;
+        const mentions = extractMentions(c.content || '');
+        if(mentions.has(meLower)){
+          out.push({
+            id: `mention:comment:${c.id}`,
+            icon: '@',
+            iconBg: '#e0eaff',
+            text: `<strong>${escHtml(c.username)}</strong> te etiquetó en un comentario`,
+            time: c.created_at || new Date().toISOString(),
+            target: 'chat'
+          });
+        }
       });
     });
   }
@@ -6226,85 +6330,315 @@ const WALL_EMOJIS = ['⚽','🔥','😂','😬','👏','💀','🐐','❤️','�
 let _wallPosts = [];
 let _openComments = {}; // postId -> bool
 
+// ── SISTEMA DE MENCIONES ──
+
+// Devuelve la lista de usernames válidos (aprobados) para autocompletar
+function getMentionableUsers(){
+  const out = new Set();
+  // Usuarios hardcoded
+  if(typeof USERS !== 'undefined' && Array.isArray(USERS)){
+    USERS.forEach(u => { if(u && u.u) out.add(u.u); });
+  }
+  // Usuarios dinámicos
+  if(typeof dynUsers !== 'undefined' && Array.isArray(dynUsers)){
+    dynUsers.forEach(u => {
+      const name = u?.u || u?.username;
+      if(name) out.add(name);
+    });
+  }
+  // Excluir admin de las menciones (cuenta de sistema)
+  out.delete('admin');
+  return Array.from(out).sort((a,b)=>a.localeCompare(b,'es'));
+}
+
+// Reemplaza @username con un span clickeable. El texto entrante NO debe estar escapado todavía.
+function parseWithMentions(text){
+  if(!text) return '';
+  const validUsers = new Set(getMentionableUsers().map(u => u.toLowerCase()));
+  // Primero escapamos todo el texto para seguridad
+  const escaped = escHtml(text);
+  // Luego buscamos @username en el texto YA escapado (los nombres son alfanuméricos así que no interfiere)
+  // username puede tener letras, números, _, ., - (típico de usernames)
+  return escaped.replace(/@([a-zA-Z0-9_.\-]{2,30})/g, (match, uname) => {
+    if(validUsers.has(uname.toLowerCase())){
+      const safeUname = uname.replace(/'/g, "\\'");
+      return `<a class="wall-mention" onclick="openProfile('${safeUname}');event.stopPropagation()">@${escHtml(uname)}</a>`;
+    }
+    return match;
+  });
+}
+
+// Extrae los usernames mencionados en un texto (devuelve set en lowercase)
+function extractMentions(text){
+  if(!text) return new Set();
+  const validUsers = new Set(getMentionableUsers().map(u => u.toLowerCase()));
+  const mentioned = new Set();
+  const re = /@([a-zA-Z0-9_.\-]{2,30})/g;
+  let m;
+  while((m = re.exec(text)) !== null){
+    const lower = m[1].toLowerCase();
+    if(validUsers.has(lower)) mentioned.add(lower);
+  }
+  return mentioned;
+}
+
+// Estado del picker
+let _mentionPicker = { el:null, target:null, items:[], activeIdx:0, query:'', startPos:0 };
+
+function closeMentionPicker(){
+  if(_mentionPicker.el){ _mentionPicker.el.remove(); _mentionPicker.el = null; }
+  _mentionPicker.target = null;
+}
+
+function attachMentionPicker(textEl){
+  if(!textEl || textEl.dataset.mentionAttached === '1') return;
+  textEl.dataset.mentionAttached = '1';
+
+  textEl.addEventListener('input', ()=>handleMentionInput(textEl));
+  textEl.addEventListener('keydown', (e)=>handleMentionKeydown(e, textEl));
+  textEl.addEventListener('blur', ()=>{
+    // Cerrar después de pequeño delay para permitir click en items
+    setTimeout(()=>{ if(_mentionPicker.target === textEl) closeMentionPicker(); }, 180);
+  });
+}
+
+function handleMentionInput(textEl){
+  const val = textEl.value;
+  const caret = textEl.selectionStart;
+  // Buscar el @ más cercano hacia atrás desde el caret, sin que haya espacios entre @ y caret
+  let i = caret - 1;
+  let foundAt = -1;
+  while(i >= 0){
+    const ch = val[i];
+    if(ch === '@'){
+      // Verificar que sea inicio de string o haya espacio/newline antes
+      if(i === 0 || /\s/.test(val[i-1])) foundAt = i;
+      break;
+    }
+    if(/\s/.test(ch)) break;
+    if(!/[a-zA-Z0-9_.\-]/.test(ch)) break;
+    i--;
+  }
+  if(foundAt < 0){ closeMentionPicker(); return; }
+  const query = val.slice(foundAt + 1, caret);
+  if(query.length > 30){ closeMentionPicker(); return; }
+  showMentionPicker(textEl, foundAt, query);
+}
+
+function showMentionPicker(textEl, startPos, query){
+  const all = getMentionableUsers().filter(u => u !== CU.u);
+  const q = query.toLowerCase();
+  const items = q ? all.filter(u => u.toLowerCase().includes(q)).slice(0, 6) : all.slice(0, 6);
+
+  closeMentionPicker();
+
+  const picker = document.createElement('div');
+  picker.className = 'wall-mention-picker';
+
+  if(!items.length){
+    picker.innerHTML = `<div class="wall-mention-empty">Sin coincidencias</div>`;
+  } else {
+    picker.innerHTML = items.map((u, idx) => {
+      const initials = u.slice(0,2).toUpperCase();
+      return `<div class="wall-mention-item${idx===0?' active':''}" data-idx="${idx}" data-user="${escHtml(u)}">
+        <div class="wall-mention-av">${initials}</div>
+        <div class="wall-mention-name">${escHtml(u)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Insertar después del textarea, en su contenedor
+  const parent = textEl.parentNode;
+  parent.appendChild(picker);
+  // Posicionar absolutamente
+  const tRect = textEl.getBoundingClientRect();
+  const pRect = parent.getBoundingClientRect();
+  picker.style.position = 'absolute';
+  picker.style.left = (tRect.left - pRect.left) + 'px';
+  picker.style.top  = (tRect.bottom - pRect.top + 4) + 'px';
+
+  // Click handler en items
+  picker.querySelectorAll('.wall-mention-item').forEach(itm=>{
+    itm.addEventListener('mousedown', (e)=>{
+      e.preventDefault();
+      const u = itm.dataset.user;
+      insertMention(textEl, startPos, u);
+    });
+  });
+
+  _mentionPicker = { el: picker, target: textEl, items, activeIdx: 0, query, startPos };
+}
+
+function handleMentionKeydown(e, textEl){
+  if(_mentionPicker.target !== textEl || !_mentionPicker.el) return;
+  const items = _mentionPicker.items;
+  if(!items.length) return;
+
+  if(e.key === 'ArrowDown'){
+    e.preventDefault();
+    _mentionPicker.activeIdx = (_mentionPicker.activeIdx + 1) % items.length;
+    updateMentionActive();
+  } else if(e.key === 'ArrowUp'){
+    e.preventDefault();
+    _mentionPicker.activeIdx = (_mentionPicker.activeIdx - 1 + items.length) % items.length;
+    updateMentionActive();
+  } else if(e.key === 'Enter' || e.key === 'Tab'){
+    e.preventDefault();
+    insertMention(textEl, _mentionPicker.startPos, items[_mentionPicker.activeIdx]);
+  } else if(e.key === 'Escape'){
+    e.preventDefault();
+    closeMentionPicker();
+  }
+}
+
+function updateMentionActive(){
+  if(!_mentionPicker.el) return;
+  _mentionPicker.el.querySelectorAll('.wall-mention-item').forEach((el, i)=>{
+    el.classList.toggle('active', i === _mentionPicker.activeIdx);
+  });
+}
+
+function insertMention(textEl, startPos, username){
+  const val = textEl.value;
+  const caret = textEl.selectionStart;
+  const before = val.slice(0, startPos);
+  const after = val.slice(caret);
+  const insert = `@${username} `;
+  textEl.value = before + insert + after;
+  const newCaret = startPos + insert.length;
+  textEl.selectionStart = textEl.selectionEnd = newCaret;
+  closeMentionPicker();
+  // Trigger input para que se actualice el contador, etc.
+  textEl.dispatchEvent(new Event('input', { bubbles: true }));
+  textEl.focus();
+}
+
 function renderChat(){
   const wrap = document.getElementById('wall-wrap');
   if(!wrap) return;
 
+  const buildBody = (posts, opts)=>{
+    const muted = opts?.muted || false;
+    const strikes = opts?.strikes || 0;
+
+    _wallPosts = posts.map(p=>({...p, reactions: normalizeReactions(p.reactions)}));
+
+    // Stats del hero
+    const totalPosts = posts.length;
+    const totalReactions = posts.reduce((sum,p)=>{
+      const norm = normalizeReactions(p.reactions);
+      return sum + Object.values(norm).reduce((s,r)=>s+(r?.count||0),0);
+    }, 0);
+    const ePosts = document.getElementById('wp-stat-posts');
+    const eReact = document.getElementById('wp-stat-reactions');
+    const eEye = document.getElementById('wp-eyebrow-txt');
+    const eStk = document.getElementById('wp-sticky-stat');
+    if(ePosts) ePosts.textContent = String(totalPosts);
+    if(eReact) eReact.textContent = String(totalReactions);
+    if(eEye) eEye.textContent = `En vivo · ${totalPosts} publicación${totalPosts!==1?'es':''}`;
+    if(eStk) eStk.textContent = `${totalPosts} publicación${totalPosts!==1?'es':''}`;
+
+    // Detectar nuevas menciones para notificaciones
+    if(typeof refreshNotifications === 'function'){
+      try { refreshNotifications(); } catch(e){}
+    }
+
+    let html = '';
+
+    // Disclaimer (sutil)
+    html += `<div class="wall-disclaimer">🤝 <strong>Sé respetuoso</strong> — 2 eliminaciones y pierdes acceso al muro</div>`;
+
+    // Strike warning
+    if(strikes === 1 && !muted){
+      html += `<div style="background:var(--gld-bg);border:1.5px solid var(--gld);border-radius:14px;padding:10px 14px;font-size:.78rem;color:var(--gld);font-weight:600;margin-bottom:12px">
+        ⚠️ Tienes 1 aviso — si el admin elimina otro de tus posts o comentarios, perderás acceso al muro.
+      </div>`;
+    }
+
+    // Muted banner
+    if(muted){
+      html += `<div class="wall-muted-banner" style="text-align:center">🚫 Tu acceso al muro ha sido desactivado por el administrador.</div>`;
+    }
+
+    // Compose box
+    if(!muted){
+      const meInitials = CU.u.slice(0,2).toUpperCase();
+      html += `<div class="wall-compose">
+        <div class="wall-compose-top">
+          <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${meInitials}</div>
+          <textarea id="wall-input" placeholder="¿Qué está pasando en tu quiniela? Escribe @ para etiquetar ⚽" maxlength="500" rows="2"
+            oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
+            onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
+        </div>
+        <div class="wall-compose-footer">
+          <span class="wall-char-count" id="wall-input-count">0/500</span>
+          <button class="wall-post-btn" onclick="submitWallPost()">Publicar ⚽</button>
+        </div>
+      </div>`;
+    }
+
+    // Section header
+    if(posts.length){
+      html += `<div class="wall-section-h">Recientes</div>`;
+    }
+
+    if(!posts.length){
+      html += `<div style="text-align:center;padding:3rem 1.5rem;background:var(--surface);border:1px dashed var(--border);border-radius:18px;display:flex;flex-direction:column;align-items:center;gap:.6rem">
+        <div style="font-size:3rem">⚽</div>
+        <div style="font-weight:800;font-size:.95rem;color:var(--ink)">Sé el primero en publicar algo</div>
+        <div style="font-size:.82rem;color:var(--ink3);max-width:300px;line-height:1.5">Comparte cómo va tu quiniela, comenta los partidos del Mundial.</div>
+      </div>`;
+    } else {
+      html += posts.map((p, idx)=>renderPost(p, idx)).join('');
+    }
+
+    wrap.innerHTML = html;
+
+    // Attach mention picker al compose
+    const composeInput = document.getElementById('wall-input');
+    if(composeInput) attachMentionPicker(composeInput);
+
+    // Animar reveal de posts
+    observeWallPosts();
+  };
+
   // Check mute status first
   api('GET',`/api/wall/strikes/${CU.u}`).then(status=>{
-    const muted = status.muted;
-    const strikes = status.strikes;
-
     api('GET','/api/wall').then(posts=>{
-      _wallPosts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
-
-      let html = '';
-
-      // Disclaimer
-      html += `<div class="wall-disclaimer">🤝 Comparte con todos los participantes. Sé respetuoso — 2 eliminaciones y pierdes acceso al muro.</div>`;
-
-      // Strike warning
-      if(strikes === 1 && !muted){
-        html += `<div style="background:var(--gld-bg);border:1.5px solid var(--gld);border-radius:14px;padding:10px 14px;font-size:.78rem;color:var(--gld);font-weight:600;margin-bottom:12px">
-          ⚠️ Tienes 1 aviso — si el admin elimina otro de tus posts o comentarios, perderás acceso al muro.
-        </div>`;
-      }
-
-      // Muted banner
-      if(muted){
-        html += `<div class="wall-muted-banner" style="text-align:center">🚫 Tu acceso al muro ha sido desactivado por el administrador.</div>`;
-      }
-
-      // Compose box
-      if(!muted){
-        const meInitials = CU.u.slice(0,2).toUpperCase();
-        html += `<div class="wall-compose">
-          <div class="wall-compose-top">
-            <div style="width:34px;height:34px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${meInitials}</div>
-            <textarea id="wall-input" placeholder="¿Qué está pasando en tu quiniela? ⚽" maxlength="500" rows="2"
-              oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
-              onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
-          </div>
-          <div class="wall-compose-footer">
-            <span class="wall-char-count" id="wall-input-count">0/500</span>
-            <button class="wall-post-btn" onclick="submitWallPost()">Publicar ⚽</button>
-          </div>
-        </div>`;
-      }
-
-      // Posts count
-      html += `<div data-wall-count style="font-size:.68rem;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-left:2px">${posts.length} publicación${posts.length!==1?'es':''}</div>`;
-
-      if(!posts.length){
-        html += `<div style="text-align:center;padding:3rem 1rem;color:var(--ink3)">Sé el primero en publicar algo ⚽</div>`;
-      } else {
-        html += posts.map(p=>renderPost(p)).join('');
-      }
-
-      wrap.innerHTML = html;
+      buildBody(posts, { muted: status.muted, strikes: status.strikes });
     }).catch(()=>{ wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--red)">Error cargando el muro</div>`; });
   }).catch(()=>{
     api('GET','/api/wall').then(posts=>{
-      _wallPosts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
-      const meInitials = CU.u.slice(0,2).toUpperCase();
-      wrap.innerHTML = `<div class="wall-disclaimer">🤝 Comparte con todos los participantes. Sé respetuoso — 2 eliminaciones y pierdes acceso al muro.</div>
-        <div class="wall-compose">
-          <div class="wall-compose-top">
-            <div style="width:34px;height:34px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${meInitials}</div>
-            <textarea id="wall-input" placeholder="¿Qué está pasando en tu quiniela? ⚽" maxlength="500" rows="2"
-              oninput="document.getElementById('wall-input-count').textContent=this.value.length+'/500'"
-              onkeydown="if(event.ctrlKey&&event.key==='Enter')submitWallPost()"></textarea>
-          </div>
-          <div class="wall-compose-footer">
-            <span class="wall-char-count" id="wall-input-count">0/500</span>
-            <button class="wall-post-btn" onclick="submitWallPost()">Publicar ⚽</button>
-          </div>
-        </div>` + posts.map(p=>renderPost(p)).join('');
+      buildBody(posts, { muted: false, strikes: 0 });
     }).catch(()=>{ wrap.innerHTML=`<div style="padding:2rem;color:var(--red)">Error cargando</div>`; });
   });
 }
 
-function renderPost(p){
+let _wallPostObserver = null;
+function observeWallPosts(){
+  if(_wallPostObserver) _wallPostObserver.disconnect();
+  const posts = document.querySelectorAll('#wall-wrap .wall-post.wp-reveal');
+  if(!posts.length) return;
+  if(!('IntersectionObserver' in window)){
+    posts.forEach(p=>p.classList.add('show'));
+    return;
+  }
+  _wallPostObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        _wallPostObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.04, rootMargin: '0px 0px -2% 0px' });
+  posts.forEach(p=>{
+    const rect = p.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.95) p.classList.add('show');
+    else _wallPostObserver.observe(p);
+  });
+}
+
+function renderPost(p, idx){
   const isMe = p.username===CU.u;
   const canDelete = CU.admin || isMe;
   const time = timeAgo(p.created_at);
@@ -6330,18 +6664,21 @@ function renderPost(p){
     }).join('')}
   </div>`;
 
-  return `<div class="wall-post" id="post-${p.id}">
+  const idxAttr = (typeof idx === 'number') ? ` style="--wp-i:${Math.min(idx, 8)}"` : '';
+  const contentHtml = parseWithMentions(p.content || '');
+
+  return `<div class="wall-post wp-reveal" id="post-${p.id}"${idxAttr}>
     <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
       <div onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" title="Ver perfil">${initials}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="font-weight:700;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'};cursor:pointer" title="Ver perfil">${p.username}</span>
-          ${isMe?`<span style="background:var(--g-bg);color:var(--green);font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.3px">tú</span>`:''}
-          <span style="font-size:.7rem;color:var(--ink3)">${time}</span>
+          <span onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="font-weight:800;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'};cursor:pointer" title="Ver perfil">${escHtml(p.username)}</span>
+          ${isMe?`<span style="background:var(--g-bg);color:var(--green);font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:7px;letter-spacing:.5px;text-transform:uppercase">tú</span>`:''}
+          <span style="font-size:.72rem;color:var(--ink3);font-weight:600">${time}</span>
         </div>
-        <div style="font-size:.88rem;color:var(--ink2);line-height:1.6;margin-top:5px;word-break:break-word">${escHtml(p.content)}</div>
+        <div style="font-size:.88rem;color:var(--ink2);line-height:1.55;margin-top:5px;word-break:break-word">${contentHtml}</div>
       </div>
-      ${canDelete?`<button onclick="deleteWallPost(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.75rem;padding:2px 6px;flex-shrink:0;opacity:.6" title="Eliminar">✕</button>`:''}
+      ${canDelete?`<button onclick="deleteWallPost(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.85rem;padding:2px 6px;flex-shrink:0;opacity:.5;transition:opacity .15s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5" title="Eliminar">✕</button>`:''}
     </div>
     <div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:10px">
       ${activeHtml}
@@ -6393,7 +6730,17 @@ function loadComments(postId){
     <div class="sk" style="height:11px;width:80%;margin-left:32px"></div>
   </div>`;
   api('GET',`/api/wall/${postId}/comments`).then(comments=>{
+    // Caché para detectar menciones en notificaciones
+    if(!window._wallCommentCache) window._wallCommentCache = {};
+    window._wallCommentCache[postId] = comments;
     wrap.innerHTML = renderComments(comments, postId, null) + commentInput(postId, null);
+    // Attach mention picker al input principal de comentarios
+    const inp = document.getElementById(`comment-input-${postId}`);
+    if(inp) attachMentionPicker(inp);
+    // Refrescar notificaciones por si hay menciones nuevas en estos comentarios
+    if(typeof refreshNotifications === 'function'){
+      try { refreshNotifications(); } catch(e){}
+    }
   }).catch(()=>{ wrap.innerHTML=`<div style="color:var(--red);font-size:.78rem">Error</div>`; });
 }
 
@@ -6404,19 +6751,20 @@ function renderComments(comments, postId, parentId){
     const isMe = c.username===CU.u;
     const canDelete = CU.admin||isMe;
     const replies = renderComments(comments, postId, c.id);
-    const hasReplies = comments.some(x=>x.parent_id===c.id);
+    const safeUname = c.username.replace(/'/g,"\\'");
+    const contentHtml = parseWithMentions(c.content || '');
     return `<div style="padding:.6rem 0;border-bottom:1px solid var(--border);${parentId?'margin-left:1.5rem;':''}">
       <div style="display:flex;gap:8px;align-items:flex-start">
-        <div style="width:26px;height:26px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${c.username.slice(0,2).toUpperCase()}</div>
+        <div onclick="openProfile('${safeUname}')" style="width:26px;height:26px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">${c.username.slice(0,2).toUpperCase()}</div>
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px">
-            <span style="font-weight:700;font-size:.8rem;color:${isMe?'var(--green)':'var(--ink)'}">${c.username}</span>
-            <span style="font-size:.65rem;color:var(--ink3)">${timeAgo(c.created_at)}</span>
+            <span onclick="openProfile('${safeUname}')" style="font-weight:800;font-size:.8rem;color:${isMe?'var(--green)':'var(--blue2)'};cursor:pointer">${escHtml(c.username)}</span>
+            <span style="font-size:.65rem;color:var(--ink3);font-weight:600">${timeAgo(c.created_at)}</span>
           </div>
-          <div style="font-size:.82rem;color:var(--ink);line-height:1.5;margin-top:2px">${escHtml(c.content)}</div>
+          <div style="font-size:.82rem;color:var(--ink);line-height:1.5;margin-top:2px;word-break:break-word">${contentHtml}</div>
           <div style="display:flex;gap:8px;margin-top:4px">
-            <button onclick="showReplyInput(${postId},${c.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.72rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;padding:0">Responder</button>
-            ${canDelete?`<button onclick="deleteWallComment(${c.id},${postId})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.72rem;padding:0">Eliminar</button>`:''}
+            <button onclick="showReplyInput(${postId},${c.id})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.72rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;padding:0">Responder</button>
+            ${canDelete?`<button onclick="deleteWallComment(${c.id},${postId})" style="background:none;border:none;cursor:pointer;color:var(--ink3);font-size:.72rem;padding:0;font-weight:700">Eliminar</button>`:''}
           </div>
           <div id="reply-input-${c.id}"></div>
         </div>
@@ -6428,14 +6776,16 @@ function renderComments(comments, postId, parentId){
 
 function commentInput(postId, parentId){
   const id = parentId ? `reply-form-${parentId}` : `comment-form-${postId}`;
-  return `<div style="display:flex;gap:8px;align-items:flex-start;padding:.75rem 0 0" id="${id}">
+  const inputId = `comment-input-${parentId||postId}`;
+  return `<div style="display:flex;gap:8px;align-items:flex-start;padding:.75rem 0 0;position:relative" id="${id}">
     <div style="width:26px;height:26px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${CU.u.slice(0,2).toUpperCase()}</div>
-    <div style="flex:1;display:flex;gap:6px">
-      <input type="text" placeholder="${parentId?'Responder...':'Comentar...'}" maxlength="500"
-        id="comment-input-${parentId||postId}"
-        style="flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.8rem;outline:none"
-        onkeydown="if(event.key==='Enter')submitComment(${postId},${parentId||'null'})">
-      <button onclick="submitComment(${postId},${parentId||'null'})" style="padding:7px 12px;background:var(--grad-tri);color:#fff;border:none;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer">↗</button>
+    <div style="flex:1;display:flex;gap:6px;position:relative">
+      <input type="text" placeholder="${parentId?'Responder... (@ para etiquetar)':'Comentar... (@ para etiquetar)'}" maxlength="500"
+        id="${inputId}"
+        style="flex:1;padding:8px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;outline:none"
+        onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault();submitComment(${postId},${parentId||'null'})}"
+        oninput="window._lastCommentInput='${inputId}'">
+      <button onclick="submitComment(${postId},${parentId||'null'})" style="padding:8px 14px;background:var(--grad-tri);color:#fff;border:none;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.78rem;cursor:pointer;flex-shrink:0">↗</button>
     </div>
   </div>`;
 }
@@ -6444,7 +6794,10 @@ function showReplyInput(postId, parentId){
   const wrap = document.getElementById(`reply-input-${parentId}`);
   if(!wrap) return;
   wrap.innerHTML = commentInput(postId, parentId);
-  setTimeout(()=>document.getElementById(`comment-input-${parentId}`)?.focus(),50);
+  setTimeout(()=>{
+    const inp = document.getElementById(`comment-input-${parentId}`);
+    if(inp){ inp.focus(); attachMentionPicker(inp); }
+  },50);
 }
 
 function submitWallPost(){
@@ -6563,9 +6916,25 @@ function startWallPolling(){
           const wrap = document.getElementById('wall-wrap');
           if(wrap){
             const tmp = document.createElement('div');
-            tmp.innerHTML = renderPost(p);
-            const countEl = wrap.querySelector('[data-wall-count]');
-            if(countEl) countEl.after(tmp.firstChild);
+            tmp.innerHTML = renderPost(p, 0);
+            const newEl = tmp.firstChild;
+            if(newEl){
+              // Reveal inmediato para nuevos posts
+              setTimeout(()=>newEl.classList.add('show'), 30);
+              const sectionH = wrap.querySelector('.wall-section-h');
+              if(sectionH){
+                sectionH.after(newEl);
+              } else {
+                // Insertar antes del primer post existente o al final
+                const firstPost = wrap.querySelector('.wall-post');
+                if(firstPost) firstPost.before(newEl);
+                else wrap.appendChild(newEl);
+              }
+            }
+          }
+          // Refrescar notificaciones por si me etiquetaron en este post nuevo
+          if(typeof refreshNotifications === 'function'){
+            try { refreshNotifications(); } catch(e){}
           }
           return;
         }
@@ -6591,7 +6960,10 @@ function startWallPolling(){
           if(idx>=0) _wallPosts[idx] = p;
           const tmp = document.createElement('div');
           tmp.innerHTML = renderPost(p);
-          existing.replaceWith(tmp.firstChild);
+          const newEl = tmp.firstChild;
+          // Mantener visible — ya estaba en pantalla
+          if(newEl) newEl.classList.add('show');
+          existing.replaceWith(newEl);
           if(_openComments[p.id]) loadComments(p.id);
         }
       });
@@ -6602,6 +6974,20 @@ function startWallPolling(){
         const id = parseInt(el.id.replace('post-',''));
         if(!posts.find(p=>p.id===id)) el.remove();
       });
+
+      // Actualizar stats del hero
+      const totalPosts = posts.length;
+      const totalReactions = posts.reduce((sum,p)=>{
+        return sum + Object.values(p.reactions||{}).reduce((s,r)=>s+(r?.count||0),0);
+      }, 0);
+      const ePosts = document.getElementById('wp-stat-posts');
+      const eReact = document.getElementById('wp-stat-reactions');
+      const eEye = document.getElementById('wp-eyebrow-txt');
+      const eStk = document.getElementById('wp-sticky-stat');
+      if(ePosts) ePosts.textContent = String(totalPosts);
+      if(eReact) eReact.textContent = String(totalReactions);
+      if(eEye) eEye.textContent = `En vivo · ${totalPosts} publicación${totalPosts!==1?'es':''}`;
+      if(eStk) eStk.textContent = `${totalPosts} publicación${totalPosts!==1?'es':''}`;
     }).catch(()=>{});
   }, 1000);
 }
@@ -8134,7 +8520,7 @@ function _doNavigate(name){
   if(name==='admin')          renderAdmin();
   if(name==='premios')        renderPremios();
   if(name==='reglas')         renderReglas();
-  if(name==='chat')           { renderChat(); startWallPolling(); }
+  if(name==='chat')           { renderChat(); startWallPolling(); setupWallSticky(); }
   if(name==='miquiniela')     { renderMiQuiniela(); setupMqSticky(); }
   if(name==='misgrupos')      renderMisGrupos();
   if(name==='referidos')      renderReferidos();
@@ -8226,6 +8612,25 @@ function setupMqSticky(){
   };
   window.addEventListener('scroll', _mqScrollHandler, { passive: true });
   _mqScrollHandler();
+}
+
+let _wallScrollHandler = null;
+function setupWallSticky(){
+  const hero = document.querySelector('#page-chat .wp-page-hero');
+  const sticky = document.getElementById('wp-sticky');
+  if(!hero || !sticky) return;
+  if(_wallScrollHandler) window.removeEventListener('scroll', _wallScrollHandler);
+  _wallScrollHandler = ()=>{
+    if(localStorage.getItem('q26page') !== 'chat'){
+      sticky.classList.remove('show');
+      return;
+    }
+    const rect = hero.getBoundingClientRect();
+    if(rect.bottom < 110) sticky.classList.add('show');
+    else sticky.classList.remove('show');
+  };
+  window.addEventListener('scroll', _wallScrollHandler, { passive: true });
+  _wallScrollHandler();
 }
 
 // ══════════════════════════════════════════════════════
