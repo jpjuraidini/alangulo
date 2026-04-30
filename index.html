@@ -6845,7 +6845,9 @@ function toggleReaction(postId, emoji){
     if(el){
       const tmp = document.createElement('div');
       tmp.innerHTML = renderPost(post);
-      el.replaceWith(tmp.firstChild);
+      const newEl = tmp.firstChild;
+      if(newEl) newEl.classList.add('show'); // mantener visible (ya estaba en pantalla)
+      el.replaceWith(newEl);
       if(_openComments[postId]) loadComments(postId);
     }
   }
@@ -6865,7 +6867,9 @@ function toggleReaction(postId, emoji){
           if(el){
             const tmp = document.createElement('div');
             tmp.innerHTML = renderPost(fresh);
-            el.replaceWith(tmp.firstChild);
+            const newEl = tmp.firstChild;
+            if(newEl) newEl.classList.add('show'); // mantener visible
+            el.replaceWith(newEl);
             if(_openComments[postId]) loadComments(postId);
           }
         }
