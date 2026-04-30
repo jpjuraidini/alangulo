@@ -131,10 +131,22 @@ body.dark .lp-header-cta{background:var(--surface);color:var(--ink)}
 
 /* HERO */
 .lp-hero{position:relative;padding:3rem 1.25rem 3.5rem;overflow:hidden}
-.lp-hero-bg{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,104,56,.07) 0%,rgba(0,48,135,.07) 50%,rgba(192,0,26,.07) 100%);z-index:0}
-.lp-hero-bg::before{content:"";position:absolute;width:280px;height:280px;background:radial-gradient(circle,rgba(0,196,106,.25),transparent 70%);top:-60px;left:-60px;filter:blur(50px);animation:lpOrb 12s ease-in-out infinite alternate}
-.lp-hero-bg::after{content:"";position:absolute;width:240px;height:240px;background:radial-gradient(circle,rgba(61,135,255,.22),transparent 70%);bottom:-40px;right:-40px;filter:blur(50px);animation:lpOrb 14s ease-in-out infinite alternate-reverse}
-@keyframes lpOrb{from{transform:translate(0,0)}to{transform:translate(30px,40px)}}
+.lp-hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:linear-gradient(180deg,rgba(0,104,56,.05) 0%,rgba(0,48,135,.05) 50%,rgba(192,0,26,.05) 100%)}
+.lp-hero-bg::before{content:"";position:absolute;width:520px;height:520px;background:radial-gradient(circle,rgba(0,196,106,.45),transparent 65%);top:-160px;left:-160px;filter:blur(70px);animation:lpMesh1 18s ease-in-out infinite alternate;will-change:transform}
+.lp-hero-bg::after{content:"";position:absolute;width:480px;height:480px;background:radial-gradient(circle,rgba(61,135,255,.42),transparent 65%);bottom:-140px;right:-140px;filter:blur(70px);animation:lpMesh2 22s ease-in-out infinite alternate-reverse;will-change:transform}
+.lp-mesh{position:absolute;inset:0;pointer-events:none;z-index:0}
+.lp-mesh-orb{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;will-change:transform}
+.lp-mesh-orb.m1{width:380px;height:380px;background:radial-gradient(circle,rgba(255,51,85,.55),transparent 65%);top:30%;left:35%;animation:lpMesh3 26s ease-in-out infinite alternate}
+.lp-mesh-orb.m2{width:300px;height:300px;background:radial-gradient(circle,rgba(125,75,255,.4),transparent 65%);top:55%;left:10%;animation:lpMesh4 30s ease-in-out infinite alternate-reverse}
+.lp-mesh-orb.m3{width:240px;height:240px;background:radial-gradient(circle,rgba(255,180,0,.35),transparent 65%);top:5%;right:25%;animation:lpMesh5 24s ease-in-out infinite alternate}
+@keyframes lpMesh1{0%{transform:translate(0,0) scale(1)}100%{transform:translate(80px,60px) scale(1.15)}}
+@keyframes lpMesh2{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-70px,-50px) scale(1.18)}}
+@keyframes lpMesh3{0%{transform:translate(0,0) scale(1) rotate(0)}100%{transform:translate(-50px,40px) scale(1.2) rotate(60deg)}}
+@keyframes lpMesh4{0%{transform:translate(0,0) scale(1)}100%{transform:translate(70px,-40px) scale(1.1)}}
+@keyframes lpMesh5{0%{transform:translate(0,0) scale(1)}100%{transform:translate(-40px,30px) scale(1.25)}}
+.lp-grain{position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.18;mix-blend-mode:overlay;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.7'/></svg>")}
+body.dark .lp-grain{opacity:.08}
+body.dark .lp-mesh-orb{opacity:.35}
 .lp-hero-inner{position:relative;z-index:1;max-width:1080px;margin:0 auto}
 .lp-hero-grid{display:grid;grid-template-columns:1fr;gap:32px;align-items:center}
 .lp-hero-text{text-align:center}
@@ -473,7 +485,7 @@ body.dark .lp-trail{mix-blend-mode:screen;opacity:.7}
 .lp-reveal.lp-show{opacity:1;transform:translateY(0)}
 @media (prefers-reduced-motion:reduce){
   .lp-reveal{opacity:1;transform:none;transition:none}
-  .lp-hero-bg::before,.lp-hero-bg::after,.lp-pending-emoji{animation:none}
+  .lp-hero-bg::before,.lp-hero-bg::after,.lp-pending-emoji,.lp-mesh-orb{animation:none}
 }
 
 /* Responsive */
@@ -1508,6 +1520,12 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
   <!-- HERO -->
   <section class="lp-hero lp-reveal">
     <div class="lp-hero-bg"></div>
+    <div class="lp-mesh">
+      <div class="lp-mesh-orb m1"></div>
+      <div class="lp-mesh-orb m2"></div>
+      <div class="lp-mesh-orb m3"></div>
+    </div>
+    <div class="lp-grain"></div>
     <div class="lp-hero-inner">
       <div class="lp-hero-grid">
 
@@ -5538,8 +5556,31 @@ function toggleDark(){
   syncDrawer();
 }
 function initDark(){
-  if(localStorage.getItem('q26dark')==='1'){
+  // 1) Si el usuario ya eligió un tema, respeta su elección
+  const saved = localStorage.getItem('q26dark');
+  if(saved === '1'){
     document.body.classList.add('dark');
+    return;
+  }
+  if(saved === '0'){
+    document.body.classList.remove('dark');
+    return;
+  }
+  // 2) Si no hay preferencia guardada, sigue al sistema
+  if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches){
+    document.body.classList.add('dark');
+  }
+  // 3) Escuchar cambios del sistema mientras NO haya elección manual
+  if(window.matchMedia){
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e)=>{
+      // Solo aplicar si el usuario sigue sin elegir manualmente
+      if(localStorage.getItem('q26dark') !== null) return;
+      if(e.matches) document.body.classList.add('dark');
+      else document.body.classList.remove('dark');
+    };
+    if(mq.addEventListener) mq.addEventListener('change', handler);
+    else if(mq.addListener) mq.addListener(handler);
   }
 }
 
