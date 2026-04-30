@@ -1267,61 +1267,151 @@ body.dark .podium-card.p3{background:linear-gradient(120deg,rgba(160,103,58,.1),
 .rsub{font-size:.68rem;color:var(--ink3)}
 
 /* PRIZES */
-.prizes-hero{background:var(--grad-tri);border-radius:var(--rad-lg);padding:2rem;color:#fff;margin-bottom:1.5rem;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.2)}
-.prizes-hero::before{content:"🏆";position:absolute;right:-10px;top:-10px;font-size:7rem;opacity:.08}
-.prizes-hero::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 80% 120%,rgba(255,255,255,.15) 0%,transparent 60%)}
-.prizes-hero-top{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;position:relative;z-index:1}
-.prizes-bolsa-label{font-size:.75rem;opacity:.85;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-.prizes-bolsa-amt{font-weight:800;font-size:3rem;line-height:1;color:#fff}
-.prizes-bolsa-sub{font-size:.75rem;opacity:.7;margin-top:4px}
-.prizes-right{text-align:right}
-.prizes-count-label{font-size:.72rem;opacity:.7;text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
-.prizes-count-num{font-weight:800;font-size:1.8rem;color:#fff}
-.prizes-count-sub{font-size:.7rem;opacity:.6}
-.prizes-prog-wrap{margin-top:1.25rem;position:relative;z-index:1}
-.prizes-prog-label{font-size:.72rem;opacity:.7;margin-bottom:5px}
-.prizes-prog-track{height:8px;background:rgba(255,255,255,.2);border-radius:4px;overflow:hidden}
-.prizes-prog-bar{height:100%;background:#fff;border-radius:4px;transition:width .6s}
-.prizes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:1.5rem}
-.prize-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;box-shadow:var(--sh);transition:all .25s cubic-bezier(.22,1,.36,1);display:flex;flex-direction:column;gap:6px;position:relative;overflow:hidden}
-.prize-card:hover{transform:translateY(-4px);box-shadow:var(--sh2)}
-.prize-card::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
-.prize-card.p1::before{background:var(--grad-tri)}
-.prize-card.p2::before{background:linear-gradient(90deg,#888,#aaa)}
-.prize-card.p3::before{background:linear-gradient(90deg,#c8875a,#e8a070)}
-.prize-card.p4::before,.prize-card.p5::before{background:var(--grad-gb)}
-.prize-card.p6::before{background:linear-gradient(90deg,#222,#555)}
-.prize-medal{font-size:1.8rem}
-.prize-pos{font-weight:800;font-size:.78rem;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px}
-.prize-pct{font-weight:800;font-size:2rem;line-height:1}
-.prize-pct.c1{color:var(--gld)}.prize-pct.c2{color:#888}.prize-pct.c3{color:#c8875a}.prize-pct.c45{color:var(--blue2)}
-.prize-amt{font-weight:800;font-size:1.1rem;color:var(--ink)}
-.prize-amt-sub{font-size:.7rem;color:var(--ink3)}
-.prize-bar-w{height:5px;background:var(--bg);border-radius:3px;margin-top:4px}
-.prize-bar{height:100%;border-radius:3px;transition:width .6s}
-.prizes-ref-section{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;box-shadow:var(--sh)}
-.prizes-ref-title{font-weight:800;font-size:1rem;color:var(--ink);margin-bottom:.25rem}
-.prizes-ref-sub{font-size:.78rem;color:var(--ink3);margin-bottom:1rem}
+/* ── PREMIOS v2 ── */
+
+/* Hero gigante con gradient tricolor */
+.pp-hero{background:linear-gradient(135deg,#006838 0%,#003087 50%,#c0001a 100%);border-radius:24px;padding:28px 24px;margin-bottom:18px;position:relative;overflow:hidden;color:#fff;box-shadow:0 16px 40px rgba(0,48,135,.18)}
+.pp-hero::before{content:"";position:absolute;top:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 65%);pointer-events:none}
+.pp-hero::after{content:"🏆";position:absolute;bottom:-40px;right:-10px;font-size:9rem;opacity:.08;line-height:1;pointer-events:none}
+.pp-hero-row{position:relative;z-index:1}
+.pp-eyebrow{font-size:.66rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#fff;opacity:.92;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.pp-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:#ffd84d;animation:ppPulse 1.6s ease-in-out infinite;box-shadow:0 0 10px rgba(255,216,77,.6)}
+@keyframes ppPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.pp-bolsa-label{font-size:.74rem;text-transform:uppercase;letter-spacing:1.5px;opacity:.85;font-weight:700;margin-bottom:6px}
+.pp-bolsa-amt{font-size:3.6rem;font-weight:800;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;text-shadow:0 4px 24px rgba(0,0,0,.2);margin-bottom:6px;color:#fff}
+.pp-bolsa-amt .currency{font-size:.5em;font-weight:700;opacity:.7;margin-right:6px;vertical-align:top}
+.pp-bolsa-sub{font-size:.82rem;opacity:.85;font-weight:500;margin-bottom:14px}
+.pp-pills{display:flex;gap:8px;flex-wrap:wrap}
+.pp-pill{background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border-radius:20px;padding:6px 14px;font-size:.74rem;font-weight:700;color:#fff;display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(255,255,255,.2)}
+
+/* Section dividers */
+.pp-section-h{font-size:.66rem;font-weight:800;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;margin:18px 0 12px;padding:0 4px;display:flex;align-items:center;gap:7px}
+.pp-section-h::before,.pp-section-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* Prize cards apiladas verticales */
+.pp-prizes{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.pp-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;display:grid;grid-template-columns:auto auto 1fr auto;align-items:center;column-gap:14px;cursor:default;position:relative;overflow:hidden;transition:transform .25s cubic-bezier(.22,1,.36,1),box-shadow .25s}
+body.dark .pp-card{background:#161a2e}
+.pp-card:hover{transform:translateY(-2px);box-shadow:0 16px 32px rgba(10,14,26,.08)}
+.pp-card::before{content:'';position:absolute;top:0;left:0;bottom:0;width:4px}
+
+.pp-card.p1{padding:18px;background:linear-gradient(120deg,rgba(232,170,30,.18),var(--surface) 55%);border-color:rgba(232,170,30,.4);box-shadow:0 12px 28px rgba(232,170,30,.14)}
+.pp-card.p1::before{background:linear-gradient(180deg,#c8900a,#f0b830,#c8900a)}
+.pp-card.p1::after{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(232,170,30,.25),transparent 65%);pointer-events:none}
+.pp-card.p2{background:linear-gradient(120deg,rgba(140,140,140,.12),var(--surface) 55%);border-color:rgba(140,140,140,.3)}
+.pp-card.p2::before{background:linear-gradient(180deg,#666,#aaa,#666)}
+.pp-card.p3{background:linear-gradient(120deg,rgba(160,103,58,.14),var(--surface) 55%);border-color:rgba(160,103,58,.3)}
+.pp-card.p3::before{background:linear-gradient(180deg,#7a4020,#c87840,#7a4020)}
+.pp-card.p4{background:linear-gradient(120deg,rgba(0,196,106,.10),var(--surface) 55%);border-color:rgba(0,196,106,.25)}
+.pp-card.p4::before{background:linear-gradient(180deg,#006838,#00c46a)}
+.pp-card.p5{background:linear-gradient(120deg,rgba(0,82,204,.10),var(--surface) 55%);border-color:rgba(0,82,204,.25)}
+.pp-card.p5::before{background:linear-gradient(180deg,#003087,#3d87ff)}
+.pp-card.p6{background:linear-gradient(120deg,rgba(192,0,26,.08),var(--surface) 55%);border-color:rgba(192,0,26,.2)}
+.pp-card.p6::before{background:linear-gradient(180deg,#c0001a,#ff3355)}
+body.dark .pp-card.p1{background:linear-gradient(120deg,rgba(232,170,30,.16),#1a1f33 55%)}
+body.dark .pp-card.p2{background:linear-gradient(120deg,rgba(140,140,140,.1),#1a1f33 55%)}
+body.dark .pp-card.p3{background:linear-gradient(120deg,rgba(160,103,58,.1),#1a1f33 55%)}
+body.dark .pp-card.p4{background:linear-gradient(120deg,rgba(0,196,106,.08),#1a1f33 55%)}
+body.dark .pp-card.p5{background:linear-gradient(120deg,rgba(0,82,204,.08),#1a1f33 55%)}
+body.dark .pp-card.p6{background:linear-gradient(120deg,rgba(192,0,26,.06),#1a1f33 55%)}
+
+.pp-medal{font-size:2rem;line-height:1;flex-shrink:0;animation:ppFloat 3s ease-in-out infinite;align-self:center}
+.pp-card.p1 .pp-medal{font-size:2.4rem}
+.pp-card.p2 .pp-medal{animation-delay:.1s}
+.pp-card.p3 .pp-medal{animation-delay:.2s}
+.pp-card.p4 .pp-medal{animation-delay:.3s}
+.pp-card.p5 .pp-medal{animation-delay:.4s}
+.pp-card.p6 .pp-medal{animation-delay:.5s}
+@keyframes ppFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@media (prefers-reduced-motion:reduce){
+  .pp-medal{animation:none}
+}
+
+.pp-rank{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1.3px;color:var(--ink3);align-self:center;line-height:1.2;text-align:center;min-width:42px}
+.pp-card.p1 .pp-rank{color:#c8900a}
+.pp-card.p2 .pp-rank{color:#888}
+.pp-card.p3 .pp-rank{color:#a0673a}
+.pp-card.p6 .pp-rank{color:#c0001a}
+.pp-info{display:flex;flex-direction:column;gap:2px;align-self:center;min-width:0}
+.pp-info-title{font-weight:800;font-size:.92rem;color:var(--ink);letter-spacing:-.2px;line-height:1.2}
+.pp-card.p1 .pp-info-title{font-size:1rem}
+.pp-info-sub{font-size:.74rem;color:var(--ink3);font-weight:600}
+.pp-amt-wrap{align-self:center;text-align:right;flex-shrink:0;position:relative;z-index:1}
+.pp-amt{font-weight:800;line-height:1;font-size:1.4rem;letter-spacing:-.4px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.pp-card.p1 .pp-amt{font-size:1.7rem;color:#c8900a}
+.pp-amt .cur{font-size:.5em;font-weight:700;opacity:.6;margin-right:2px}
+.pp-amt-mxn{font-size:.6rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+
+/* Reveal stagger */
+.pp-card.pp-reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--pp-i,0) * 70ms)}
+.pp-card.pp-reveal.show{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){
+  .pp-card.pp-reveal{opacity:1;transform:none;transition:none}
+}
+
+/* Bonus referido */
+.pp-ref-bonus{background:linear-gradient(135deg,#fff9e6,#fffef8);border:2px solid rgba(232,170,30,.5);border-radius:20px;padding:18px 22px;margin-bottom:18px;position:relative;overflow:hidden}
+body.dark .pp-ref-bonus{background:linear-gradient(135deg,#2a1e00,#1a1300);border-color:rgba(232,170,30,.5)}
+.pp-ref-bonus::before{content:"🎁";position:absolute;top:-15px;right:-10px;font-size:5rem;opacity:.06}
+.pp-ref-row{display:flex;gap:14px;align-items:flex-start;position:relative;z-index:1}
+.pp-ref-icon{font-size:2.2rem;flex-shrink:0;line-height:1}
+.pp-ref-meta{flex:1;min-width:0}
+.pp-ref-eyebrow{font-size:.6rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#c8900a;margin-bottom:4px}
+body.dark .pp-ref-eyebrow{color:#f0b030}
+.pp-ref-h{font-size:1rem;font-weight:800;color:var(--ink);letter-spacing:-.3px;margin-bottom:6px}
+.pp-ref-sub{font-size:.82rem;color:var(--ink2);line-height:1.55;margin-bottom:10px}
+.pp-ref-sub b{color:#c8900a;font-weight:800}
+body.dark .pp-ref-sub b{color:#f0b030}
+.pp-ref-amt{display:inline-flex;align-items:baseline;gap:6px;background:var(--surface);border:1.5px solid rgba(232,170,30,.4);padding:8px 14px;border-radius:12px;box-shadow:0 4px 12px rgba(232,170,30,.12)}
+body.dark .pp-ref-amt{background:#161a2e}
+.pp-ref-amt-num{font-size:1.5rem;font-weight:800;color:#c8900a;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+body.dark .pp-ref-amt-num{color:#f0b030}
+.pp-ref-amt-lbl{font-size:.68rem;font-weight:700;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px}
+.pp-ref-alert{margin-top:10px;border-radius:10px;padding:10px 14px;font-size:.8rem;font-weight:600;line-height:1.4}
+.pp-ref-alert.live{background:var(--g-bg);border:1.5px solid var(--green2);color:var(--green)}
+.pp-ref-alert.info{background:var(--b-bg);border:1px solid var(--b2);color:var(--blue2)}
+.pp-ref-alert.muted{font-style:italic;color:var(--ink3);background:transparent;border:none;padding:6px 0}
+
+/* Código referido */
+.pp-code{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px 22px;display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center;box-shadow:0 4px 14px rgba(10,14,26,.04);margin-bottom:14px}
+body.dark .pp-code{background:#161a2e}
+.pp-code-l .label{font-size:.6rem;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:1.3px;margin-bottom:4px}
+.pp-code-l .code{font-size:1.7rem;font-weight:800;letter-spacing:2px;font-variant-numeric:tabular-nums;background:linear-gradient(135deg,#003087,#0052cc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+.pp-code-r{text-align:right}
+.pp-refs-count{font-size:.68rem;color:var(--ink3);font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px}
+.pp-copy-btn{padding:9px 18px;background:linear-gradient(135deg,#006838,#003087);color:#fff;border:none;border-radius:11px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.78rem;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(0,82,204,.18)}
+.pp-copy-btn:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(0,82,204,.24)}
+
+/* Mis referidos */
+.pp-myrefs{margin-top:10px;padding:0 22px 18px}
+.pp-myrefs-title{font-size:.74rem;color:var(--ink2);font-weight:700;margin-bottom:6px}
+.pp-myrefs-list{display:flex;flex-wrap:wrap;gap:6px}
+
+/* Tabla admin */
 .ref-table{width:100%;border-collapse:collapse}
 .ref-table th{font-size:.65rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);padding:6px 10px;border-bottom:1.5px solid var(--border);text-align:left}
 .ref-table td{padding:9px 10px;border-bottom:1px solid var(--border);font-size:.82rem}
 .ref-table tr:last-child td{border-bottom:none}
 .ref-code{font-weight:800;letter-spacing:1.5px;color:var(--green);font-size:.9rem}
 .ref-count{font-weight:800;color:var(--blue2)}
-.my-ref-box{background:var(--g-bg);border:1.5px solid var(--green2);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem;margin-bottom:1rem}
-.my-ref-left .label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--green);margin-bottom:2px}
-.my-ref-left .code{font-weight:800;font-size:1.6rem;color:var(--green);letter-spacing:3px}
-.my-ref-right{font-size:.78rem;color:var(--ink3);text-align:right}
-.copy-code-btn{background:var(--grad-gb);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:"Plus Jakarta Sans";font-weight:600;font-size:.8rem;cursor:pointer;transition:opacity .2s;box-shadow:0 2px 8px rgba(0,104,56,.2)}
-.copy-code-btn:hover{opacity:.88}
-.bono-card{background:#fdf0d8;border:1px solid #e8c86a}
-body.dark .bono-card{background:#2a1e00;border-color:#a07010}
-.bono-label{font-size:.65rem;color:#9a6500;text-transform:uppercase;letter-spacing:.8px;font-weight:600;margin-bottom:2px}
-body.dark .bono-label{color:#e8a020}
-.bono-amount{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.3rem;color:#9a6500}
-body.dark .bono-amount{color:#f0b030}
-.bono-sub{font-size:.65rem;color:#7a5a00}
-body.dark .bono-sub{color:#c09040}
+
+@media (max-width:520px){
+  .pp-hero{padding:22px 18px}
+  .pp-bolsa-amt{font-size:2.8rem}
+  .pp-card{padding:14px 16px;column-gap:10px}
+  .pp-card.p1{padding:16px}
+  .pp-medal{font-size:1.7rem}
+  .pp-card.p1 .pp-medal{font-size:2rem}
+  .pp-amt{font-size:1.2rem}
+  .pp-card.p1 .pp-amt{font-size:1.45rem}
+  .pp-info-title{font-size:.85rem}
+  .pp-rank{min-width:36px;font-size:.55rem}
+  .pp-code{padding:16px 18px}
+  .pp-code-l .code{font-size:1.4rem}
+}
+
+/* Legacy styles para evitar romper si quedan referencias */
+.prizes-hero,.prizes-grid,.prize-card,.prize-medal,.prize-pos,.prize-pct,.prize-amt,.prize-bar-w,.prize-bar,.prizes-ref-section,.bono-card,.bono-label,.bono-amount,.bono-sub,.my-ref-box,.my-ref-left,.my-ref-right,.copy-code-btn{ /* deprecated */ }
 
 /* ADMIN */
 .adm-section{margin-bottom:2rem}
@@ -2944,9 +3034,6 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
 
   <!-- PREMIOS -->
   <div class="page" id="page-premios">
-    <div class="ph">
-      <div class="ph-left"><div class="ph-h">Premios 🏆</div><div class="ph-s">La bolsa crece con cada participante registrado · $275 MXN por jugador</div></div>
-    </div>
     <div id="premios-wrap"></div>
   </div>
 
@@ -5863,86 +5950,93 @@ function renderPremios(){
     }
   }
 
+  const safeMoney = (n)=>`<span class="cur">$</span>${n.toLocaleString('es-MX')}`;
+
   // ── HERO ──
-  let html=`<div class="prizes-hero" style="position:relative;overflow:hidden">
-    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(255,255,255,.15),transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(255,255,255,.08),transparent 60%)"></div>
-    <div class="prizes-hero-top" style="position:relative;z-index:1">
-      <div>
-        <div class="prizes-bolsa-label">💰 Bolsa total estimada</div>
-        <div class="prizes-bolsa-amt" style="text-shadow:0 2px 20px rgba(0,0,0,.2)">$${bolsa.toLocaleString('es-MX')}</div>
-        <div class="prizes-bolsa-sub" style="font-size:.82rem;opacity:.85">MXN en efectivo · ${totalUsers} participante${totalUsers!==1?'s':''} × $${PRICE_PER_USER}</div>
-        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-          <div style="background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:20px;padding:5px 12px;font-size:.72rem;font-weight:700;color:#fff">⚽ ${totalUsers} jugadores</div>
-          <div style="background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:20px;padding:5px 12px;font-size:.72rem;font-weight:700;color:#fff">📅 Finaliza 19 jul 2026</div>
-          <div style="background:rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:20px;padding:5px 12px;font-size:.72rem;font-weight:700;color:#fff">🏆 6 premiados</div>
-        </div>
+  let html=`<div class="pp-hero">
+    <div class="pp-hero-row">
+      <div class="pp-eyebrow"><span class="pp-eyebrow-dot"></span>Premios · Bolsa creciendo</div>
+      <div class="pp-bolsa-label">💰 Bolsa total estimada</div>
+      <div class="pp-bolsa-amt" id="pp-bolsa-amt"><span class="currency">$</span><span id="pp-bolsa-num">0</span></div>
+      <div class="pp-bolsa-sub">MXN en efectivo · ${totalUsers} participante${totalUsers!==1?'s':''} × $${PRICE_PER_USER}</div>
+      <div class="pp-pills">
+        <div class="pp-pill">⚽ ${totalUsers} jugador${totalUsers!==1?'es':''}</div>
+        <div class="pp-pill">📅 Finaliza 19 jul 2026</div>
+        <div class="pp-pill">🏆 6 premiados</div>
       </div>
     </div>
   </div>`;
 
   // ── PRIZE CARDS ──
-  html+=`<div class="prizes-grid">`;
-  PRIZE_PCT.forEach(p=>{
+  const prizeMeta = [
+    { rank:'1er<br/>lugar', title:'Campeón',     sub:'Primer lugar' },
+    { rank:'2do<br/>lugar', title:'Subcampeón',  sub:'Segundo lugar' },
+    { rank:'3er<br/>lugar', title:'Tercero',     sub:'Tercer lugar' },
+    { rank:'4to<br/>lugar', title:'Cuarto',      sub:'Cuarto lugar' },
+    { rank:'5to<br/>lugar', title:'Quinto',      sub:'Quinto lugar' },
+    { rank:'Último<br/>lugar', title:'Cucharón', sub:'Premio consolación' },
+  ];
+
+  html += `<div class="pp-section-h">Distribución de premios</div>`;
+  html += `<div class="pp-prizes">`;
+  PRIZE_PCT.forEach((p, idx)=>{
     const amt=Math.floor(bolsa*p.pct/100);
-    html+=`<div class="prize-card ${p.cls}">
-      <div class="prize-medal">${p.medal}</div>
-      <div class="prize-pos">${p.label}</div>
-      <div class="prize-pct ${p.pctCls}">${p.pct}%</div>
-      <div class="prize-amt">$${amt.toLocaleString('es-MX')} <span style="font-size:.72rem;color:var(--ink3)">MXN</span></div>
-      <div class="prize-amt-sub">de la bolsa · efectivo</div>
-      <div class="prize-bar-w"><div class="prize-bar" style="width:${p.pct*2.5}%;background:${p.barColor}"></div></div>
+    const meta = prizeMeta[idx] || { rank:p.label, title:p.label, sub:'' };
+    html+=`<div class="pp-card ${p.cls} pp-reveal" style="--pp-i:${idx}">
+      <div class="pp-medal">${p.medal}</div>
+      <div class="pp-rank">${meta.rank}</div>
+      <div class="pp-info">
+        <div class="pp-info-title">${meta.title}</div>
+        <div class="pp-info-sub">${p.pct}% de la bolsa · ${meta.sub}</div>
+      </div>
+      <div class="pp-amt-wrap">
+        <div class="pp-amt">${safeMoney(amt)}</div>
+        <div class="pp-amt-mxn">MXN</div>
+      </div>
     </div>`;
   });
   html+=`</div>`;
 
-  // ── REFERRAL BONUS CARD ──
-  html+=`<div style="background:linear-gradient(135deg,#fff9e6,#fffdf5);border:2px solid var(--gld);border-radius:var(--rad);padding:1.25rem 1.5rem;margin-bottom:1.5rem;box-shadow:var(--sh)">
-    <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
-      <div style="font-size:2.2rem">🎁</div>
-      <div style="flex:1;min-width:180px">
-        <div style="font-family:'Plus Jakarta Sans';font-weight:800;font-size:1rem;color:var(--gld);margin-bottom:4px">Bono por referido campeón</div>
-        <div style="font-size:.82rem;color:#1a1a1a;line-height:1.6;margin-bottom:.75rem">
-          Si alguien que tú invitaste gana el <b>1er lugar</b>, caen <b>$500 MXN a tu cuenta</b> — financiados por los organizadores, fuera de la bolsa de premios.
-        </div>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap">
-          <div class="bono-card" style="border-radius:8px;padding:8px 14px;text-align:center">
-            <div class="bono-label">Bono si tu invitado gana</div>
-            <div class="bono-amount">$500</div>
-            <div class="bono-sub">recuperas tu entrada + ganas $200</div>
-          </div>
-        </div>`;
-
-  // Live bonus alert
+  // ── REFERRAL BONUS ──
+  html += `<div class="pp-section-h">Bono extra por referido</div>`;
+  let refAlertHtml = '';
   if(iMayGetBonus && currentWinner){
-    html+=`<div style="margin-top:.75rem;background:var(--g-bg);border:1.5px solid var(--g2);border-radius:8px;padding:10px 14px;font-size:.8rem;color:var(--g);font-weight:600">
-      🏆 ¡${currentWinner} va en 1er lugar y tú lo referiste! Si gana, cobras $${REF_BONUS} MXN de bono.
-    </div>`;
+    refAlertHtml = `<div class="pp-ref-alert live">🏆 ¡<b>${escHtml(currentWinner)}</b> va en 1er lugar y tú lo referiste! Si gana, cobras $${REF_BONUS} MXN.</div>`;
   } else if(hasRealResults && currentWinner && currentWinnerReferrer && !iMayGetBonus){
-    html+=`<div style="margin-top:.75rem;background:var(--b-bg);border:1px solid var(--b2);border-radius:8px;padding:8px 12px;font-size:.76rem;color:var(--b2)">
-      Líder actual: <b>${currentWinner}</b>${currentWinnerReferrer?` · referido por <b>${currentWinnerReferrer}</b>`:''}
-    </div>`;
+    refAlertHtml = `<div class="pp-ref-alert info">Líder actual: <b>${escHtml(currentWinner)}</b>${currentWinnerReferrer?` · referido por <b>${escHtml(currentWinnerReferrer)}</b>`:''}</div>`;
   } else if(!hasRealResults){
-    html+=`<div style="margin-top:.75rem;font-size:.75rem;color:var(--ink3);font-style:italic">
-      El bono se activa cuando el admin registre los primeros resultados.
-    </div>`;
+    refAlertHtml = `<div class="pp-ref-alert muted">El bono se activa cuando el admin registre los primeros resultados.</div>`;
   }
 
-  html+=`</div></div></div>`;
+  html += `<div class="pp-ref-bonus">
+    <div class="pp-ref-row">
+      <div class="pp-ref-icon">🎁</div>
+      <div class="pp-ref-meta">
+        <div class="pp-ref-eyebrow">Fuera de la bolsa de premios</div>
+        <div class="pp-ref-h">Referido campeón</div>
+        <div class="pp-ref-sub">Si alguien que tú invitaste gana el <b>1er lugar</b>, caen <b>$${REF_BONUS} MXN a tu cuenta</b> — financiados por los organizadores.</div>
+        <div class="pp-ref-amt">
+          <span class="pp-ref-amt-lbl">Bono</span>
+          <span class="pp-ref-amt-num">$${REF_BONUS}</span>
+          <span class="pp-ref-amt-lbl">MXN</span>
+        </div>
+        ${refAlertHtml}
+      </div>
+    </div>
+  </div>`;
 
   // ── MY REFERRAL CODE ──
-  html+=`<div class="prizes-ref-section">
-    <div class="prizes-ref-title">🔗 Tu código de referido</div>
-    <div class="prizes-ref-sub">Comparte tu código — si tu invitado gana el torneo, tú cobras el bono</div>
-    <div class="my-ref-box">
-      <div class="my-ref-left">
-        <div class="label">Tu código único</div>
-        <div class="code">${myCode}</div>
-      </div>
-      <div class="my-ref-right">
-        <div style="font-size:.7rem;color:var(--ink3);margin-bottom:6px">${myRefs.length} referido${myRefs.length!==1?'s':''}</div>
-        <button class="copy-code-btn" onclick="copyMyCode()">📋 Copiar código</button>
-      </div>
-    </div>`;
+  html += `<div class="pp-section-h">Tu código de referido</div>`;
+  html += `<div class="pp-code">
+    <div class="pp-code-l">
+      <div class="label">Código único</div>
+      <div class="code">${escHtml(myCode)}</div>
+    </div>
+    <div class="pp-code-r">
+      <div class="pp-refs-count">${myRefs.length} referido${myRefs.length!==1?'s':''}</div>
+      <button class="pp-copy-btn" onclick="copyMyCode()">📋 Copiar</button>
+    </div>
+  </div>`;
 
   if(CU.admin){
     // Admin: full referral table with bonus status
@@ -5952,46 +6046,91 @@ function renderPremios(){
       referred:refs[u.code||genCode(u.u)]||[]
     })).sort((a,b)=>b.count-a.count);
 
-    html+=`<table class="ref-table" style="margin-top:.75rem">
-      <thead><tr><th>Usuario</th><th>Código</th><th>Referidos</th><th>Bono activo</th><th>Quiénes</th></tr></thead>
-      <tbody>`;
+    html+=`<div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-top:10px;overflow-x:auto">
+      <table class="ref-table">
+        <thead><tr><th>Usuario</th><th>Código</th><th>Referidos</th><th>Bono activo</th><th>Quiénes</th></tr></thead>
+        <tbody>`;
     refRows.forEach(r=>{
       const bonusActive=currentWinner&&r.referred.includes(currentWinner)&&hasRealResults;
       html+=`<tr>
-        <td style="font-weight:600">${r.u}</td>
-        <td><span class="ref-code">${r.code}</span></td>
+        <td style="font-weight:600">${escHtml(r.u)}</td>
+        <td><span class="ref-code">${escHtml(r.code)}</span></td>
         <td><span class="ref-count">${r.count}</span></td>
         <td>${bonusActive
           ?`<span class="pill pg">🏆 $${REF_BONUS} activo</span>`
           :`<span style="color:var(--ink3);font-size:.75rem">—</span>`}</td>
-        <td style="font-size:.75rem;color:var(--ink3)">${r.referred.join(', ')||'—'}</td>
+        <td style="font-size:.75rem;color:var(--ink3)">${r.referred.map(escHtml).join(', ')||'—'}</td>
       </tr>`;
     });
-    html+=`</tbody></table>`;
+    html+=`</tbody></table></div>`;
   } else {
     if(myRefs.length>0){
-      // Check if any of my referrals is winning
       const winningRef=currentWinner&&myRefs.includes(currentWinner)&&hasRealResults;
-      html+=`<div style="margin-top:.75rem">
-        <div style="font-size:.78rem;color:var(--ink2);margin-bottom:6px"><b>Tus referidos (${myRefs.length}):</b></div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">`;
+      html+=`<div class="pp-myrefs">
+        <div class="pp-myrefs-title">Tus referidos (${myRefs.length}):</div>
+        <div class="pp-myrefs-list">`;
       myRefs.forEach(r=>{
         const isLeading=currentWinner===r&&hasRealResults;
-        html+=`<span class="pill ${isLeading?'pg':'pnk'}">${isLeading?'🏆 ':''}<b>${r}</b>${isLeading?' · ¡va ganando!':''}</span>`;
+        html+=`<span class="pill ${isLeading?'pg':'pnk'}">${isLeading?'🏆 ':''}<b>${escHtml(r)}</b>${isLeading?' · ¡va ganando!':''}</span>`;
       });
       html+=`</div>`;
-      if(winningRef) html+=`<div style="margin-top:.75rem;background:var(--g-bg);border:1.5px solid var(--g2);border-radius:8px;padding:10px 14px;font-size:.8rem;color:var(--g);font-weight:600">
-        🎁 <b>${currentWinner}</b> va en primer lugar — si gana el torneo, cobras $${REF_BONUS} MXN de bono.
+      if(winningRef) html+=`<div style="margin-top:10px;background:var(--g-bg);border:1.5px solid var(--g2);border-radius:10px;padding:10px 14px;font-size:.8rem;color:var(--g);font-weight:600">
+        🎁 <b>${escHtml(currentWinner)}</b> va en primer lugar — si gana el torneo, cobras $${REF_BONUS} MXN de bono.
       </div>`;
       html+=`</div>`;
     } else {
-      html+=`<div style="font-size:.78rem;color:var(--ink3);margin-top:.5rem;font-style:italic">
+      html+=`<div style="font-size:.78rem;color:var(--ink3);margin-top:.5rem;font-style:italic;padding:0 4px">
         Aún no has referido a nadie — ¡comparte tu código y gana el bono si tu invitado resulta campeón!
       </div>`;
     }
   }
-  html+=`</div>`;
+
   wrap.innerHTML=html;
+
+  // Animar bolsa con count-up formateado
+  const numEl = document.getElementById('pp-bolsa-num');
+  if(numEl){
+    const target = bolsa;
+    const dur = 1100;
+    const start = performance.now();
+    function tick(now){
+      const t = Math.min(1, (now - start) / dur);
+      const e = 1 - Math.pow(1 - t, 3);
+      const v = Math.round(target * e);
+      numEl.textContent = v.toLocaleString('es-MX');
+      if(t < 1) requestAnimationFrame(tick);
+      else numEl.textContent = target.toLocaleString('es-MX');
+    }
+    if(target === 0){ numEl.textContent = '0'; }
+    else requestAnimationFrame(tick);
+  }
+
+  // Reveal on-scroll
+  observePrizeCards();
+}
+
+let _ppCardObserver = null;
+function observePrizeCards(){
+  if(_ppCardObserver) _ppCardObserver.disconnect();
+  const cards = document.querySelectorAll('#premios-wrap .pp-card.pp-reveal');
+  if(!cards.length) return;
+  if(!('IntersectionObserver' in window)){
+    cards.forEach(c=>c.classList.add('show'));
+    return;
+  }
+  _ppCardObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        _ppCardObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -5% 0px' });
+  cards.forEach(c=>{
+    const rect = c.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.95) c.classList.add('show');
+    else _ppCardObserver.observe(c);
+  });
 }
 
 function copyMyCode(){
