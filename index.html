@@ -1413,6 +1413,118 @@ body.dark .pp-code{background:#161a2e}
 /* Legacy styles para evitar romper si quedan referencias */
 .prizes-hero,.prizes-grid,.prize-card,.prize-medal,.prize-pos,.prize-pct,.prize-amt,.prize-bar-w,.prize-bar,.prizes-ref-section,.bono-card,.bono-label,.bono-amount,.bono-sub,.my-ref-box,.my-ref-left,.my-ref-right,.copy-code-btn{ /* deprecated */ }
 
+/* ── STATS v2 ── */
+
+/* Overview integrado al hero */
+.st-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px;position:relative;z-index:1}
+.st-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;transition:transform .2s,box-shadow .2s,border-color .2s}
+body.dark .st-stat{background:#161a2e}
+.st-stat:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(10,14,26,.06);border-color:var(--ink3)}
+.st-stat-icon{font-size:1.15rem;line-height:1;margin-bottom:6px}
+.st-stat-num{font-weight:800;font-size:1.4rem;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums;margin-bottom:4px;color:var(--ink)}
+.st-stat-label{font-size:.6rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;line-height:1.2}
+@media (max-width:600px){
+  .st-overview{grid-template-columns:repeat(4,1fr);gap:6px}
+  .st-stat{padding:12px 6px}
+  .st-stat-num{font-size:1.2rem}
+  .st-stat-label{font-size:.55rem;letter-spacing:.8px}
+}
+
+/* Disclaimer (sin bracket completo) */
+.st-disclaimer{margin-top:14px;background:rgba(232,170,30,.12);border:1.5px solid rgba(232,170,30,.4);border-radius:12px;padding:10px 14px;display:flex;align-items:flex-start;gap:10px;position:relative;z-index:1}
+.st-disclaimer-icon{font-size:1.1rem;flex-shrink:0;line-height:1.3}
+.st-disclaimer-txt{flex:1;font-size:.78rem;color:#8a5a00;font-weight:600;line-height:1.5}
+body.dark .st-disclaimer-txt{color:#f0b030}
+.st-disclaimer-txt strong{font-weight:800}
+
+/* Section dividers */
+.st-section-h{font-size:.66rem;font-weight:800;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;margin:14px 0 10px;padding:0 4px;display:flex;align-items:center;gap:7px}
+.st-section-h::before,.st-section-h::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+
+/* Card generic */
+.st-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:16px 18px;box-shadow:0 4px 12px rgba(10,14,26,.04);margin-bottom:12px}
+body.dark .st-card{background:#161a2e}
+
+/* Reveal */
+.st-card.st-reveal,.st-list.st-reveal{opacity:0;transform:translateY(14px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--st-i,0) * 80ms)}
+.st-card.st-reveal.show,.st-list.st-reveal.show{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){
+  .st-card.st-reveal,.st-list.st-reveal{opacity:1;transform:none;transition:none}
+}
+
+/* Match highlights */
+.st-match-list{display:flex;flex-direction:column;gap:0}
+.st-match-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border)}
+.st-match-row:last-child{border-bottom:none}
+.st-match-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;color:#fff;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.st-match-icon.green{background:linear-gradient(135deg,#006838,#00c46a)}
+.st-match-icon.blue{background:linear-gradient(135deg,#003087,#3d87ff)}
+.st-match-icon.red{background:linear-gradient(135deg,#c0001a,#ff3355)}
+.st-match-meta{flex:1;min-width:0}
+.st-match-tag{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink3);margin-bottom:2px}
+.st-match-name{font-weight:800;color:var(--ink);font-size:.92rem;letter-spacing:-.2px}
+.st-match-desc{font-size:.74rem;font-weight:700;margin-top:2px}
+.st-match-desc.green{color:var(--green)}
+.st-match-desc.blue{color:var(--blue2)}
+.st-match-desc.red{color:var(--r)}
+
+/* Bars (campeón más seleccionado) */
+.st-bars{display:flex;flex-direction:column;gap:12px}
+.st-bar-row{display:grid;grid-template-columns:32px 1fr auto;align-items:center;gap:10px}
+.st-bar-row[data-clickable="1"]{cursor:pointer;border-radius:10px;padding:4px;margin:-4px;transition:background .15s}
+.st-bar-row[data-clickable="1"]:hover{background:var(--bg)}
+body.dark .st-bar-row[data-clickable="1"]:hover{background:#0c0f1c}
+.st-bar-medal{font-size:1.15rem;line-height:1;text-align:center}
+.st-bar-info{display:flex;flex-direction:column;gap:4px;min-width:0}
+.st-bar-name-row{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.st-bar-name{font-weight:800;color:var(--ink);font-size:.86rem}
+.st-bar-pct{font-size:.7rem;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums}
+.st-bar-track{height:8px;background:var(--bg);border-radius:6px;overflow:hidden;position:relative}
+body.dark .st-bar-track{background:#0c0f1c}
+.st-bar-fill{height:100%;background:var(--grad-tri);border-radius:6px;width:0;transition:width 1.1s cubic-bezier(.22,1,.36,1)}
+.st-bar-votes{font-size:.7rem;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums;flex-shrink:0;text-align:right;width:60px}
+
+/* Top exactos list */
+.st-list{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;box-shadow:0 4px 12px rgba(10,14,26,.04);margin-bottom:12px}
+body.dark .st-list{background:#161a2e}
+.st-list-row{display:grid;grid-template-columns:36px 1fr auto;align-items:center;padding:11px 18px;border-bottom:1px solid var(--border);gap:10px;cursor:pointer;transition:background .15s;position:relative}
+.st-list-row:last-child{border-bottom:none}
+.st-list-row:hover{background:var(--bg)}
+body.dark .st-list-row:hover{background:#0c0f1c}
+.st-list-row.me{background:linear-gradient(90deg,rgba(0,196,106,.08),transparent 60%)}
+.st-list-row.me::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green);box-shadow:0 0 8px rgba(0,196,106,.5)}
+.st-list-pos{width:28px;height:28px;border-radius:50%;background:var(--bg);color:var(--ink3);font-size:.74rem;font-weight:800;display:flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+body.dark .st-list-pos{background:#0c0f1c}
+.st-list-row.me .st-list-pos{background:rgba(0,196,106,.16);color:var(--green)}
+.st-list-name{font-weight:800;color:var(--ink);font-size:.86rem}
+.st-list-row.me .st-list-name{color:var(--green)}
+.st-list-val{font-size:.76rem;font-weight:700;color:var(--ink3);font-variant-numeric:tabular-nums}
+.st-list-val strong{color:var(--ink);font-size:.92rem}
+
+/* Curiosidades */
+.st-curios{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+@media (max-width:520px){
+  .st-curios{grid-template-columns:1fr}
+}
+.st-curio{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s;cursor:pointer}
+body.dark .st-curio{background:#161a2e}
+.st-curio:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(10,14,26,.07);border-color:var(--ink3)}
+.st-curio.me{background:linear-gradient(135deg,rgba(0,196,106,.08),var(--surface) 55%);border-color:rgba(0,196,106,.3)}
+body.dark .st-curio.me{background:linear-gradient(135deg,rgba(0,196,106,.1),#161a2e 55%)}
+.st-curio-icon{font-size:1.7rem;margin-bottom:6px;line-height:1}
+.st-curio-tag{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink3);margin-bottom:2px}
+.st-curio-name{font-weight:800;color:var(--ink);font-size:.92rem;letter-spacing:-.2px;margin-bottom:3px}
+.st-curio.me .st-curio-name{color:var(--green)}
+.st-curio-desc{font-size:.74rem;color:var(--ink3);line-height:1.4;font-weight:600}
+.st-curio-me-pill{position:absolute;top:12px;right:12px;background:var(--green);color:#fff;font-size:.5rem;font-weight:800;padding:2px 7px;border-radius:6px;letter-spacing:.5px;text-transform:uppercase}
+
+/* Empty state */
+.st-empty{padding:3rem 1.5rem;text-align:center;background:var(--surface);border:1px dashed var(--border);border-radius:18px;display:flex;flex-direction:column;align-items:center;gap:.6rem}
+body.dark .st-empty{background:#161a2e}
+.st-empty-icon{font-size:3rem;line-height:1}
+.st-empty-t{font-weight:800;font-size:1rem;color:var(--ink)}
+.st-empty-s{font-size:.82rem;color:var(--ink3);max-width:340px;line-height:1.5}
+
 /* ADMIN */
 .adm-section{margin-bottom:2rem}
 .adm-title{font-weight:800;font-size:1rem;margin-bottom:.75rem;padding-bottom:6px;display:inline-block;letter-spacing:.3px;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border-bottom:2px solid transparent;border-image:var(--grad-tri) 1}
@@ -3091,8 +3203,22 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
 
   <!-- ESTADÍSTICAS -->
   <div class="page" id="page-stats">
-    <div class="ph">
-      <div class="ph-left"><div class="ph-h">Estadísticas</div><div class="ph-s">Datos curiosos de todos los participantes</div></div>
+    <div class="ph2 st-page-hero">
+      <div class="ph2-sticky" id="st-sticky">
+        <div class="ph2-sticky-t">Estadísticas</div>
+        <div class="ph2-sticky-prog">
+          <span style="font-size:.74rem;font-weight:700;color:var(--ink3)" id="st-sticky-stat">— elegibles</span>
+        </div>
+      </div>
+      <div class="ph2-row">
+        <div class="ph2-l">
+          <div class="ph2-eyebrow b"><span class="ph2-eyebrow-dot"></span><span id="st-eyebrow-txt">Estadísticas en vivo</span></div>
+          <h1 class="ph2-h1">Estadísticas</h1>
+          <p class="ph2-sub">Datos curiosos, campeones más seleccionados, partidos sorpresa y los reyes del marcador exacto.</p>
+        </div>
+      </div>
+      <div class="st-overview" id="st-overview" style="display:none"></div>
+      <div class="st-disclaimer" id="st-disclaimer" style="display:none"></div>
     </div>
     <div id="stats-wrap"></div>
   </div>
@@ -8784,7 +8910,7 @@ function _doNavigate(name){
   const tab=document.querySelector(`[data-p="${name}"]`);
   if(tab) tab.classList.add('on');
   if(name==='ranking')        { renderRanking(); renderRankingHistory(); setupRankingSticky(); }
-  if(name==='stats')          renderStats();
+  if(name==='stats')          { renderStats(); setupStatsSticky(); }
   if(name==='bracket')        { renderBracket(); setupBracketSticky(); }
   if(name==='admin')          renderAdmin();
   if(name==='premios')        renderPremios();
@@ -8919,6 +9045,25 @@ function setupRulesSticky(){
   };
   window.addEventListener('scroll', _rulesScrollHandler, { passive: true });
   _rulesScrollHandler();
+}
+
+let _statsScrollHandler = null;
+function setupStatsSticky(){
+  const hero = document.querySelector('#page-stats .st-page-hero');
+  const sticky = document.getElementById('st-sticky');
+  if(!hero || !sticky) return;
+  if(_statsScrollHandler) window.removeEventListener('scroll', _statsScrollHandler);
+  _statsScrollHandler = ()=>{
+    if(localStorage.getItem('q26page') !== 'stats'){
+      sticky.classList.remove('show');
+      return;
+    }
+    const rect = hero.getBoundingClientRect();
+    if(rect.bottom < 110) sticky.classList.add('show');
+    else sticky.classList.remove('show');
+  };
+  window.addEventListener('scroll', _statsScrollHandler, { passive: true });
+  _statsScrollHandler();
 }
 
 // ══════════════════════════════════════════════════════
@@ -9536,113 +9681,204 @@ function renderRankingHistory(){
 
 function renderStats(){
   const wrap = document.getElementById('stats-wrap');
+  const overviewEl = document.getElementById('st-overview');
+  const disclaimerEl = document.getElementById('st-disclaimer');
+  const eyebrowEl = document.getElementById('st-eyebrow-txt');
+  const stickyEl = document.getElementById('st-sticky-stat');
+
+  // Skeleton mientras carga
   wrap.innerHTML=`<div class="sk-stack" style="padding:.5rem 0">
     <div class="sk row" style="display:block;padding:14px">
       <div class="sk" style="width:35%;height:14px;margin-bottom:12px"></div>
-      <div style="display:flex;gap:8px">
-        <div class="sk" style="height:80px;flex:1"></div>
-        <div class="sk" style="height:80px;flex:1"></div>
-        <div class="sk" style="height:80px;flex:1"></div>
-      </div>
-    </div>
-    <div class="sk row" style="display:block;padding:14px">
-      <div class="sk" style="width:25%;height:14px;margin-bottom:12px"></div>
       <div class="sk-stack">
         ${Array.from({length:3},()=>`<div class="sk" style="height:34px"></div>`).join('')}
       </div>
     </div>
   </div>`;
+  if(overviewEl) overviewEl.style.display = 'none';
+  if(disclaimerEl) disclaimerEl.style.display = 'none';
 
   api('GET','/api/stats').then(d=>{
+    function matchLabel(id){ return `Partido ${id.replace(/\D/g,'')}`; }
+    const safe = (u) => (u || '').replace(/'/g,"\\'");
+
+    // Disclaimer si NO todos los registrados tienen bracket completo
+    const elig = d.eligibleCount ?? d.total ?? 0;
+    const reg = d.totalRegistered ?? elig;
+    const missing = Math.max(0, reg - elig);
+    if(disclaimerEl && missing > 0){
+      disclaimerEl.style.display = 'flex';
+      disclaimerEl.innerHTML = `
+        <div class="st-disclaimer-icon">⚠️</div>
+        <div class="st-disclaimer-txt">Solo se incluyen jugadores con <strong>bracket completo</strong>. <strong>${missing}</strong> jugador${missing!==1?'es':''} sin bracket completo no aparece${missing!==1?'n':''} en estas estadísticas.</div>`;
+    } else if(disclaimerEl){
+      disclaimerEl.style.display = 'none';
+    }
+
+    // Caso vacío: nadie tiene bracket completo
     if(d.empty){
-      wrap.innerHTML=`<div style="text-align:center;padding:3rem 2rem">
-        <div style="font-size:2.5rem;margin-bottom:.75rem">📊</div>
-        <div style="font-weight:800;color:var(--ink);margin-bottom:.5rem">Sin datos aún</div>
-        <div style="font-size:.82rem;color:var(--ink3)">Las estadísticas aparecen cuando el admin ingrese los primeros resultados.</div>
+      if(eyebrowEl) eyebrowEl.textContent = `Estadísticas en vivo · 0 elegibles`;
+      if(stickyEl) stickyEl.textContent = `0 elegibles`;
+      wrap.innerHTML = `<div class="st-empty">
+        <div class="st-empty-icon">📊</div>
+        <div class="st-empty-t">Sin jugadores con bracket completo</div>
+        <div class="st-empty-s">Las estadísticas aparecen cuando al menos un jugador llene los 31 partidos del bracket.</div>
       </div>`;
       return;
     }
 
-    function matchLabel(id){ return `Partido ${id.replace(/\D/g,'')}`; }
+    // Stats overview en el hero
+    if(overviewEl){
+      const totalExacts = (d.exactByUser || []).reduce((s,u)=>s+(u.exact||0), 0);
+      overviewEl.style.display = 'grid';
+      overviewEl.innerHTML = `
+        <div class="st-stat"><div class="st-stat-icon">👥</div><div class="st-stat-num">${elig}</div><div class="st-stat-label">Elegibles</div></div>
+        <div class="st-stat"><div class="st-stat-icon">🎯</div><div class="st-stat-num">${totalExacts}</div><div class="st-stat-label">Exactos</div></div>
+        <div class="st-stat"><div class="st-stat-icon">⚽</div><div class="st-stat-num">${d.matchesWithResults ?? 0}</div><div class="st-stat-label">Partidos</div></div>
+        <div class="st-stat"><div class="st-stat-icon">📊</div><div class="st-stat-num">${d.globalPct ?? 0}%</div><div class="st-stat-label">Avg.</div></div>`;
+    }
+
+    if(eyebrowEl) eyebrowEl.textContent = `Estadísticas en vivo · ${elig} elegible${elig!==1?'s':''}`;
+    if(stickyEl)  stickyEl.textContent  = `${elig} elegible${elig!==1?'s':''}`;
 
     let html='';
-
-    // ── RESUMEN ──
-    html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;margin-bottom:1rem">
-      ${statCard('👥','Participantes',d.total,'')}
-    </div>`;
+    let sIdx = 0;
 
     // ── PARTIDOS DESTACADOS ──
     if(d.mostCorrect || d.mostExact || d.leastCorrect){
-      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
-        <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:1rem">🎯 Partidos destacados</div>
-        <div style="display:flex;flex-direction:column;gap:.75rem">`;
-      if(d.mostCorrect) html+=matchStatRow('✅','Más acertado',matchLabel(d.mostCorrect.id),`${d.mostCorrect.pct}% lo acertaron (${d.mostCorrect.correct}/${d.mostCorrect.picked})`,'var(--green)');
-      if(d.mostExact)   html+=matchStatRow('🎯','Más exacto',matchLabel(d.mostExact.id),`${d.mostExact.exact} personas lo dijeron exacto`,'var(--blue2)');
-      if(d.leastCorrect) html+=matchStatRow('😬','Sorpresa del torneo',matchLabel(d.leastCorrect.id),`Solo ${d.leastCorrect.pct}% lo acertó (${d.leastCorrect.correct}/${d.leastCorrect.picked})`,'var(--red)');
-      html+=`</div></div>`;
+      html += `<div class="st-section-h">Partidos destacados</div>`;
+      html += `<div class="st-card st-reveal" style="--st-i:${sIdx++}">
+        <div class="st-match-list">`;
+      if(d.mostCorrect){
+        html += `<div class="st-match-row">
+          <div class="st-match-icon green">✅</div>
+          <div class="st-match-meta">
+            <div class="st-match-tag">Más acertado</div>
+            <div class="st-match-name">${matchLabel(d.mostCorrect.id)}</div>
+            <div class="st-match-desc green">${d.mostCorrect.pct}% lo acertaron (${d.mostCorrect.correct}/${d.mostCorrect.picked})</div>
+          </div>
+        </div>`;
+      }
+      if(d.mostExact){
+        html += `<div class="st-match-row">
+          <div class="st-match-icon blue">🎯</div>
+          <div class="st-match-meta">
+            <div class="st-match-tag">Más exacto</div>
+            <div class="st-match-name">${matchLabel(d.mostExact.id)}</div>
+            <div class="st-match-desc blue">${d.mostExact.exact} persona${d.mostExact.exact!==1?'s lo dijeron':' lo dijo'} exacto</div>
+          </div>
+        </div>`;
+      }
+      if(d.leastCorrect){
+        html += `<div class="st-match-row">
+          <div class="st-match-icon red">😬</div>
+          <div class="st-match-meta">
+            <div class="st-match-tag">Sorpresa del torneo</div>
+            <div class="st-match-name">${matchLabel(d.leastCorrect.id)}</div>
+            <div class="st-match-desc red">Solo ${d.leastCorrect.pct}% lo acertó (${d.leastCorrect.correct}/${d.leastCorrect.picked})</div>
+          </div>
+        </div>`;
+      }
+      html += `</div></div>`;
     }
 
     // ── CAMPEÓN MÁS SELECCIONADO ──
     if(d.topChamp?.length){
-      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
-        <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:.75rem">🏆 Campeón del mundial más seleccionado</div>
-        <div style="display:flex;flex-direction:column;gap:.5rem">`;
+      html += `<div class="st-section-h">Campeón más seleccionado</div>`;
+      html += `<div class="st-card st-reveal" style="--st-i:${sIdx++}">
+        <div class="st-bars">`;
       d.topChamp.forEach((c,i)=>{
         const medals=['🥇','🥈','🥉'];
-        html+=`<div style="display:flex;align-items:center;gap:10px">
-          <div style="font-size:1.1rem;width:24px;text-align:center">${medals[i]||''}</div>
-          <div style="font-weight:700;color:var(--ink);min-width:50px">${c.team}</div>
-          <div style="flex:1;background:var(--bg);border-radius:20px;height:8px;overflow:hidden">
-            <div style="width:${c.pct}%;height:100%;background:var(--grad-tri);border-radius:20px"></div>
+        html += `<div class="st-bar-row">
+          <div class="st-bar-medal">${medals[i]||''}</div>
+          <div class="st-bar-info">
+            <div class="st-bar-name-row">
+              <span class="st-bar-name">${escHtml(c.team)}</span>
+              <span class="st-bar-pct">${c.pct}%</span>
+            </div>
+            <div class="st-bar-track"><div class="st-bar-fill" data-pct="${c.pct}"></div></div>
           </div>
-          <div style="font-size:.78rem;color:var(--ink3);min-width:55px;text-align:right">${c.votes} votos · ${c.pct}%</div>
+          <div class="st-bar-votes">${c.votes} voto${c.votes!==1?'s':''}</div>
         </div>`;
       });
-      html+=`</div></div>`;
+      html += `</div></div>`;
     }
 
     // ── TOP EXACTOS ──
     if(d.exactByUser?.length){
-      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
-        <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:.75rem">🔮 Más marcadores exactos</div>
-        <div style="display:flex;flex-direction:column;gap:0">`;
+      html += `<div class="st-section-h">Reyes del marcador exacto</div>`;
+      html += `<div class="st-list st-reveal" style="--st-i:${sIdx++}">`;
       d.exactByUser.forEach((u,i)=>{
         const isMe = u.name===CU.u;
-        html+=`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)">
-          <div style="font-weight:800;color:var(--ink3);font-size:.8rem;width:20px;text-align:center">${i+1}</div>
-          <div style="font-weight:${isMe?'800':'600'};color:${isMe?'var(--green)':'var(--ink)'};flex:1">${u.name}${isMe?' (tú)':''}</div>
-          <div style="font-size:.82rem;color:var(--ink3)">${u.exact} exacto${u.exact!==1?'s':''}</div>
+        html += `<div class="st-list-row${isMe?' me':''}" onclick="openProfile('${safe(u.name)}')">
+          <div class="st-list-pos">${i+1}</div>
+          <div class="st-list-name">${escHtml(u.name)}${isMe?' <span style="font-size:.6rem;font-weight:800;background:rgba(0,196,106,.16);color:var(--green);padding:1px 6px;border-radius:5px;letter-spacing:.5px;text-transform:uppercase;margin-left:2px">tú</span>':''}</div>
+          <div class="st-list-val"><strong>${u.exact}</strong> exacto${u.exact!==1?'s':''}</div>
         </div>`;
       });
-      html+=`</div></div>`;
+      html += `</div>`;
     }
 
     // ── CURIOSIDADES ──
     const curios = [];
-    if(d.tumba)    curios.push({icon:'🪦',title:'La tumba',name:d.tumba.name,desc:`${d.tumba.total} pts · tiene bracket completo`,isMe:d.tumba.name===CU.u});
-    if(d.basico)   curios.push({icon:'🤷','title':'El básico',name:d.basico.name,desc:`Puso 2-0 en ${d.basico.count} partido${d.basico.count!==1?'s':''}`,isMe:d.basico.name===CU.u});
+    if(d.tumba)    curios.push({icon:'🥄',title:'La tumba',name:d.tumba.name,desc:`${d.tumba.total} pts · tiene bracket completo`,isMe:d.tumba.name===CU.u});
+    if(d.basico)   curios.push({icon:'🤷',title:'El básico',name:d.basico.name,desc:`Puso 2-0 en ${d.basico.count} partido${d.basico.count!==1?'s':''}`,isMe:d.basico.name===CU.u});
     if(d.goleador) curios.push({icon:'💥',title:'El más goleador',name:d.goleador.name,desc:`Predijo ${d.goleador.goals} goles en total`,isMe:d.goleador.name===CU.u});
     if(d.aburrido) curios.push({icon:'😴',title:'El aburrido',name:d.aburrido.name,desc:`Solo predijo ${d.aburrido.goals} goles en total`,isMe:d.aburrido.name===CU.u});
 
     if(curios.length){
-      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
-        <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:.75rem">😂 Curiosidades</div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem">`;
-      curios.forEach(c=>{
-        html+=`<div style="background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:.875rem 1rem">
-          <div style="font-size:1.4rem;margin-bottom:4px">${c.icon}</div>
-          <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--ink3);margin-bottom:2px">${c.title}</div>
-          <div style="font-weight:800;color:${c.isMe?'var(--green)':'var(--ink)'};font-size:.9rem">${c.name}${c.isMe?' 👈':''}</div>
-          <div style="font-size:.75rem;color:var(--ink3);margin-top:2px">${c.desc}</div>
+      html += `<div class="st-section-h">Curiosidades</div>`;
+      html += `<div class="st-curios">`;
+      curios.forEach((c, i)=>{
+        const delay = i * 80;
+        html += `<div class="st-curio st-reveal${c.isMe?' me':''}" style="--st-i:${sIdx + i};transition-delay:${delay}ms" onclick="openProfile('${safe(c.name)}')">
+          ${c.isMe?`<div class="st-curio-me-pill">tú</div>`:''}
+          <div class="st-curio-icon">${c.icon}</div>
+          <div class="st-curio-tag">${c.title}</div>
+          <div class="st-curio-name">${escHtml(c.name)}</div>
+          <div class="st-curio-desc">${c.desc}</div>
         </div>`;
       });
-      html+=`</div></div>`;
+      html += `</div>`;
     }
 
     wrap.innerHTML = html;
+
+    // Animar barras del campeón después de renderizar
+    setTimeout(()=>{
+      document.querySelectorAll('#stats-wrap .st-bar-fill').forEach(b=>{
+        b.style.width = (b.dataset.pct || 0) + '%';
+      });
+    }, 200);
+
+    // Reveal on-scroll
+    observeStatsCards();
   }).catch(()=>{
     wrap.innerHTML=`<div style="text-align:center;padding:2rem;color:var(--ink3)">Error cargando estadísticas</div>`;
+  });
+}
+
+let _statsObserver = null;
+function observeStatsCards(){
+  if(_statsObserver) _statsObserver.disconnect();
+  const cards = document.querySelectorAll('#stats-wrap .st-reveal');
+  if(!cards.length) return;
+  if(!('IntersectionObserver' in window)){
+    cards.forEach(c=>c.classList.add('show'));
+    return;
+  }
+  _statsObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        _statsObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -3% 0px' });
+  cards.forEach(c=>{
+    const rect = c.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.95) c.classList.add('show');
+    else _statsObserver.observe(c);
   });
 }
 
