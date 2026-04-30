@@ -139,6 +139,89 @@ body.dark .bell-badge{border-color:var(--bg)}
 .nav-user b{color:var(--ink);font-weight:700}
 .nav-out{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.72rem;text-decoration:underline}
 
+/* PROFILE / COMPARE MODAL */
+.prof-modal{position:fixed;inset:0;z-index:9000;display:flex;align-items:center;justify-content:center;padding:16px;animation:profIn .22s ease-out}
+@keyframes profIn{from{opacity:0}to{opacity:1}}
+.prof-bg{position:absolute;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(5px)}
+.prof-card{position:relative;background:var(--surface);border-radius:24px;width:100%;max-width:440px;max-height:90vh;overflow-y:auto;box-shadow:0 32px 80px rgba(0,0,0,.4);animation:profCardIn .35s cubic-bezier(.22,1,.36,1) both}
+.prof-card-wide{max-width:720px}
+@keyframes profCardIn{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+body.dark .prof-card{background:#111525;border:1px solid var(--border)}
+.prof-close{position:absolute;top:14px;right:14px;background:var(--bg);border:none;border-radius:50%;width:32px;height:32px;cursor:pointer;color:var(--ink2);font-size:1rem;font-weight:600;display:flex;align-items:center;justify-content:center;z-index:5}
+.prof-close:hover{background:var(--border);color:var(--ink)}
+
+/* Profile content */
+.prof-hero{position:relative;padding:32px 24px 24px;background:var(--grad-tri);color:#fff;border-radius:24px 24px 0 0;overflow:hidden;text-align:center}
+.prof-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 30% 120%,rgba(255,255,255,.18),transparent 55%),radial-gradient(ellipse at 80% -20%,rgba(255,255,255,.12),transparent 55%);pointer-events:none}
+.prof-avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.95);color:#0a0e1a;font-weight:800;font-size:1.6rem;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;box-shadow:0 8px 24px rgba(0,0,0,.18);position:relative;z-index:1}
+.prof-uname{font-weight:800;font-size:1.5rem;margin:0 0 4px;letter-spacing:-.4px;position:relative;z-index:1}
+.prof-uname-me{display:inline-block;background:rgba(255,255,255,.22);font-size:.6rem;font-weight:800;padding:3px 10px;border-radius:10px;margin-left:8px;vertical-align:middle;letter-spacing:.5px;text-transform:uppercase}
+.prof-position{font-size:.85rem;font-weight:700;opacity:.95;position:relative;z-index:1}
+.prof-position-trophy{font-size:1.2rem;margin-right:6px}
+
+.prof-body{padding:22px 22px 24px}
+.prof-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
+.prof-stat{background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:14px}
+body.dark .prof-stat{background:#161a2e}
+.prof-stat-lbl{font-size:.66rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px}
+.prof-stat-val{font-weight:800;font-size:1.5rem;color:var(--ink);letter-spacing:-.5px;line-height:1.1;display:flex;align-items:baseline;gap:5px}
+.prof-stat-val small{font-size:.7rem;font-weight:700;color:var(--ink3);letter-spacing:0}
+.prof-stat-val .icon{font-size:1.2rem;margin-right:4px}
+
+.prof-section-h{font-size:.7rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;margin:18px 0 8px}
+.prof-breakdown{display:flex;gap:8px;margin-bottom:16px}
+.prof-bd-item{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center}
+body.dark .prof-bd-item{background:#161a2e}
+.prof-bd-icon{font-size:1.4rem;margin-bottom:4px}
+.prof-bd-pts{font-weight:800;font-size:1.3rem;color:var(--ink);line-height:1}
+.prof-bd-lbl{font-size:.7rem;color:var(--ink3);font-weight:700;margin-top:3px}
+
+.prof-cta{display:flex;gap:8px;margin-top:8px}
+.prof-btn{flex:1;background:var(--ink);color:var(--surface);border:none;padding:13px;border-radius:12px;font-family:"Plus Jakarta Sans";font-weight:800;font-size:.88rem;cursor:pointer;letter-spacing:.2px;transition:transform .15s,opacity .2s}
+.prof-btn:hover{transform:translateY(-1px);opacity:.92}
+body.dark .prof-btn{background:var(--surface);color:var(--ink)}
+.prof-btn-vs{background:var(--grad-tri);color:#fff;box-shadow:0 8px 22px rgba(0,48,135,.28)}
+body.dark .prof-btn-vs{background:var(--grad-tri);color:#fff}
+
+/* Compare layout */
+.cmp-head{padding:24px 22px 18px;border-bottom:1px solid var(--border);text-align:center}
+.cmp-vs-row{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin-top:14px}
+.cmp-side{text-align:center}
+.cmp-side-av{width:60px;height:60px;border-radius:50%;color:#fff;font-weight:800;font-size:1.3rem;display:flex;align-items:center;justify-content:center;margin:0 auto 8px;box-shadow:0 6px 18px rgba(0,0,0,.15)}
+.cmp-side-av.a{background:linear-gradient(135deg,#006838,#003087)}
+.cmp-side-av.b{background:linear-gradient(135deg,#003087,#c0001a)}
+.cmp-side-name{font-weight:800;font-size:.95rem;color:var(--ink);word-break:break-word;line-height:1.2}
+.cmp-side-pos{font-size:.72rem;color:var(--ink3);font-weight:700;margin-top:3px}
+.cmp-vs{font-weight:800;font-size:1.4rem;color:var(--ink3);letter-spacing:1px}
+.cmp-body{padding:18px 22px 22px}
+.cmp-row{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+.cmp-row:last-child{border-bottom:none}
+.cmp-val{text-align:center;font-weight:800;font-size:1.15rem;color:var(--ink);transition:color .2s}
+.cmp-val.win{color:var(--green);font-size:1.25rem}
+.cmp-val.lose{color:var(--ink3);opacity:.6}
+.cmp-val.tie{color:var(--blue2)}
+.cmp-lbl{text-align:center;font-size:.66rem;font-weight:800;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;line-height:1.3}
+.cmp-icon{font-size:1.05rem;margin-bottom:2px;display:block}
+.cmp-summary{margin-top:18px;padding:14px 16px;background:var(--bg);border-radius:12px;text-align:center;font-size:.85rem;font-weight:600;color:var(--ink2);line-height:1.5}
+body.dark .cmp-summary{background:#161a2e}
+.cmp-summary strong{color:var(--green);font-weight:800}
+
+@media (max-width:480px){
+  .prof-hero{padding:24px 18px 18px}
+  .prof-avatar{width:60px;height:60px;font-size:1.3rem}
+  .prof-uname{font-size:1.25rem}
+  .prof-body{padding:18px 16px 20px}
+  .prof-stats-grid{grid-template-columns:1fr 1fr;gap:8px}
+  .prof-stat{padding:12px}
+  .prof-stat-val{font-size:1.3rem}
+  .cmp-side-av{width:48px;height:48px;font-size:1.05rem}
+  .cmp-side-name{font-size:.82rem}
+  .cmp-vs{font-size:1.1rem}
+  .cmp-val{font-size:1rem}
+  .cmp-val.win{font-size:1.1rem}
+  .cmp-body{padding:14px 16px 18px}
+}
+
 /* DARK TOGGLE */
 .dark-toggle{background:var(--border);border:1px solid var(--border2);border-radius:20px;color:var(--ink2);cursor:pointer;font-size:.75rem;padding:4px 10px;transition:all .2s;display:flex;align-items:center;gap:5px;font-weight:600}
 .dark-toggle:hover{background:var(--border2)}
@@ -2293,6 +2376,24 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 </div>
 
 
+<!-- MODAL: PERFIL DE USUARIO -->
+<div id="profile-modal" class="prof-modal" style="display:none">
+  <div class="prof-bg" onclick="closeProfile()"></div>
+  <div class="prof-card" id="prof-card">
+    <button class="prof-close" onclick="closeProfile()" aria-label="Cerrar">✕</button>
+    <div id="prof-content"></div>
+  </div>
+</div>
+
+<!-- MODAL: COMPARADOR 1V1 -->
+<div id="compare-modal" class="prof-modal" style="display:none">
+  <div class="prof-bg" onclick="closeCompare()"></div>
+  <div class="prof-card prof-card-wide" id="cmp-card">
+    <button class="prof-close" onclick="closeCompare()" aria-label="Cerrar">✕</button>
+    <div id="cmp-content"></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -3958,7 +4059,7 @@ function buildRankingHTML(board,isDemo){
   podOrder.forEach(i=>{
     const p=top3[i];
     if(!p){html+=`<div class="podium-card p${i+1}"></div>`;return;}
-    html+=`<div class="podium-card p${i+1}">
+    html+=`<div class="podium-card p${i+1}" onclick="openProfile('${p.name.replace(/'/g,"\\'")}')" style="cursor:pointer">
       <div class="pod-rank">${podLabel[i]}</div>
       <div class="pod-medal">${podMedal[i]}</div>
       <div class="pod-name">${p.name}${p.isMe?' <span class="pill pb" style="font-size:.55rem">tú</span>':''}</div>
@@ -3975,7 +4076,7 @@ function buildRankingHTML(board,isDemo){
       const pos=i+4;
       const barW=maxPts>0?Math.round(p.total/maxPts*100):0;
       const barColor=p.isMe?'var(--green)':'var(--grad-tri)';
-      html+=`<div class="rk-row${p.isMe?' me':''}">
+      html+=`<div class="rk-row${p.isMe?' me':''}" onclick="openProfile('${p.name.replace(/'/g,"\\'")}')" style="cursor:pointer">
         <div class="rk-row-pos">${pos}</div>
         <div class="rk-row-info">
           <div class="rk-row-name">${p.name}${p.isMe?' <span class="pill pb" style="font-size:.55rem">tú</span>':''}${currentStreak(p.name)>=3?` 🔥`:''}</div>
@@ -5152,10 +5253,10 @@ function renderPost(p){
 
   return `<div class="wall-post" id="post-${p.id}">
     <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:10px">
-      <div style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0">${initials}</div>
+      <div onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" title="Ver perfil">${initials}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span style="font-weight:700;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'}">${p.username}</span>
+          <span onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="font-weight:700;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'};cursor:pointer" title="Ver perfil">${p.username}</span>
           ${isMe?`<span style="background:var(--g-bg);color:var(--green);font-size:.62rem;font-weight:800;padding:2px 7px;border-radius:8px;letter-spacing:.3px">tú</span>`:''}
           <span style="font-size:.7rem;color:var(--ink3)">${time}</span>
         </div>
@@ -5614,6 +5715,281 @@ function closeWelcomeModal(){}
 function escHtml(s){
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
+
+// ══════════════════════════════════════════════════════
+//  PROFILE & 1V1 COMPARE
+// ══════════════════════════════════════════════════════
+
+// Calcula stats completas de un usuario
+function getProfileStats(username){
+  const u = username;
+  const sc = calcScore(u);
+  const up = picks[u] || {sc:{},br:{}};
+
+  // Predicciones de fase de grupos: total y aciertos
+  let grpPredCount = 0, grpHits = 0, grpExacts = 0;
+  if(typeof GM !== 'undefined'){
+    Object.values(GM).forEach(ms=>{
+      ms.forEach(m=>{
+        const mine = up.sc?.[m.id];
+        if(mine && mine.h!=null && mine.a!=null) grpPredCount++;
+        const real = results?.sc?.[m.id];
+        if(!real || !mine || mine.h==null) return;
+        const rh=+real.h, ra=+real.a, mh=+mine.h, ma=+mine.a;
+        const realRes = rh>ra?'H':rh<ra?'A':'D';
+        const mineRes = mh>ma?'H':mh<ma?'A':'D';
+        if(realRes === mineRes) grpHits++;
+        if(rh===mh && ra===ma) grpExacts++;
+      });
+    });
+  }
+
+  // Predicciones del bracket: total y aciertos
+  let brPredCount = 0, brHits = 0, brExacts = 0;
+  if(up.br){
+    brPredCount = Object.values(up.br).filter(v=>v!=null && v!=='').length;
+  }
+  if(results?.bracket){
+    Object.entries(results.bracket).forEach(([id,rr])=>{
+      if(!rr?.winner) return;
+      const mw = up.br?.[id];
+      if(!mw) return;
+      if(mw === rr.winner){
+        brHits++;
+        const ms = up.sc?.[id];
+        if(ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a) brExacts++;
+      }
+    });
+  }
+
+  // Total de partidos juzgados (resultados ya cargados)
+  const grpJudged = results?.sc ? Object.keys(results.sc).filter(k=>!k.includes('_')).length : 0;
+  let brJudged = 0;
+  if(results?.bracket){
+    brJudged = Object.values(results.bracket).filter(rr=>rr?.winner).length;
+  }
+  const totalJudged = grpJudged + brJudged;
+  const totalHits = grpHits + brHits;
+  const totalExacts = grpExacts + brExacts;
+  const accuracyPct = totalJudged > 0 ? Math.round((totalHits/totalJudged) * 100) : null;
+
+  // Posición en ranking (excluye admins)
+  let position = null, rankSize = 0;
+  try {
+    const adminSet = new Set((dynUsers||[]).filter(x=>x.admin).map(x=>x.u));
+    const rank = Object.keys(picks)
+      .filter(k=>!adminSet.has(k))
+      .map(k=>({u:k, total:calcScore(k).total}))
+      .sort((a,b)=>{ if(b.total !== a.total) return b.total - a.total; return a.u.localeCompare(b.u,'es'); });
+    rankSize = rank.length;
+    const idx = rank.findIndex(r=>r.u === u);
+    if(idx >= 0) position = idx + 1;
+  } catch(_){}
+
+  // Streak actual (bracket) y total de predicciones
+  const streak = currentStreak(u);
+  const totalPreds = grpPredCount + brPredCount;
+
+  return {
+    username: u,
+    grupos: sc.grupos,
+    bracket: sc.bracket,
+    total: sc.total,
+    position, rankSize,
+    grpPredCount, grpHits, grpExacts, grpJudged,
+    brPredCount, brHits, brExacts, brJudged,
+    totalPreds, totalHits, totalExacts, totalJudged,
+    accuracyPct,
+    streak
+  };
+}
+
+function profileInitials(u){
+  return (u || '?').slice(0,2).toUpperCase();
+}
+
+function openProfile(username){
+  if(!username) return;
+  const s = getProfileStats(username);
+  const isMe = username === CU?.u;
+
+  const positionTxt = s.position
+    ? `<span class="prof-position-trophy">${s.position===1?'🥇':s.position===2?'🥈':s.position===3?'🥉':'🏅'}</span>${s.position}° de ${s.rankSize}`
+    : 'Sin clasificar aún';
+
+  const accuracyTxt = s.accuracyPct === null
+    ? '<small>sin datos</small>'
+    : `${s.accuracyPct}<small>%</small>`;
+
+  const exactsTxt = s.totalJudged > 0
+    ? `${s.totalExacts}<small>marcador${s.totalExacts!==1?'es':''}</small>`
+    : `0<small>sin datos</small>`;
+
+  const streakTxt = s.streak > 0
+    ? `${s.streak}<small>🔥 al hilo</small>`
+    : `0<small>sin racha</small>`;
+
+  const html = `
+    <div class="prof-hero">
+      <div class="prof-avatar">${profileInitials(s.username)}</div>
+      <div class="prof-uname">${escHtml(s.username)}${isMe?'<span class="prof-uname-me">tú</span>':''}</div>
+      <div class="prof-position">${positionTxt}</div>
+    </div>
+    <div class="prof-body">
+      <div class="prof-stats-grid">
+        <div class="prof-stat">
+          <div class="prof-stat-lbl">Puntos totales</div>
+          <div class="prof-stat-val"><span class="icon">⚡</span>${s.total}<small>pts</small></div>
+        </div>
+        <div class="prof-stat">
+          <div class="prof-stat-lbl">% aciertos</div>
+          <div class="prof-stat-val"><span class="icon">🎯</span>${accuracyTxt}</div>
+        </div>
+        <div class="prof-stat">
+          <div class="prof-stat-lbl">Marcadores exactos</div>
+          <div class="prof-stat-val"><span class="icon">🎰</span>${exactsTxt}</div>
+        </div>
+        <div class="prof-stat">
+          <div class="prof-stat-lbl">Racha bracket</div>
+          <div class="prof-stat-val">${streakTxt}</div>
+        </div>
+      </div>
+
+      <div class="prof-section-h">Desglose por fase</div>
+      <div class="prof-breakdown">
+        <div class="prof-bd-item">
+          <div class="prof-bd-icon">📊</div>
+          <div class="prof-bd-pts">${s.grupos}</div>
+          <div class="prof-bd-lbl">Grupos · ${s.grpHits}/${s.grpJudged||'?'}</div>
+        </div>
+        <div class="prof-bd-item">
+          <div class="prof-bd-icon">🌳</div>
+          <div class="prof-bd-pts">${s.bracket}</div>
+          <div class="prof-bd-lbl">Bracket · ${s.brHits}/${s.brJudged||'?'}</div>
+        </div>
+      </div>
+
+      <div class="prof-cta">
+        ${isMe
+          ? `<button class="prof-btn" onclick="closeProfile()">Cerrar</button>`
+          : `<button class="prof-btn" onclick="closeProfile()">Cerrar</button>
+             <button class="prof-btn prof-btn-vs" onclick="openCompare('${CU.u.replace(/'/g,"\\'")}','${s.username.replace(/'/g,"\\'")}')">⚔️ Comparar conmigo</button>`
+        }
+      </div>
+    </div>`;
+
+  document.getElementById('prof-content').innerHTML = html;
+  document.getElementById('profile-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProfile(){
+  const m = document.getElementById('profile-modal');
+  if(m) m.style.display = 'none';
+  if(!document.getElementById('compare-modal') || document.getElementById('compare-modal').style.display === 'none'){
+    document.body.style.overflow = '';
+  }
+}
+
+function openCompare(userA, userB){
+  if(!userA || !userB) return;
+  // Cierra perfil si estaba abierto
+  document.getElementById('profile-modal').style.display = 'none';
+
+  const a = getProfileStats(userA);
+  const b = getProfileStats(userB);
+
+  // Helper: marca quién gana en una métrica (mayor es mejor por default)
+  function cmp(va, vb, higherBetter = true){
+    if(va === vb || va == null || vb == null) return ['tie','tie'];
+    const aWins = higherBetter ? (va > vb) : (va < vb);
+    return aWins ? ['win','lose'] : ['lose','win'];
+  }
+
+  // Para posición: menor es mejor
+  const posA = a.position || 99999;
+  const posB = b.position || 99999;
+  const posCmp = cmp(posA, posB, false);
+
+  const totalCmp    = cmp(a.total, b.total);
+  const accCmp      = cmp(a.accuracyPct ?? -1, b.accuracyPct ?? -1);
+  const exactsCmp   = cmp(a.totalExacts, b.totalExacts);
+  const streakCmp   = cmp(a.streak, b.streak);
+  const grpCmp      = cmp(a.grupos, b.grupos);
+  const brCmp       = cmp(a.bracket, b.bracket);
+
+  // Cuenta wins
+  let wA = 0, wB = 0;
+  [posCmp, totalCmp, accCmp, exactsCmp, streakCmp, grpCmp, brCmp].forEach(c=>{
+    if(c[0] === 'win') wA++;
+    if(c[1] === 'win') wB++;
+  });
+
+  let summary;
+  if(wA > wB) summary = `<strong>${escHtml(a.username)}</strong> va arriba ${wA}–${wB}`;
+  else if(wB > wA) summary = `<strong>${escHtml(b.username)}</strong> va arriba ${wB}–${wA}`;
+  else summary = `Vienen empatados ${wA}–${wB}. ¡Definan en los próximos partidos!`;
+
+  function row(icon, lbl, va, vb, cmpRes, suffix=''){
+    return `<div class="cmp-row">
+      <div class="cmp-val ${cmpRes[0]}">${va}${suffix}</div>
+      <div class="cmp-lbl"><span class="cmp-icon">${icon}</span>${lbl}</div>
+      <div class="cmp-val ${cmpRes[1]}">${vb}${suffix}</div>
+    </div>`;
+  }
+
+  const fmtPos = s => s.position ? `${s.position}°` : '—';
+  const fmtAcc = s => s.accuracyPct === null ? '—' : `${s.accuracyPct}%`;
+
+  const html = `
+    <div class="cmp-head">
+      <div style="font-size:.7rem;font-weight:800;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase">Cara a cara</div>
+      <div class="cmp-vs-row">
+        <div class="cmp-side">
+          <div class="cmp-side-av a">${profileInitials(a.username)}</div>
+          <div class="cmp-side-name">${escHtml(a.username)}${a.username===CU.u?'<br><span style="font-size:.62rem;color:var(--green);font-weight:800">tú</span>':''}</div>
+          <div class="cmp-side-pos">${a.position?`#${a.position}`:'sin pos'}</div>
+        </div>
+        <div class="cmp-vs">VS</div>
+        <div class="cmp-side">
+          <div class="cmp-side-av b">${profileInitials(b.username)}</div>
+          <div class="cmp-side-name">${escHtml(b.username)}${b.username===CU.u?'<br><span style="font-size:.62rem;color:var(--green);font-weight:800">tú</span>':''}</div>
+          <div class="cmp-side-pos">${b.position?`#${b.position}`:'sin pos'}</div>
+        </div>
+      </div>
+    </div>
+    <div class="cmp-body">
+      ${row('🏆', 'Posición', fmtPos(a), fmtPos(b), posCmp)}
+      ${row('⚡', 'Puntos', a.total, b.total, totalCmp)}
+      ${row('🎯', '% aciertos', fmtAcc(a), fmtAcc(b), accCmp)}
+      ${row('🎰', 'Marcadores exactos', a.totalExacts, b.totalExacts, exactsCmp)}
+      ${row('🔥', 'Racha bracket', a.streak, b.streak, streakCmp)}
+      ${row('📊', 'Puntos grupos', a.grupos, b.grupos, grpCmp)}
+      ${row('🌳', 'Puntos bracket', a.bracket, b.bracket, brCmp)}
+      <div class="cmp-summary">${summary}</div>
+    </div>`;
+
+  document.getElementById('cmp-content').innerHTML = html;
+  document.getElementById('compare-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCompare(){
+  const m = document.getElementById('compare-modal');
+  if(m) m.style.display = 'none';
+  if(!document.getElementById('profile-modal') || document.getElementById('profile-modal').style.display === 'none'){
+    document.body.style.overflow = '';
+  }
+}
+
+// Cerrar con Escape
+document.addEventListener('keydown', (e)=>{
+  if(e.key !== 'Escape') return;
+  const cm = document.getElementById('compare-modal');
+  const pm = document.getElementById('profile-modal');
+  if(cm && cm.style.display !== 'none'){ closeCompare(); return; }
+  if(pm && pm.style.display !== 'none'){ closeProfile(); return; }
+});
 
 // ══════════════════════════════════════════════════════
 //  STREAK — consecutive correct results
