@@ -1468,40 +1468,111 @@ body.dark .bono-sub{color:#c09040}
 .export-btn:hover{background:var(--grad-tri);color:#fff;border-color:transparent}
 
 /* MI QUINIELA */
-.mq-section{margin-bottom:1.5rem}
-.mq-section-hd{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:1px;color:#fff;background:var(--grad-tri);padding:8px 14px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between}
-.mq-section-hd .mq-pts{font-size:.72rem;background:rgba(255,255,255,.2);padding:2px 8px;border-radius:20px}
-.mq-matches{background:var(--surface);border:1.5px solid var(--border);border-top:none;border-radius:0 0 8px 8px;overflow:hidden}
-.mq-row{display:grid;grid-template-columns:1fr 80px 80px 40px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--border);gap:8px;font-size:.82rem}
+/* ── MI QUINIELA v2 ── */
+.mq-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:18px;position:relative;z-index:1}
+.mq-stat{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .2s,border-color .2s;position:relative;overflow:hidden}
+body.dark .mq-stat{background:#161a2e}
+.mq-stat:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(10,14,26,.06);border-color:var(--ink3)}
+.mq-stat-icon{font-size:1.15rem;line-height:1;margin-bottom:6px}
+.mq-stat-num{font-weight:800;font-size:1.4rem;line-height:1;letter-spacing:-.5px;font-variant-numeric:tabular-nums;margin-bottom:4px;color:var(--ink)}
+.mq-stat-label{font-size:.6rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;line-height:1.2}
+.mq-stat.pts .mq-stat-num{color:var(--ink)}
+.mq-stat.exact .mq-stat-num{color:#c8900a}
+.mq-stat.correct .mq-stat-num{color:var(--green2)}
+.mq-stat.wrong .mq-stat-num{color:var(--r)}
+.mq-stat.pending .mq-stat-num{color:var(--ink3)}
+@media (max-width:600px){
+  .mq-stats{grid-template-columns:repeat(5,1fr);gap:6px}
+  .mq-stat{padding:12px 6px}
+  .mq-stat-num{font-size:1.2rem}
+  .mq-stat-label{font-size:.55rem;letter-spacing:.8px}
+}
+@media (max-width:400px){
+  .mq-stats{grid-template-columns:repeat(3,1fr)}
+}
+
+/* FILTERS */
+.mq-filters{margin-bottom:14px;display:flex;flex-direction:column;gap:8px}
+.mq-filter{display:flex;flex-wrap:wrap;gap:6px}
+.mq-f-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 12px;font-size:.74rem;font-weight:700;color:var(--ink2);cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+body.dark .mq-f-btn{background:#161a2e}
+.mq-f-btn:hover:not(.active){border-color:var(--blue2);color:var(--blue2)}
+.mq-f-btn.active{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+body.dark .mq-f-btn.active{background:var(--surface);color:var(--ink);border-color:var(--surface)}
+.mq-f-count{font-size:.6rem;font-weight:800;background:rgba(0,0,0,.08);padding:1px 6px;border-radius:6px;margin-left:2px;line-height:1.4}
+body.dark .mq-f-count{background:rgba(255,255,255,.08)}
+.mq-f-btn.active .mq-f-count{background:rgba(255,255,255,.2)}
+body.dark .mq-f-btn.active .mq-f-count{background:rgba(0,0,0,.2)}
+
+/* SECTIONS */
+.mq-section{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:14px;box-shadow:0 4px 12px rgba(10,14,26,.04)}
+body.dark .mq-section{background:#161a2e}
+.mq-section.mq-reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--mqs-i,0) * 80ms)}
+.mq-section.mq-reveal.show{opacity:1;transform:translateY(0)}
+@media (prefers-reduced-motion:reduce){
+  .mq-section.mq-reveal{opacity:1;transform:none;transition:none}
+}
+.mq-section-hd{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(120deg,var(--bg),var(--surface));border-bottom:1px solid var(--border)}
+body.dark .mq-section-hd{background:linear-gradient(120deg,#0c0f1c,#161a2e)}
+.mq-section-name{font-weight:800;font-size:.92rem;color:var(--ink);letter-spacing:-.2px}
+.mq-section-pts{background:var(--b-bg);color:var(--blue2);font-size:.74rem;font-weight:800;padding:4px 11px;border-radius:8px;letter-spacing:.2px;font-variant-numeric:tabular-nums}
+.mq-section-pts.zero{background:var(--bg);color:var(--ink3)}
+body.dark .mq-section-pts.zero{background:#0c0f1c}
+
+/* HEADER ROW */
+.mq-row-h{display:grid;grid-template-columns:1fr 80px 80px 48px;gap:10px;padding:8px 18px;font-size:.6rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;background:var(--bg);border-bottom:1px solid var(--border)}
+body.dark .mq-row-h{background:#0c0f1c}
+.mq-row-h .h-c{text-align:center}
+
+/* MATCH ROWS */
+.mq-row{display:grid;grid-template-columns:1fr 80px 80px 48px;gap:10px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);transition:background .15s}
 .mq-row:last-child{border-bottom:none}
-.mq-row.correct{background:var(--g-bg)}
-.mq-row.exact{background:rgba(0,196,106,.12)}
-body.dark .mq-row.exact{background:rgba(0,196,106,.18)}
-.mq-row.wrong{background:var(--r-bg)}
-body.dark .mq-row.correct{background:rgba(0,196,106,.14)}
-body.dark .mq-row.wrong{background:rgba(255,51,85,.14)}
-.mq-row.pending{opacity:.55}
-.mq-match-name{font-weight:500;color:var(--ink2)}
-.mq-score{text-align:center;font-weight:700;font-size:.9rem;padding:3px 0;border-radius:6px}
-.mq-score.mine{color:var(--blue2);background:var(--b-bg)}
-.mq-score.real{color:var(--green);background:var(--g-bg)}
-.mq-score.pending-sc{color:var(--ink3);font-weight:400;font-style:italic;font-size:.75rem}
-.mq-result{text-align:center;font-size:1rem}
-.mq-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:.75rem;margin-bottom:1.25rem}
-.mq-stat{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1rem .875rem;box-shadow:var(--sh);text-align:center;position:relative;overflow:hidden;transition:transform .2s}
-.mq-stat:hover{transform:translateY(-2px);box-shadow:var(--sh2)}
-.mq-stat::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:var(--grad-tri)}
-.mq-stat-icon{font-size:1.4rem;margin-bottom:4px;line-height:1}
-.mq-stat-num{font-weight:800;font-size:1.8rem;line-height:1}
-.mq-stat-label{font-size:.65rem;color:var(--ink3);margin-top:5px;text-transform:uppercase;letter-spacing:.6px;font-weight:600}
-.mq-filter{display:flex;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
-.mq-f-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--border);background:var(--surface);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .15s;color:var(--ink2)}
-.mq-f-btn.active{background:var(--grad-gb);color:#fff;border-color:transparent;box-shadow:0 2px 8px rgba(0,104,56,.2)}
-.mq-f-btn:hover:not(.active){border-color:var(--green);color:var(--green)}
-.mq-elim-rnd{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;padding:2px 8px;border-radius:20px;margin-left:6px}
-.rnd-r32{background:var(--border);color:var(--ink3)}.rnd-r16{background:var(--b-bg);color:var(--blue2)}
-.rnd-qf{background:var(--g-bg);color:var(--green)}.rnd-sf{background:var(--r-bg);color:var(--red)}
+.mq-row:hover{background:var(--bg)}
+body.dark .mq-row:hover{background:#0c0f1c}
+.mq-row.exact{background:linear-gradient(90deg,rgba(232,170,30,.1),transparent)}
+.mq-row.correct{background:linear-gradient(90deg,rgba(0,196,106,.06),transparent)}
+.mq-row.wrong{opacity:.65}
+.mq-row.pending .mq-score-real{color:var(--ink3)}
+
+.mq-match-name{display:flex;align-items:center;gap:8px;font-size:.85rem;font-weight:700;color:var(--ink);min-width:0}
+.mq-match-flags{font-size:1.1rem;flex-shrink:0;display:inline-flex;gap:3px;line-height:1}
+.mq-match-text{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.mq-score{font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums;text-align:center;padding:5px 8px;border-radius:8px;min-width:44px}
+.mq-score-mine{background:var(--b-bg);color:var(--blue2)}
+.mq-score-real{background:var(--bg);color:var(--ink);border:1px solid var(--border)}
+body.dark .mq-score-real{background:#0c0f1c}
+.mq-row.exact .mq-score-real{background:rgba(232,170,30,.18);color:#8a5a00;border-color:transparent}
+body.dark .mq-row.exact .mq-score-real{color:#f0b830}
+.mq-row.correct .mq-score-real{background:var(--g-bg);color:var(--green);border-color:transparent}
+.mq-row.wrong .mq-score-real{background:var(--r-bg);color:var(--r);border-color:transparent}
+.mq-score-pending{color:var(--ink3);font-weight:600;font-style:italic;background:transparent;border:none}
+
+.mq-result-icon{font-size:1.05rem;line-height:1;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;flex-shrink:0;background:var(--bg);position:relative;justify-self:center}
+body.dark .mq-result-icon{background:#0c0f1c}
+.mq-row.exact .mq-result-icon{background:linear-gradient(135deg,rgba(255,200,80,.4),rgba(232,170,30,.25));box-shadow:0 0 0 3px rgba(232,170,30,.18)}
+.mq-row.correct .mq-result-icon{background:var(--g-bg);box-shadow:0 0 0 3px rgba(0,196,106,.15)}
+.mq-row.wrong .mq-result-icon{background:var(--r-bg)}
+.mq-pts-badge{position:absolute;bottom:-5px;right:-8px;font-size:.55rem;font-weight:800;padding:1px 5px;border-radius:5px;color:#fff;letter-spacing:.3px;line-height:1.4;font-variant-numeric:tabular-nums}
+.mq-row.exact .mq-pts-badge{background:#c8900a}
+.mq-row.correct .mq-pts-badge{background:var(--green2)}
+
+.mq-elim-rnd{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:middle}
+.rnd-r32{background:var(--border);color:var(--ink3)}
+.rnd-r16{background:var(--b-bg);color:var(--blue2)}
+.rnd-qf{background:var(--g-bg);color:var(--green)}
+.rnd-sf{background:var(--r-bg);color:var(--r)}
 .rnd-f{background:var(--gld-bg);color:var(--gld)}
+
+@media (max-width:520px){
+  .mq-row,.mq-row-h{grid-template-columns:1fr 56px 56px 40px;padding:10px 12px;gap:6px}
+  .mq-section-hd{padding:12px 14px}
+  .mq-match-name{font-size:.78rem;gap:6px}
+  .mq-match-flags{font-size:.95rem}
+  .mq-score{font-size:.78rem;padding:4px 6px;min-width:auto}
+  .mq-result-icon{width:32px;height:32px;font-size:.95rem}
+  .mq-pts-badge{font-size:.5rem;padding:1px 4px}
+}
 
 /* ── HAMBURGER + DRAWER ── */
 .ham-btn{
@@ -2768,9 +2839,23 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
 
   <!-- MI QUINIELA -->
   <div class="page" id="page-miquiniela">
-    <div class="ph">
-      <div class="ph-left"><div class="ph-h">Mi Quiniela</div><div class="ph-s">Tu predicción vs lo que está pasando — partido por partido</div></div>
-      <div id="mq-summary"></div>
+    <div class="ph2 mq-page-hero">
+      <div class="ph2-sticky" id="mq-sticky">
+        <div class="ph2-sticky-t">Mi Quiniela</div>
+        <div class="ph2-sticky-prog">
+          <span style="font-size:.74rem;font-weight:700;color:var(--ink3)">Total</span>
+          <span class="ph2-sticky-pct" id="mq-sticky-pts">0 pts</span>
+        </div>
+      </div>
+      <div class="ph2-row">
+        <div class="ph2-l">
+          <div class="ph2-eyebrow b"><span class="ph2-eyebrow-dot"></span>Tu pronóstico vs los resultados reales</div>
+          <h1 class="ph2-h1">Mi Quiniela</h1>
+          <p class="ph2-sub">Tu predicción vs lo que está pasando — partido por partido. Cada acierto suma a tu total.</p>
+        </div>
+      </div>
+      <div id="mq-summary" style="display:none"></div>
+      <div class="mq-stats" id="mq-stats-wrap" style="display:none"></div>
     </div>
     <div id="mq-wrap"></div>
   </div>
@@ -7593,6 +7678,7 @@ let mqGroup  = 'all'; // all | A | B | C | D | E | F | G | H | I | J | K | L
 function renderMiQuiniela(){
   const wrap = document.getElementById('mq-wrap');
   const sumEl = document.getElementById('mq-summary');
+  const statsEl = document.getElementById('mq-stats-wrap');
   const up = picks[CU.u];
   if (!up){ wrap.innerHTML='<div style="padding:2rem;text-align:center;color:var(--ink3)">Sin predicciones guardadas aún.</div>'; return; }
 
@@ -7673,54 +7759,53 @@ function renderMiQuiniela(){
   const exact  = allMatches.filter(m=>m.status==='exact');
   const correct= allMatches.filter(m=>m.status==='correct'||m.status==='exact');
   const wrong  = allMatches.filter(m=>m.status==='wrong');
+  const pending= allMatches.filter(m=>m.status==='pending');
   const totalPts = allMatches.reduce((s,m)=>s+m.pts,0);
-  const pct = played.length ? Math.round(correct.length/played.length*100) : 0;
 
-  // Summary pills
-  if(sumEl) sumEl.innerHTML=`
-    <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
-      <span class="pill pg" style="font-size:.75rem;font-weight:800">${totalPts} pts</span>
-      <span class="pill pnk">${pct}% de aciertos</span>
-      <span class="pill pnk">✅ ${correct.length} correctos</span>
-      <span class="pill pnk">🎯 ${exact.length} exactos</span>
-    </div>`;
+  // Stats grid en el hero
+  if(statsEl){
+    statsEl.style.display = 'grid';
+    statsEl.innerHTML = `
+      <div class="mq-stat pts"><div class="mq-stat-icon">⭐</div><div class="mq-stat-num">${totalPts}</div><div class="mq-stat-label">Total</div></div>
+      <div class="mq-stat correct"><div class="mq-stat-icon">✅</div><div class="mq-stat-num">${correct.length}</div><div class="mq-stat-label">Correctos</div></div>
+      <div class="mq-stat exact"><div class="mq-stat-icon">🎯</div><div class="mq-stat-num">${exact.length}</div><div class="mq-stat-label">Exactos</div></div>
+      <div class="mq-stat wrong"><div class="mq-stat-icon">❌</div><div class="mq-stat-num">${wrong.length}</div><div class="mq-stat-label">Fallados</div></div>
+      <div class="mq-stat pending"><div class="mq-stat-icon">⏳</div><div class="mq-stat-num">${pending.length}</div><div class="mq-stat-label">Pendientes</div></div>`;
+  }
+  // Sticky pts
+  const stkPts = document.getElementById('mq-sticky-pts');
+  if(stkPts) stkPts.textContent = `${totalPts} pts`;
+  // sumEl está oculto pero lo mantenemos por compatibilidad
+  if(sumEl) sumEl.innerHTML = '';
 
   // ── Filters ──
   let html = `
-    <div class="mq-stats">
-      <div class="mq-stat"><div class="mq-stat-icon">⭐</div><div class="mq-stat-num" style="color:var(--g)">${totalPts}</div><div class="mq-stat-label">Puntos totales</div></div>
-      <div class="mq-stat"><div class="mq-stat-icon">✅</div><div class="mq-stat-num" style="color:var(--g)">${correct.length}</div><div class="mq-stat-label">Correctos</div></div>
-      <div class="mq-stat"><div class="mq-stat-icon">🎯</div><div class="mq-stat-num" style="color:var(--gld)">${exact.length}</div><div class="mq-stat-label">Exactos</div></div>
-      <div class="mq-stat"><div class="mq-stat-icon">❌</div><div class="mq-stat-num" style="color:var(--r)">${wrong.length}</div><div class="mq-stat-label">Fallidos</div></div>
-      <div class="mq-stat"><div class="mq-stat-icon">⏳</div><div class="mq-stat-num" style="color:var(--ink3)">${allMatches.filter(m=>m.status==='pending').length}</div><div class="mq-stat-label">Por jugarse</div></div>
-    </div>
-    <div class="mq-filter">
-      <button class="mq-f-btn ${mqFilter==='all'?'active':''}"    onclick="setMqFilter('all')">Todos (${allMatches.length})</button>
-      <button class="mq-f-btn ${mqFilter==='exact'?'active':''}"  onclick="setMqFilter('exact')">🎯 Exactos (${exact.length})</button>
-      <button class="mq-f-btn ${mqFilter==='correct'?'active':''}" onclick="setMqFilter('correct')">✅ Correctos (${correct.length})</button>
-      <button class="mq-f-btn ${mqFilter==='wrong'?'active':''}"  onclick="setMqFilter('wrong')">❌ Fallidos (${wrong.length})</button>
-      <button class="mq-f-btn ${mqFilter==='pending'?'active':''}" onclick="setMqFilter('pending')">⏳ Pendientes</button>
-    </div>
-    <div class="mq-filter" style="margin-top:.4rem">
-      <button class="mq-f-btn ${mqStage==='all'?'active':''}"    onclick="setMqStage('all')">Todas las etapas</button>
-      <button class="mq-f-btn ${mqStage==='grupos'?'active':''}" onclick="setMqStage('grupos')">Grupos</button>
-      <button class="mq-f-btn ${mqStage==='r32'?'active':''}"   onclick="setMqStage('r32')">D16</button>
-      <button class="mq-f-btn ${mqStage==='r16'?'active':''}"   onclick="setMqStage('r16')">Octavos</button>
-      <button class="mq-f-btn ${mqStage==='qf'?'active':''}"    onclick="setMqStage('qf')">Cuartos</button>
-      <button class="mq-f-btn ${mqStage==='sf'?'active':''}"    onclick="setMqStage('sf')">Semis</button>
-      <button class="mq-f-btn ${mqStage==='f'?'active':''}"     onclick="setMqStage('f')">Final</button>
-    </div>
-    ${mqStage==='grupos'?`<div class="mq-filter" style="margin-top:.4rem">
-      <button class="mq-f-btn ${mqGroup==='all'?'active':''}" onclick="setMqGroup('all')">Todos</button>
-      ${'ABCDEFGHIJKL'.split('').map(g=>`<button class="mq-f-btn ${mqGroup===g?'active':''}" onclick="setMqGroup('${g}')">Grupo ${g}</button>`).join('')}
-    </div>`:''}`;
+    <div class="mq-filters">
+      <div class="mq-filter">
+        <button class="mq-f-btn ${mqFilter==='all'?'active':''}"    onclick="setMqFilter('all')">Todos<span class="mq-f-count">${allMatches.length}</span></button>
+        <button class="mq-f-btn ${mqFilter==='exact'?'active':''}"  onclick="setMqFilter('exact')">🎯 Exactos<span class="mq-f-count">${exact.length}</span></button>
+        <button class="mq-f-btn ${mqFilter==='correct'?'active':''}" onclick="setMqFilter('correct')">✅ Correctos<span class="mq-f-count">${correct.length}</span></button>
+        <button class="mq-f-btn ${mqFilter==='wrong'?'active':''}"  onclick="setMqFilter('wrong')">❌ Fallados<span class="mq-f-count">${wrong.length}</span></button>
+        <button class="mq-f-btn ${mqFilter==='pending'?'active':''}" onclick="setMqFilter('pending')">⏳ Pendientes<span class="mq-f-count">${pending.length}</span></button>
+      </div>
+      <div class="mq-filter">
+        <button class="mq-f-btn ${mqStage==='all'?'active':''}"    onclick="setMqStage('all')">Todas las etapas</button>
+        <button class="mq-f-btn ${mqStage==='grupos'?'active':''}" onclick="setMqStage('grupos')">Grupos</button>
+        <button class="mq-f-btn ${mqStage==='r32'?'active':''}"   onclick="setMqStage('r32')">D16</button>
+        <button class="mq-f-btn ${mqStage==='r16'?'active':''}"   onclick="setMqStage('r16')">Octavos</button>
+        <button class="mq-f-btn ${mqStage==='qf'?'active':''}"    onclick="setMqStage('qf')">Cuartos</button>
+        <button class="mq-f-btn ${mqStage==='sf'?'active':''}"    onclick="setMqStage('sf')">Semis</button>
+        <button class="mq-f-btn ${mqStage==='f'?'active':''}"     onclick="setMqStage('f')">Final</button>
+      </div>
+      ${mqStage==='grupos'?`<div class="mq-filter">
+        <button class="mq-f-btn ${mqGroup==='all'?'active':''}" onclick="setMqGroup('all')">Todos</button>
+        ${'ABCDEFGHIJKL'.split('').map(g=>`<button class="mq-f-btn ${mqGroup===g?'active':''}" onclick="setMqGroup('${g}')">Grupo ${g}</button>`).join('')}
+      </div>`:''}
+    </div>`;
 
   // ── Group sections ──
-  // Group stage
+  let sectionIdx = 0;
   const groupMatches = allMatches.filter(m=>m.phase==='grupos');
-  const groupsByLetter = {};
-  groupMatches.forEach(m=>{ if(!groupsByLetter[m.group]) groupsByLetter[m.group]=[]; groupsByLetter[m.group].push(m); });
-
   const groupPts = groupMatches.reduce((s,m)=>s+m.pts,0);
   const showGroups = mqStage==='all'||mqStage==='grupos';
   const filteredGroup = groupMatches.filter(m=>
@@ -7729,25 +7814,34 @@ function renderMiQuiniela(){
   );
 
   if(showGroups && filteredGroup.length){
-    html+=`<div class="mq-section">
-      <div class="mq-section-hd">Fase de Grupos <span class="mq-pts">${groupPts} pts</span></div>
-      <div class="mq-matches">
-        <div class="mq-row" style="background:var(--bg);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3)">
-          <div>Partido</div><div style="text-align:center">Tu pred.</div><div style="text-align:center">Real</div><div></div>
-        </div>`;
+    html+=`<div class="mq-section mq-reveal" style="--mqs-i:${sectionIdx++}">
+      <div class="mq-section-hd">
+        <div class="mq-section-name">Fase de Grupos</div>
+        <div class="mq-section-pts ${groupPts===0?'zero':''}">${groupPts > 0 ? '+' : ''}${groupPts} pts</div>
+      </div>
+      <div class="mq-row-h">
+        <div>Partido</div>
+        <div class="h-c">Tu pred.</div>
+        <div class="h-c">Real</div>
+        <div class="h-c"></div>
+      </div>`;
     filteredGroup.forEach(m=>{
       const myTxt = m.myScore ? `${m.myScore.h}-${m.myScore.a}` : '—';
       const realTxt = m.realScore ? `${m.realScore.h}-${m.realScore.a}` : '?';
+      const realCls = m.realScore ? '' : 'mq-score-pending';
       const icon = m.status==='exact'?'🎯':m.status==='correct'?'✅':m.status==='wrong'?'❌':'⏳';
-      const ptsTxt = m.pts>0?`+${m.pts}`:'';
+      const ptsBadge = m.pts>0 ? `<span class="mq-pts-badge">+${m.pts}</span>` : '';
       html+=`<div class="mq-row ${m.status}">
-        <div class="mq-match-name">${m.flags} ${m.label}</div>
-        <div class="mq-score mine">${myTxt}</div>
-        <div class="mq-score ${m.realScore?'real':'pending-sc'}">${realTxt}</div>
-        <div class="mq-result" title="${ptsTxt}">${icon}</div>
+        <div class="mq-match-name">
+          <span class="mq-match-flags">${m.flags}</span>
+          <span class="mq-match-text">${escHtml(m.label)}</span>
+        </div>
+        <div class="mq-score mq-score-mine">${myTxt}</div>
+        <div class="mq-score mq-score-real ${realCls}">${realTxt}</div>
+        <div class="mq-result-icon">${icon}${ptsBadge}</div>
       </div>`;
     });
-    html+=`</div></div>`;
+    html+=`</div>`;
   }
 
   // Elimination stage
@@ -7758,26 +7852,37 @@ function renderMiQuiniela(){
     const filtered = rndMatches.filter(m=>mqFilter==='all'||m.status===mqFilter||(mqFilter==='correct'&&(m.status==='correct'||m.status==='exact')));
     if(!filtered.length) return;
     const rndPts = rndMatches.reduce((s,m)=>s+m.pts,0);
-    html+=`<div class="mq-section">
-      <div class="mq-section-hd">${name} <span class="mq-pts">${rndPts} pts</span></div>
-      <div class="mq-matches">
-        <div class="mq-row" style="background:var(--bg);font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--ink3)">
-          <div>Tu pick</div><div style="text-align:center">Tu Pred.</div><div style="text-align:center">Real</div><div></div>
-        </div>`;
+    html+=`<div class="mq-section mq-reveal" style="--mqs-i:${sectionIdx++}">
+      <div class="mq-section-hd">
+        <div class="mq-section-name">${name}</div>
+        <div class="mq-section-pts ${rndPts===0?'zero':''}">${rndPts > 0 ? '+' : ''}${rndPts} pts</div>
+      </div>
+      <div class="mq-row-h">
+        <div>Tu pick</div>
+        <div class="h-c">Tu pred.</div>
+        <div class="h-c">Real</div>
+        <div class="h-c"></div>
+      </div>`;
     filtered.forEach(m=>{
-      const myTxt = m.myWinner ? `${FL[m.myWinner]||'🏳'} ${NM[m.myWinner]||m.myWinner}${m.myBrScore!=null&&m.myBrScore.h!=null?` <span style="font-size:.65rem;opacity:.7;font-weight:600">(${m.myBrScore.h}-${m.myBrScore.a})</span>`:''}` : '—';
-      const realTxt = m.realWinner ? `${FL[m.realWinner]||'🏳'} ${NM[m.realWinner]||m.realWinner}${m.realScore?.h!=null?` <span style="font-size:.65rem;opacity:.7">(${m.realScore.h}-${m.realScore.a})</span>`:''}` : '?';
+      const myTxt = m.myWinner
+        ? `${FL[m.myWinner]||'🏳'}${m.myBrScore!=null&&m.myBrScore.h!=null?` ${m.myBrScore.h}-${m.myBrScore.a}`:''}`
+        : '—';
+      const realTxt = m.realWinner
+        ? `${FL[m.realWinner]||'🏳'}${m.realScore?.h!=null?` ${m.realScore.h}-${m.realScore.a}`:''}`
+        : '?';
+      const realCls = m.realWinner ? '' : 'mq-score-pending';
       const icon = m.status==='exact'?'🎯':m.status==='correct'?'✅':m.status==='wrong'?'❌':'⏳';
-      const [wp,ep]=PTS[key]||[0,0];
-      const hint = m.status==='exact'?`+${wp+ep} pts`:m.status==='correct'?`+${wp} pts`:'';
+      const ptsBadge = m.pts>0 ? `<span class="mq-pts-badge">+${m.pts}</span>` : '';
       html+=`<div class="mq-row ${m.status}">
-        <div class="mq-match-name">${m.id} <span class="mq-elim-rnd ${cls}">${name}</span></div>
-        <div class="mq-score mine" style="font-size:.75rem;padding:3px 4px">${myTxt}</div>
-        <div class="mq-score ${m.realWinner?'real':'pending-sc'}" style="font-size:.75rem;padding:3px 4px">${realTxt}</div>
-        <div class="mq-result" title="${hint}">${icon}</div>
+        <div class="mq-match-name">
+          <span class="mq-match-text">${m.id} <span class="mq-elim-rnd ${cls}">${name}</span></span>
+        </div>
+        <div class="mq-score mq-score-mine" style="font-size:.78rem">${myTxt}</div>
+        <div class="mq-score mq-score-real ${realCls}" style="font-size:.78rem">${realTxt}</div>
+        <div class="mq-result-icon">${icon}${ptsBadge}</div>
       </div>`;
     });
-    html+=`</div></div>`;
+    html+=`</div>`;
   });
 
   if(!filteredGroup.length && !elimRounds.some(r=>allMatches.find(m=>m.phase==='elim'&&m.round===r.key&&(mqFilter==='all'||m.status===mqFilter||(mqFilter==='correct'&&(m.status==='correct'||m.status==='exact')))))){
@@ -7789,6 +7894,31 @@ function renderMiQuiniela(){
   }
 
   wrap.innerHTML = html;
+  observeMqSections();
+}
+
+let _mqSectionObserver = null;
+function observeMqSections(){
+  if(_mqSectionObserver) _mqSectionObserver.disconnect();
+  const sections = document.querySelectorAll('#mq-wrap .mq-section.mq-reveal');
+  if(!sections.length) return;
+  if(!('IntersectionObserver' in window)){
+    sections.forEach(s=>s.classList.add('show'));
+    return;
+  }
+  _mqSectionObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+        _mqSectionObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.06, rootMargin: '0px 0px -5% 0px' });
+  sections.forEach(s=>{
+    const rect = s.getBoundingClientRect();
+    if(rect.top < window.innerHeight * 0.95) s.classList.add('show');
+    else _mqSectionObserver.observe(s);
+  });
 }
 
 function setMqFilter(f){ mqFilter=f; renderMiQuiniela(); }
@@ -8005,7 +8135,7 @@ function _doNavigate(name){
   if(name==='premios')        renderPremios();
   if(name==='reglas')         renderReglas();
   if(name==='chat')           { renderChat(); startWallPolling(); }
-  if(name==='miquiniela')     renderMiQuiniela();
+  if(name==='miquiniela')     { renderMiQuiniela(); setupMqSticky(); }
   if(name==='misgrupos')      renderMisGrupos();
   if(name==='referidos')      renderReferidos();
   if(name==='notificaciones') renderNotificaciones();
@@ -8077,6 +8207,25 @@ function setupRankingSticky(){
   };
   window.addEventListener('scroll', _rankingScrollHandler, { passive: true });
   _rankingScrollHandler();
+}
+
+let _mqScrollHandler = null;
+function setupMqSticky(){
+  const hero = document.querySelector('#page-miquiniela .mq-page-hero');
+  const sticky = document.getElementById('mq-sticky');
+  if(!hero || !sticky) return;
+  if(_mqScrollHandler) window.removeEventListener('scroll', _mqScrollHandler);
+  _mqScrollHandler = ()=>{
+    if(localStorage.getItem('q26page') !== 'miquiniela'){
+      sticky.classList.remove('show');
+      return;
+    }
+    const rect = hero.getBoundingClientRect();
+    if(rect.bottom < 110) sticky.classList.add('show');
+    else sticky.classList.remove('show');
+  };
+  window.addEventListener('scroll', _mqScrollHandler, { passive: true });
+  _mqScrollHandler();
 }
 
 // ══════════════════════════════════════════════════════
