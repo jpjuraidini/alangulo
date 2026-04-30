@@ -219,20 +219,46 @@ body.dark .lp-pill{background:rgba(17,21,37,.85);border-color:rgba(255,255,255,.
 .lp-pred-input{width:18px;height:22px;background:var(--bg);border-radius:5px;display:flex;align-items:center;justify-content:center;color:var(--green2);font-weight:800;border:1px solid var(--border);font-size:.7rem}
 .lp-pred-dash{color:var(--ink3)}
 
-/* preview - grupos */
-.lp-grupos{background:var(--surface);border-radius:10px;padding:8px;border:1px solid var(--border)}
-.lp-gr-h{font-size:.6rem;font-weight:800;color:var(--ink);margin-bottom:5px}
-.lp-gr-row{display:flex;align-items:center;justify-content:space-between;padding:3px 4px;font-size:.6rem;border-bottom:1px solid var(--bg)}
-.lp-gr-row:last-child{border-bottom:none}
-.lp-gr-pos{width:14px;font-weight:800;color:var(--ink3)}
-.lp-gr-team{flex:1;font-weight:700;color:var(--ink)}
-.lp-gr-pts{font-weight:800;color:var(--green2)}
+/* preview - grupos (detallado) */
+.lp-gr-tabs{display:flex;gap:3px}
+.lp-gr-tab{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--ink3);font-size:.6rem;font-weight:800;padding:4px 0;border-radius:6px;text-align:center}
+.lp-gr-tab.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+body.dark .lp-gr-tab.on{background:var(--surface);color:var(--ink);border-color:var(--surface)}
+.lp-gr-card{background:var(--surface);border-radius:10px;padding:8px;border:1px solid var(--border)}
+.lp-gr-h2{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.lp-gr-h2-t{font-size:.7rem;font-weight:800;color:var(--ink)}
+.lp-gr-h2-i{font-size:.55rem;color:var(--ink3);font-weight:600}
+.lp-gr-cols{display:grid;grid-template-columns:14px 1fr 20px 20px 20px 24px;gap:4px;font-size:.5rem;font-weight:800;color:var(--ink3);letter-spacing:.5px;text-transform:uppercase;padding:0 2px;margin-bottom:3px}
+.lp-gr-r{display:grid;grid-template-columns:14px 1fr 20px 20px 20px 24px;gap:4px;align-items:center;padding:3px 2px;font-size:.62rem;border-top:1px solid var(--bg)}
+.lp-gr-r.qual{background:linear-gradient(90deg,rgba(0,196,106,.12),transparent);border-radius:4px;border-top-color:transparent}
+.lp-gr-p{font-weight:800;color:var(--ink3);text-align:center;font-size:.58rem}
+.lp-gr-r.qual .lp-gr-p{color:var(--green2)}
+.lp-gr-t{display:flex;align-items:center;gap:4px;font-weight:700;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lp-gr-f{font-size:.85rem;flex-shrink:0}
+.lp-gr-n{text-align:center;color:var(--ink2);font-weight:700;font-size:.6rem}
+.lp-gr-pp{text-align:center;font-weight:800;color:var(--green2);font-size:.62rem}
+.lp-gr-vs{display:flex;align-items:center;justify-content:space-between;font-size:.62rem;font-weight:700;color:var(--ink);padding:2px 0}
+.lp-gr-vs-t{display:flex;align-items:center;gap:4px}
+.lp-gr-vs-x{color:var(--ink3);font-size:.55rem;font-weight:800}
 
-/* preview - bracket */
-.lp-bracket{background:var(--surface);border-radius:10px;padding:8px;border:1px solid var(--border)}
-.lp-br-h{font-size:.58rem;font-weight:800;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;text-align:center}
-.lp-br-row{display:flex;align-items:center;padding:4px 6px;background:var(--bg);border-radius:6px;margin-bottom:3px;font-size:.6rem;font-weight:700;color:var(--ink)}
-.lp-br-row.win{background:linear-gradient(90deg,rgba(0,196,106,.15),var(--bg));color:var(--green2)}
+/* preview - bracket (detallado) */
+.lp-br-tabs{display:flex;gap:3px}
+.lp-br-tab{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--ink3);font-size:.55rem;font-weight:800;padding:4px 0;border-radius:6px;text-align:center;letter-spacing:.3px}
+.lp-br-tab.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+body.dark .lp-br-tab.on{background:var(--surface);color:var(--ink);border-color:var(--surface)}
+.lp-br-stage{font-size:.5rem;font-weight:800;color:var(--ink3);letter-spacing:1px;text-transform:uppercase;padding:0 2px}
+.lp-br-match{background:var(--surface);border-radius:9px;padding:5px 7px;border:1px solid var(--border);display:flex;flex-direction:column;gap:1px}
+.lp-br-match.live{border-color:var(--r);background:linear-gradient(90deg,rgba(192,0,26,.05),var(--surface))}
+.lp-br-match.next{border-style:dashed;background:var(--bg)}
+.lp-br-match.next .lp-br-tr{color:var(--ink3);font-weight:600;font-style:italic}
+.lp-br-tr{display:flex;align-items:center;justify-content:space-between;font-size:.62rem;color:var(--ink2)}
+.lp-br-tr.win{font-weight:800;color:var(--green2)}
+.lp-br-tr.lose{color:var(--ink3);text-decoration:line-through;text-decoration-thickness:1px}
+.lp-br-tn{display:flex;align-items:center;gap:4px}
+.lp-br-tf{font-size:.9rem}
+.lp-br-ts{font-weight:800;width:18px;text-align:center;font-size:.7rem}
+.lp-br-time{font-size:.5rem;color:var(--ink3);font-weight:700;letter-spacing:.5px;margin-top:2px;display:flex;align-items:center;gap:3px}
+.lp-br-livedot{width:4px;height:4px;border-radius:50%;background:var(--r);animation:lpLive 1.4s ease-in-out infinite}
 
 /* phone tabs (debajo del teléfono) */
 .lp-phone-tabs{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-top:18px;max-width:280px}
@@ -1562,29 +1588,63 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
                 </div>
 
                 <div class="lp-view" data-v="grupos">
-                  <div class="lp-grupos">
-                    <div class="lp-gr-h">Grupo A</div>
-                    <div class="lp-gr-row"><span class="lp-gr-pos">1</span><span class="lp-gr-team">🇲🇽 México</span><span class="lp-gr-pts">9</span></div>
-                    <div class="lp-gr-row"><span class="lp-gr-pos">2</span><span class="lp-gr-team">🇰🇷 Corea</span><span class="lp-gr-pts">6</span></div>
-                    <div class="lp-gr-row"><span class="lp-gr-pos">3</span><span class="lp-gr-team">🇿🇦 Sudáfrica</span><span class="lp-gr-pts">3</span></div>
-                    <div class="lp-gr-row"><span class="lp-gr-pos">4</span><span class="lp-gr-team">🇨🇿 Chequia</span><span class="lp-gr-pts">0</span></div>
+                  <div class="lp-gr-tabs">
+                    <div class="lp-gr-tab on">A</div>
+                    <div class="lp-gr-tab">B</div>
+                    <div class="lp-gr-tab">C</div>
+                    <div class="lp-gr-tab">D</div>
                   </div>
-                  <div class="lp-grupos">
-                    <div class="lp-gr-h">Grupo B</div>
-                    <div class="lp-gr-row"><span class="lp-gr-pos">1</span><span class="lp-gr-team">🇨🇭 Suiza</span><span class="lp-gr-pts">7</span></div>
-                    <div class="lp-gr-row"><span class="lp-gr-pos">2</span><span class="lp-gr-team">🇨🇦 Canadá</span><span class="lp-gr-pts">4</span></div>
+                  <div class="lp-gr-card">
+                    <div class="lp-gr-h2">
+                      <span class="lp-gr-h2-t">Grupo A</span>
+                      <span class="lp-gr-h2-i">2/3 jugadas</span>
+                    </div>
+                    <div class="lp-gr-cols">
+                      <span></span><span>Equipo</span><span>PJ</span><span>GF</span><span>GC</span><span>PTS</span>
+                    </div>
+                    <div class="lp-gr-r qual"><span class="lp-gr-p">1</span><span class="lp-gr-t"><span class="lp-gr-f">🇲🇽</span>México</span><span class="lp-gr-n">2</span><span class="lp-gr-n">5</span><span class="lp-gr-n">1</span><span class="lp-gr-pp">6</span></div>
+                    <div class="lp-gr-r qual"><span class="lp-gr-p">2</span><span class="lp-gr-t"><span class="lp-gr-f">🇰🇷</span>Corea</span><span class="lp-gr-n">2</span><span class="lp-gr-n">3</span><span class="lp-gr-n">2</span><span class="lp-gr-pp">4</span></div>
+                    <div class="lp-gr-r"><span class="lp-gr-p">3</span><span class="lp-gr-t"><span class="lp-gr-f">🇿🇦</span>Sudáfrica</span><span class="lp-gr-n">2</span><span class="lp-gr-n">2</span><span class="lp-gr-n">3</span><span class="lp-gr-pp">1</span></div>
+                    <div class="lp-gr-r"><span class="lp-gr-p">4</span><span class="lp-gr-t"><span class="lp-gr-f">🇨🇿</span>Chequia</span><span class="lp-gr-n">2</span><span class="lp-gr-n">1</span><span class="lp-gr-n">5</span><span class="lp-gr-pp">0</span></div>
+                  </div>
+                  <div class="lp-gr-card">
+                    <div class="lp-gr-h2">
+                      <span class="lp-gr-h2-t">Próximo</span>
+                      <span class="lp-gr-h2-i">11 jun · 13:00</span>
+                    </div>
+                    <div class="lp-gr-vs">
+                      <span class="lp-gr-vs-t"><span class="lp-gr-f">🇲🇽</span>México</span>
+                      <span class="lp-gr-vs-x">VS</span>
+                      <span class="lp-gr-vs-t">Sudáfrica<span class="lp-gr-f">🇿🇦</span></span>
+                    </div>
                   </div>
                 </div>
 
                 <div class="lp-view" data-v="bracket">
-                  <div class="lp-bracket">
-                    <div class="lp-br-h">Octavos</div>
-                    <div class="lp-br-row win">🇲🇽 México · 2</div>
-                    <div class="lp-br-row">🇪🇸 España · 1</div>
-                    <div class="lp-br-row win">🇫🇷 Francia · 3</div>
-                    <div class="lp-br-row">🇧🇪 Bélgica · 0</div>
-                    <div class="lp-br-row win">🇧🇷 Brasil · 2</div>
-                    <div class="lp-br-row">🇩🇪 Alemania · 1</div>
+                  <div class="lp-br-tabs">
+                    <div class="lp-br-tab on">8°</div>
+                    <div class="lp-br-tab">4°</div>
+                    <div class="lp-br-tab">SF</div>
+                    <div class="lp-br-tab">Final</div>
+                  </div>
+                  <div class="lp-br-stage">Sábado 4 jul · 13:00</div>
+                  <div class="lp-br-match played">
+                    <div class="lp-br-tr win"><span class="lp-br-tn"><span class="lp-br-tf">🇲🇽</span>México</span><span class="lp-br-ts">2</span></div>
+                    <div class="lp-br-tr lose"><span class="lp-br-tn"><span class="lp-br-tf">🇪🇸</span>España</span><span class="lp-br-ts">1</span></div>
+                  </div>
+                  <div class="lp-br-match live">
+                    <div class="lp-br-tr win"><span class="lp-br-tn"><span class="lp-br-tf">🇫🇷</span>Francia</span><span class="lp-br-ts">2</span></div>
+                    <div class="lp-br-tr"><span class="lp-br-tn"><span class="lp-br-tf">🇧🇪</span>Bélgica</span><span class="lp-br-ts">1</span></div>
+                    <div class="lp-br-time"><span class="lp-br-livedot"></span>EN VIVO · 78'</div>
+                  </div>
+                  <div class="lp-br-match played">
+                    <div class="lp-br-tr win"><span class="lp-br-tn"><span class="lp-br-tf">🇧🇷</span>Brasil</span><span class="lp-br-ts">3</span></div>
+                    <div class="lp-br-tr lose"><span class="lp-br-tn"><span class="lp-br-tf">🇩🇪</span>Alemania</span><span class="lp-br-ts">1</span></div>
+                  </div>
+                  <div class="lp-br-match next">
+                    <div class="lp-br-stage" style="margin:0 0 3px">Mañana · 13:00</div>
+                    <div class="lp-br-tr"><span class="lp-br-tn"><span class="lp-br-tf">🇦🇷</span>Argentina</span><span class="lp-br-ts">−</span></div>
+                    <div class="lp-br-tr"><span class="lp-br-tn"><span class="lp-br-tf">🇵🇹</span>Portugal</span><span class="lp-br-ts">−</span></div>
                   </div>
                 </div>
 
