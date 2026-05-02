@@ -1700,6 +1700,45 @@ body.dark .grp-modal-btn.cancel{background:#161a2e}
 .grp-modal-btn.go:hover{box-shadow:0 8px 22px rgba(0,48,135,.3)}
 .grp-modal-btn.go:disabled{opacity:.5;cursor:not-allowed;box-shadow:none}
 
+/* ── PRO BADGE (💎 al lado del nombre de Users Pro) ── */
+.pro-badge{display:inline-block;font-size:.78em;line-height:1;vertical-align:baseline;filter:drop-shadow(0 1px 3px rgba(232,170,30,.4));transition:transform .2s,filter .2s;cursor:help}
+.pro-badge:hover{transform:scale(1.15);filter:drop-shadow(0 2px 6px rgba(232,170,30,.6))}
+/* Tamaños alternativos para diferentes contextos */
+.pro-badge.sm{font-size:.7em}
+.pro-badge.lg{font-size:.92em;filter:drop-shadow(0 2px 5px rgba(232,170,30,.5))}
+.pro-badge.xl{font-size:1.1em;filter:drop-shadow(0 3px 8px rgba(232,170,30,.55))}
+
+/* ── UPGRADE MODAL & DRAWER BTN ── */
+.drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.1),rgba(232,170,30,.04));font-weight:800;color:var(--gld) !important;border:1px solid rgba(232,170,30,.4) !important;border-radius:10px !important;margin:0 0 4px 0}
+body.dark .drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.16),rgba(232,170,30,.06));color:#f0b030 !important}
+.drawer-upgrade:hover{background:linear-gradient(135deg,rgba(232,170,30,.18),rgba(232,170,30,.08));border-color:var(--gld) !important}
+.drawer-upgrade-tag{font-size:.6rem;font-weight:800;background:rgba(232,170,30,.2);padding:2px 7px;border-radius:5px;letter-spacing:.3px;text-transform:uppercase;color:var(--gld)}
+body.dark .drawer-upgrade-tag{color:#f0b030}
+
+.upg-perks{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+.upg-perk{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-size:.78rem;font-weight:700;color:var(--ink2)}
+body.dark .upg-perk{background:#0c0f1c}
+.upg-perk-i{font-size:1.05rem;line-height:1}
+
+.upg-info{background:rgba(232,170,30,.1);border-left:3px solid var(--gld);border-radius:0 8px 8px 0;padding:8px 12px;margin:10px 0;font-size:.74rem;color:#8a5a00;line-height:1.5;font-weight:600}
+body.dark .upg-info{background:rgba(232,170,30,.14);color:#f0b030}
+
+.upg-cta{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:6px}
+body.dark .upg-cta{background:#0c0f1c}
+.upg-cta-h{font-weight:800;font-size:.82rem;color:var(--ink);margin-bottom:4px}
+.upg-cta-s{font-size:.74rem;color:var(--ink3);line-height:1.5;font-weight:500}
+
+
+.rk-user-banner,.user-banner{background:linear-gradient(135deg,rgba(232,170,30,.1),rgba(232,170,30,.04));border:1.5px solid rgba(232,170,30,.4);border-radius:14px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:14px;position:relative;overflow:hidden}
+body.dark .rk-user-banner,body.dark .user-banner{background:linear-gradient(135deg,rgba(232,170,30,.14),rgba(232,170,30,.06))}
+.rk-user-banner::before,.user-banner::before{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(232,170,30,.18),transparent 65%);pointer-events:none}
+.rk-user-banner-icon,.user-banner-icon{font-size:2rem;flex-shrink:0;line-height:1;filter:drop-shadow(0 3px 8px rgba(232,170,30,.4));position:relative;z-index:1}
+.rk-user-banner-meta,.user-banner-meta{flex:1;min-width:0;position:relative;z-index:1}
+.rk-user-banner-eyebrow,.user-banner-eyebrow{font-size:.62rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:#8a5a00;margin-bottom:3px}
+body.dark .rk-user-banner-eyebrow,body.dark .user-banner-eyebrow{color:#f0b030}
+.rk-user-banner-h,.user-banner-h{font-weight:800;font-size:.95rem;color:var(--ink);letter-spacing:-.2px;line-height:1.25}
+.rk-user-banner-sub,.user-banner-sub{font-size:.74rem;color:var(--ink3);margin-top:2px;font-weight:600;line-height:1.4}
+
 /* ADMIN */
 .adm-section{margin-bottom:2rem}
 
@@ -3171,6 +3210,13 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <button class="drawer-item" onclick="goDrawer('countdown')">Cuenta Regresiva</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="closeDrawer();openOnboard()">Ver tutorial 🎓</button>
+    <div class="drawer-item-sep user-only drawer-user-item" style="display:none"></div>
+    <button class="drawer-item drawer-upgrade user-only drawer-user-item" onclick="closeDrawer();showUpgradeModal()" style="display:none">
+      <span style="display:flex;align-items:center;gap:8px;justify-content:space-between;width:100%">
+        <span>Quiero ser Pro 💎</span>
+        <span class="drawer-upgrade-tag">$230 extra</span>
+      </span>
+    </button>
     <div class="drawer-item-sep admin-only drawer-admin-item" style="display:none"></div>
     <button class="drawer-item admin-only drawer-admin-item" onclick="goDrawer('admin')" style="display:none">Admin</button>
     <div class="drawer-item-sep"></div>
@@ -3648,6 +3694,33 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <div class="grp-modal-card" id="grp-modal-card">
     <button class="grp-modal-close" onclick="closeGrpModal()" aria-label="Cerrar">✕</button>
     <div id="grp-modal-content"></div>
+  </div>
+</div>
+
+<!-- MODAL: UPGRADE A PRO -->
+<div id="upgrade-modal" class="grp-modal" style="display:none">
+  <div class="grp-modal-bg" onclick="closeUpgradeModal()"></div>
+  <div class="grp-modal-card" style="max-width:400px">
+    <button class="grp-modal-close" onclick="closeUpgradeModal()" aria-label="Cerrar">✕</button>
+    <div class="grp-modal-icon" style="background:linear-gradient(135deg,#c8900a,#e8a020,#f0c050);box-shadow:0 4px 14px rgba(232,170,30,.4)">💎</div>
+    <div class="grp-modal-h">Hazte User Pro</div>
+    <div class="grp-modal-s">Paga <b>$230 MXN</b> adicionales para entrar al ranking general, las stats globales y la bolsa total. <b>$275</b> de tu pago se suman a la bolsa.</div>
+    <div class="upg-perks">
+      <div class="upg-perk"><span class="upg-perk-i">🏆</span><span>Apareces en el ranking general</span></div>
+      <div class="upg-perk"><span class="upg-perk-i">📊</span><span>Compites por stats globales</span></div>
+      <div class="upg-perk"><span class="upg-perk-i">💰</span><span>Participas en premios oficiales</span></div>
+    </div>
+    <div class="upg-info">
+      ⚠️ El upgrade <b>solo disponible hasta el 11 jun 2026 · 1:00pm CDMX</b>. Después del cierre no se aceptan upgrades.
+    </div>
+    <div class="upg-cta">
+      <div class="upg-cta-h">¿Cómo lo hago?</div>
+      <div class="upg-cta-s">Manda los <b>$230 MXN</b> al organizador y avísale que quieres pasar a Pro. Una vez confirmado el pago, tu cuenta queda como Pro automáticamente.</div>
+    </div>
+    <div class="grp-modal-btns">
+      <button class="grp-modal-btn cancel" onclick="closeUpgradeModal()">Cerrar</button>
+      <a class="grp-modal-btn go" href="https://wa.me/52" target="_blank" rel="noopener" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">📱 Avisar por WhatsApp</a>
+    </div>
   </div>
 </div>
 
@@ -4824,7 +4897,7 @@ function renderInicio(){
         return `<div class="hp-act-row">
           <div class="hp-act-av" style="background:${color}">${escHtml(initials)}</div>
           <div class="hp-act-msg">
-            <strong onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="cursor:pointer">${escHtml(p.username)}</strong> ${verb}: <span style="color:var(--ink3)">${escHtml(text)}</span>
+            <strong onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="cursor:pointer">${escHtml(p.username)}</strong>${proBadge(p.username,{cls:'sm'})} ${verb}: <span style="color:var(--ink3)">${escHtml(text)}</span>
             <div class="hp-act-time">${ago}</div>
           </div>
         </div>`;
@@ -5226,6 +5299,8 @@ document.addEventListener('keydown',e=>{
     closeM();
     const grpModal = document.getElementById('grp-modal');
     if(grpModal && grpModal.style.display !== 'none') closeGrpModal();
+    const upgModal = document.getElementById('upgrade-modal');
+    if(upgModal && upgModal.style.display !== 'none') closeUpgradeModal();
   }
 });
 document.getElementById('mhi').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('mai').focus();});
@@ -5773,20 +5848,48 @@ function renderRanking(){
     </div>`).join('')}
   </div>`;
 
-  api('GET','/api/ranking').then(board=>{
+  // Si soy User (no Pro), también pedimos el ranking simulado para mostrar dónde iría
+  const meIsPro = isProUser(CU.u);
+  const calls = [api('GET','/api/ranking')];
+  if(!meIsPro && !isAdminUser(CU.u)){
+    calls.push(api('GET','/api/ranking/simulated').catch(()=>null));
+  }
+
+  Promise.all(calls).then(([board, simulated])=>{
     const enriched=(board||[])
       .map(p=>({...p, isMe:p.name===CU.u}))
       .sort((a,b)=>{
         if(b.total!==a.total) return b.total-a.total;
         return a.name.localeCompare(b.name,'es');
       });
-    wrap.innerHTML=buildRankingHTML(enriched,false);
-    updateRankingHero(enriched);
+
+    // Banner para usuarios User (no Pro) que muestra dónde irían si fueran Pro
+    let userBanner = '';
+    if(!meIsPro && !isAdminUser(CU.u) && Array.isArray(simulated)){
+      const myIdx = simulated.findIndex(p=>p.name===CU.u);
+      if(myIdx >= 0){
+        const myPos = myIdx + 1;
+        const totalSim = simulated.length;
+        const myPts = simulated[myIdx].total;
+        userBanner = `<div class="rk-user-banner">
+          <div class="rk-user-banner-icon">💎</div>
+          <div class="rk-user-banner-meta">
+            <div class="rk-user-banner-eyebrow">Modo User · No apareces en este ranking</div>
+            <div class="rk-user-banner-h">Si fueras Pro estarías en el lugar #${myPos}</div>
+            <div class="rk-user-banner-sub">${myPts} pts · de ${totalSim} jugadores totales (Pros + Users)</div>
+          </div>
+        </div>`;
+      }
+    }
+
+    wrap.innerHTML = userBanner + buildRankingHTML(enriched,false);
+    updateRankingHero(enriched, meIsPro);
     observeRankingCards();
   }).catch(()=>{
     // Fallback to client-side calc if API fails
     const board=[];
     Object.keys(picks).forEach(u=>{
+      if(!isProUser(u)) return; // solo Pros en fallback
       const sc=calcScore(u);
       board.push({name:u,...sc,isMe:u===CU.u});
     });
@@ -5795,13 +5898,13 @@ function renderRanking(){
       return a.name.localeCompare(b.name,'es');
     });
     wrap.innerHTML=buildRankingHTML(board,false);
-    updateRankingHero(board);
+    updateRankingHero(board, meIsPro);
     observeRankingCards();
   });
 }
 
 // Llenar el hero del ranking con stats y card "Tu posición"
-function updateRankingHero(board){
+function updateRankingHero(board, meIsPro){
   if(!Array.isArray(board) || !board.length) return;
   const max = board[0]?.total || 0;
   const players = board.length;
@@ -5810,11 +5913,19 @@ function updateRankingHero(board){
   const eyeEl = document.getElementById('rk-eyebrow-txt');
   if(playersEl) playersEl.textContent = String(players);
   if(maxEl) maxEl.textContent = String(max);
-  if(eyeEl) eyeEl.textContent = `Ranking en vivo · ${players} jugador${players!==1?'es':''}`;
+  if(eyeEl) eyeEl.textContent = `Ranking en vivo · ${players} Pro${players!==1?'s':''} 💎`;
 
-  // Tu posición
-  const meIdx = board.findIndex(p => p.isMe);
+  // Si soy User, oculto la card "Tu posición" del hero
   const myposEl = document.getElementById('rk-mypos');
+  if(meIsPro === false){
+    if(myposEl) myposEl.style.display = 'none';
+    const stkPos = document.getElementById('rk-sticky-pos');
+    if(stkPos) stkPos.textContent = `Modo User`;
+    return;
+  }
+
+  // Tu posición (solo Pros)
+  const meIdx = board.findIndex(p => p.isMe);
   if(meIdx >= 0 && myposEl){
     const me = board[meIdx];
     const pos = meIdx + 1;
@@ -5894,7 +6005,7 @@ function buildRankingHTML(board,isDemo){
     html+=`<div class="podium-card ${cls} rk-reveal" onclick="openProfile('${p.name.replace(/'/g,"\\'")}')">
       <div class="pod-rank">${podLabel[i]}</div>
       <div class="pod-medal">${podMedal[i]}</div>
-      <div class="pod-name">${escHtml(p.name)}${meTag}</div>
+      <div class="pod-name">${escHtml(p.name)}${proBadge(p.name)}${meTag}</div>
       <div class="pod-pts ${podPts[i]}">${p.total}<span>pts</span></div>
       <div class="pod-sub">${p.grupos}g · ${p.bracket}e</div>
     </div>`;
@@ -5914,7 +6025,7 @@ function buildRankingHTML(board,isDemo){
       html+=`<div class="rk-row rk-reveal${p.isMe?' me':''}" style="--rkrow-i:${i}" onclick="openProfile('${p.name.replace(/'/g,"\\'")}')">
         <div class="rk-row-pos">${pos}</div>
         <div class="rk-row-info">
-          <div class="rk-row-name">${escHtml(p.name)}${meTag}${streakIcon}</div>
+          <div class="rk-row-name">${escHtml(p.name)}${proBadge(p.name)}${meTag}${streakIcon}</div>
           <div class="rk-row-sub">${p.grupos} grupos · ${p.bracket} elim.</div>
           <div class="rk-row-bar-w"><div class="rk-row-bar" style="width:${barW}%;background:${barColor}"></div></div>
         </div>
@@ -6553,8 +6664,11 @@ function usernameFromCode(code){
 
 function renderPremios(){
   const wrap=document.getElementById('premios-wrap');
-  const totalUsers=Math.max(Object.keys(picks).filter(u=>!isAdminUser(u)).length,1);
-  const bolsa=totalUsers*PRICE_PER_USER;
+  // Solo Pros suman a la bolsa. Cada Pro aporta $275 (de los $350 que pagan).
+  const proUsers = Object.keys(picks).filter(u=>!isAdminUser(u) && isProUser(u));
+  const totalUsers = proUsers.length;
+  const POT_PER_PRO = 275; // $275 de los $350 van a la bolsa
+  const bolsa = Math.max(totalUsers, 0) * POT_PER_PRO;
   const myCode=CU.code||genCode(CU.u);
   const myRefs=refs[myCode]||[];
 
@@ -6575,15 +6689,29 @@ function renderPremios(){
 
   const safeMoney = (n)=>`<span class="cur">$</span>${n.toLocaleString('es-MX')}`;
 
+  // Banner para Users (no Pro): mensaje de modo User
+  const meIsPro = isProUser(CU.u);
+  let userBanner = '';
+  if(!meIsPro && !isAdminUser(CU.u)){
+    userBanner = `<div class="user-banner">
+      <div class="user-banner-icon">💎</div>
+      <div class="user-banner-meta">
+        <div class="user-banner-eyebrow">Modo User · No participas en la bolsa</div>
+        <div class="user-banner-h">Estos premios son solo para User Pro</div>
+        <div class="user-banner-sub">Solo los User Pro 💎 reparten la bolsa total. Tú juegas en tus grupos privados sin participar en estos premios.</div>
+      </div>
+    </div>`;
+  }
+
   // ── HERO ──
-  let html=`<div class="pp-hero">
+  let html=userBanner+`<div class="pp-hero">
     <div class="pp-hero-row">
       <div class="pp-eyebrow"><span class="pp-eyebrow-dot"></span>Premios · Bolsa creciendo</div>
       <div class="pp-bolsa-label">💰 Bolsa total estimada</div>
       <div class="pp-bolsa-amt" id="pp-bolsa-amt"><span class="currency">$</span><span id="pp-bolsa-num">0</span></div>
-      <div class="pp-bolsa-sub">MXN en efectivo · ${totalUsers} participante${totalUsers!==1?'s':''} × $${PRICE_PER_USER}</div>
+      <div class="pp-bolsa-sub">MXN en efectivo · ${totalUsers} Pro${totalUsers!==1?'s':''} 💎 × $${POT_PER_PRO} a la bolsa</div>
       <div class="pp-pills">
-        <div class="pp-pill">⚽ ${totalUsers} jugador${totalUsers!==1?'es':''}</div>
+        <div class="pp-pill">💎 ${totalUsers} Pro${totalUsers!==1?'s':''}</div>
         <div class="pp-pill">📅 Finaliza 19 jul 2026</div>
         <div class="pp-pill">🏆 6 premiados</div>
       </div>
@@ -6694,7 +6822,7 @@ function renderPremios(){
         <div class="pp-myrefs-list">`;
       myRefs.forEach(r=>{
         const isLeading=currentWinner===r&&hasRealResults;
-        html+=`<span class="pill ${isLeading?'pg':'pnk'}">${isLeading?'🏆 ':''}<b>${escHtml(r)}</b>${isLeading?' · ¡va ganando!':''}</span>`;
+        html+=`<span class="pill ${isLeading?'pg':'pnk'}">${isLeading?'🏆 ':''}<b>${escHtml(r)}</b>${proBadge(r,{cls:'sm'})}${isLeading?' · ¡va ganando!':''}</span>`;
       });
       html+=`</div>`;
       if(winningRef) html+=`<div style="margin-top:10px;background:var(--g-bg);border:1.5px solid var(--g2);border-radius:10px;padding:10px 14px;font-size:.8rem;color:var(--g);font-weight:600">
@@ -6767,7 +6895,7 @@ function copyMyCode(){
 // ══════════════════════════════════════════════════════
 function renderReglas(){
   const w=document.getElementById('reglas-wrap');
-  const totalUsers=Math.max(Object.keys(picks).filter(u=>!isAdminUser(u)).length,1);
+  const totalUsers=Math.max(Object.keys(picks).filter(u=>!isAdminUser(u) && isProUser(u)).length,1);
   const bolsa=totalUsers*PRICE_PER_USER;
 
   const sections=[
@@ -6840,7 +6968,7 @@ function renderReglas(){
           <div class="rules-prizebox-l">
             <div class="rules-prizebox-lbl">Bolsa estimada</div>
             <div class="rules-prizebox-amt">$${bolsa.toLocaleString('es-MX')}</div>
-            <div class="rules-prizebox-sub">MXN · ${totalUsers} participante${totalUsers!==1?'s':''} × $${PRICE_PER_USER}</div>
+            <div class="rules-prizebox-sub">MXN · ${totalUsers} Pro${totalUsers!==1?'s':''} 💎 × $${PRICE_PER_USER}</div>
           </div>
           <div class="rules-prizebox-icon">💰</div>
         </div>
@@ -7481,7 +7609,7 @@ function renderPost(p, idx){
       <div onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="width:36px;height:36px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" title="Ver perfil">${initials}</div>
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-          <span onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="font-weight:800;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'};cursor:pointer" title="Ver perfil">${escHtml(p.username)}</span>
+          <span onclick="openProfile('${p.username.replace(/'/g,"\\'")}')" style="font-weight:800;font-size:.88rem;color:${isMe?'var(--green)':'var(--ink)'};cursor:pointer" title="Ver perfil">${escHtml(p.username)}</span>${proBadge(p.username)}
           ${isMe?`<span style="background:var(--g-bg);color:var(--green);font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:7px;letter-spacing:.5px;text-transform:uppercase">tú</span>`:''}
           <span style="font-size:.72rem;color:var(--ink3);font-weight:600">${time}</span>
         </div>
@@ -7567,7 +7695,7 @@ function renderComments(comments, postId, parentId){
         <div onclick="openProfile('${safeUname}')" style="width:26px;height:26px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:.65rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer">${c.username.slice(0,2).toUpperCase()}</div>
         <div style="flex:1;min-width:0">
           <div style="display:flex;align-items:center;gap:6px">
-            <span onclick="openProfile('${safeUname}')" style="font-weight:800;font-size:.8rem;color:${isMe?'var(--green)':'var(--blue2)'};cursor:pointer">${escHtml(c.username)}</span>
+            <span onclick="openProfile('${safeUname}')" style="font-weight:800;font-size:.8rem;color:${isMe?'var(--green)':'var(--blue2)'};cursor:pointer">${escHtml(c.username)}</span>${proBadge(c.username,{cls:'sm'})}
             <span style="font-size:.65rem;color:var(--ink3);font-weight:600">${timeAgo(c.created_at)}</span>
           </div>
           <div style="font-size:.82rem;color:var(--ink);line-height:1.5;margin-top:2px;word-break:break-word">${contentHtml}</div>
@@ -8110,7 +8238,7 @@ function openProfile(username){
   const html = `
     <div class="prof-hero">
       <div class="prof-avatar">${profileInitials(s.username)}</div>
-      <div class="prof-uname">${escHtml(s.username)}${isMe?'<span class="prof-uname-me">tú</span>':''}</div>
+      <div class="prof-uname">${escHtml(s.username)}${proBadge(s.username,{cls:'xl'})}${isMe?'<span class="prof-uname-me">tú</span>':''}</div>
       <div class="prof-position">${positionTxt}</div>
     </div>
     <div class="prof-body">
@@ -8225,13 +8353,13 @@ function openCompare(userA, userB){
       <div class="cmp-vs-row">
         <div class="cmp-side">
           <div class="cmp-side-av a">${profileInitials(a.username)}</div>
-          <div class="cmp-side-name">${escHtml(a.username)}${a.username===CU.u?'<br><span style="font-size:.62rem;color:var(--green);font-weight:800">tú</span>':''}</div>
+          <div class="cmp-side-name">${escHtml(a.username)}${proBadge(a.username)}${a.username===CU.u?'<br><span style="font-size:.62rem;color:var(--green);font-weight:800">tú</span>':''}</div>
           <div class="cmp-side-pos">${a.position?`#${a.position}`:'sin pos'}</div>
         </div>
         <div class="cmp-vs">VS</div>
         <div class="cmp-side">
           <div class="cmp-side-av b">${profileInitials(b.username)}</div>
-          <div class="cmp-side-name">${escHtml(b.username)}${b.username===CU.u?'<br><span style="font-size:.62rem;color:var(--green);font-weight:800">tú</span>':''}</div>
+          <div class="cmp-side-name">${escHtml(b.username)}${proBadge(b.username)}${b.username===CU.u?'<br><span style="font-size:.62rem;color:var(--green);font-weight:800">tú</span>':''}</div>
           <div class="cmp-side-pos">${b.position?`#${b.position}`:'sin pos'}</div>
         </div>
       </div>
@@ -8778,6 +8906,28 @@ function isAdminUser(u){
   return false;
 }
 
+// Determinar si un usuario es Pro (default: true para usuarios hardcoded de USERS)
+function isProUser(u){
+  if(!u) return true;
+  if(isAdminUser(u)) return true; // admins se tratan como Pro para no estorbar
+  // USERS hardcoded son Pro por default (o admin)
+  if(USERS.find(x=>x.u===u)) return true;
+  // Check dynUsers (cargados de BD)
+  const found = dynUsers.find(x=>x.u===u);
+  if(found && typeof found.is_pro === 'boolean') return found.is_pro;
+  return true; // default Pro si no hay info
+}
+
+// Devuelve el badge HTML para mostrar al lado del nombre. String vacío si no es Pro.
+function proBadge(username, opts){
+  if(!username) return '';
+  if(isAdminUser(username)) return ''; // admin no muestra badge
+  if(!isProUser(username)) return '';
+  const cls = (opts && opts.cls) ? ' '+opts.cls : '';
+  const title = (opts && opts.title) || 'User Pro · juega por la bolsa';
+  return ` <span class="pro-badge${cls}" title="${title}">💎</span>`;
+}
+
 function buildBoard(){
   const hasReal = Object.keys(results.groups||{}).length > 0;
   if (!hasReal){
@@ -8824,6 +8974,10 @@ function syncDrawer(){
   if(label) label.textContent = isDark?'Modo claro':'Modo oscuro';
   // show admin item in drawer if admin
   if(CU?.admin) document.querySelectorAll('.drawer-admin-item').forEach(e=>e.style.display='');
+  // show "Quiero ser Pro" item in drawer if user is NOT pro and NOT admin and antes del cutoff (11 jun 2026 1pm CDMX)
+  const cutoffMs = Date.parse('2026-06-11T19:00:00Z');
+  const upgradeAvail = CU && !CU.admin && !isProUser(CU.u) && Date.now() < cutoffMs;
+  if(upgradeAvail) document.querySelectorAll('.drawer-user-item').forEach(e=>e.style.display='');
   // show main nav in drawer on mobile
   const isMobile=window.innerWidth<=768;
   document.querySelectorAll('.drawer-mobile-nav').forEach(e=>e.style.display=isMobile?'':'none');
@@ -9830,7 +9984,7 @@ function loadGroupRanking(groupId){
       return `<div class="mg-rank-row${p.isMe?' me':''}" onclick="openProfile('${safeName}')">
         ${posMarkup}
         <div>
-          <div class="mg-rank-name">${escHtml(p.name)}${p.isMe?' <span class="mg-pill-me">tú</span>':''}</div>
+          <div class="mg-rank-name">${escHtml(p.name)}${proBadge(p.name)}${p.isMe?' <span class="mg-pill-me">tú</span>':''}</div>
           ${globalLine}
         </div>
         <div class="mg-rank-pts">${p.total}<span>pts</span></div>
@@ -9864,6 +10018,25 @@ function closeGrpModal(){
   document.body.style.overflow = '';
   const c = document.getElementById('grp-modal-content');
   if(c) c.innerHTML = '';
+}
+
+// ── Upgrade modal (User → Pro) ──
+function showUpgradeModal(){
+  const cutoffMs = Date.parse('2026-06-11T19:00:00Z');
+  if(Date.now() >= cutoffMs){
+    toast('El upgrade a Pro ya no está disponible — el torneo ya empezó');
+    return;
+  }
+  const m = document.getElementById('upgrade-modal');
+  if(!m) return;
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeUpgradeModal(){
+  const m = document.getElementById('upgrade-modal');
+  if(!m) return;
+  m.style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 function showCreateGroup(){
@@ -10252,7 +10425,19 @@ function renderStats(){
     if(eyebrowEl) eyebrowEl.textContent = `Estadísticas en vivo · ${elig} elegible${elig!==1?'s':''}`;
     if(stickyEl)  stickyEl.textContent  = `${elig} elegible${elig!==1?'s':''}`;
 
-    let html='';
+    // Banner para Users (no Pro): mensaje de modo User
+    const meIsPro = isProUser(CU.u);
+    let html = '';
+    if(!meIsPro && !isAdminUser(CU.u)){
+      html += `<div class="user-banner">
+        <div class="user-banner-icon">💎</div>
+        <div class="user-banner-meta">
+          <div class="user-banner-eyebrow">Modo User · No apareces en estas stats</div>
+          <div class="user-banner-h">Estas estadísticas son solo de User Pro 💎</div>
+          <div class="user-banner-sub">Aunque no apareces aquí, tus stats sí cuentan dentro de tus grupos privados.</div>
+        </div>
+      </div>`;
+    }
     let sIdx = 0;
 
     // ── PARTIDOS DESTACADOS ──
@@ -10323,7 +10508,7 @@ function renderStats(){
         const isMe = u.name===CU.u;
         html += `<div class="st-list-row${isMe?' me':''}" onclick="openProfile('${safe(u.name)}')">
           <div class="st-list-pos">${i+1}</div>
-          <div class="st-list-name">${escHtml(u.name)}${isMe?' <span style="font-size:.6rem;font-weight:800;background:rgba(0,196,106,.16);color:var(--green);padding:1px 6px;border-radius:5px;letter-spacing:.5px;text-transform:uppercase;margin-left:2px">tú</span>':''}</div>
+          <div class="st-list-name">${escHtml(u.name)}${proBadge(u.name)}${isMe?' <span style="font-size:.6rem;font-weight:800;background:rgba(0,196,106,.16);color:var(--green);padding:1px 6px;border-radius:5px;letter-spacing:.5px;text-transform:uppercase;margin-left:2px">tú</span>':''}</div>
           <div class="st-list-val"><strong>${u.exact}</strong> exacto${u.exact!==1?'s':''}</div>
         </div>`;
       });
@@ -10346,7 +10531,7 @@ function renderStats(){
           ${c.isMe?`<div class="st-curio-me-pill">tú</div>`:''}
           <div class="st-curio-icon">${c.icon}</div>
           <div class="st-curio-tag">${c.title}</div>
-          <div class="st-curio-name">${escHtml(c.name)}</div>
+          <div class="st-curio-name">${escHtml(c.name)}${proBadge(c.name)}</div>
           <div class="st-curio-desc">${c.desc}</div>
         </div>`;
       });
