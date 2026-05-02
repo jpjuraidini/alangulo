@@ -671,12 +671,12 @@ body.dark .su-typecard{background:#161a2e}
 .su-typecard:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(10,14,26,.08)}
 .su-typecard.user:hover{border-color:var(--blue2);box-shadow:0 12px 28px rgba(0,82,204,.12)}
 
-.su-typecard.pro{background:linear-gradient(135deg,rgba(255,200,40,.07),var(--surface) 60%);border-color:rgba(232,170,30,.35)}
+.su-typecard.pro{background:linear-gradient(135deg,rgba(255,200,40,.07),var(--surface) 60%);border-color:rgba(232,170,30,.35);padding-top:24px}
 body.dark .su-typecard.pro{background:linear-gradient(135deg,rgba(232,170,30,.1),#161a2e 60%)}
 .su-typecard.pro:hover{border-color:var(--gld);box-shadow:0 12px 28px rgba(232,170,30,.18)}
 .su-typecard.pro::before{content:"";position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(232,170,30,.18),transparent 65%);pointer-events:none}
 
-.su-recommended{position:absolute;top:8px;right:14px;font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:var(--grad-tri);color:#fff;padding:3px 9px;border-radius:6px;z-index:2;box-shadow:0 4px 12px rgba(0,48,135,.25)}
+.su-recommended{position:absolute;top:6px;left:14px;font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:var(--grad-tri);color:#fff;padding:3px 9px;border-radius:6px;z-index:2;box-shadow:0 4px 12px rgba(0,48,135,.3);white-space:nowrap}
 
 .su-typeicon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;color:#fff;position:relative;z-index:1}
 .su-typeicon.user{background:linear-gradient(135deg,#7880a0,#a0a8c0);box-shadow:0 4px 12px rgba(120,128,160,.25)}
@@ -9294,24 +9294,55 @@ function exportBracketPDF(){
   }
 
   function doExport(){
-    const el = document.querySelector('.br-outer');
-    if(!el){ toast('No se encontró el bracket'); btn.textContent=original; btn.disabled=false; return; }
+    const outer = document.querySelector('.br-outer');
+    const flex  = document.querySelector('.br-flex');
+    const target = flex || outer;
+    if(!target){ toast('No se encontró el bracket'); btn.textContent=original; btn.disabled=false; return; }
 
-    html2canvas(el, {
+    // Medir el ancho real del contenido completo (no el scroll visible)
+    const fullWidth = target.scrollWidth;
+    const fullHeight = target.scrollHeight;
+
+    // Forzar al outer a no recortar mientras renderizamos
+    let originalOverflow = '';
+    if(outer){
+      originalOverflow = outer.style.overflow;
+      outer.style.overflow = 'visible';
+    }
+
+    html2canvas(target, {
       scale: 2,
       backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg') || '#f2f4f8',
       useCORS: true,
       logging: false,
+      width: fullWidth,
+      height: fullHeight,
+      windowWidth: fullWidth,
+      windowHeight: fullHeight,
+      scrollX: 0,
+      scrollY: -window.scrollY,
     }).then(canvas => {
+      // Restaurar overflow
+      if(outer) outer.style.overflow = originalOverflow;
+
       const { jsPDF } = window.jspdf;
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({ orientation:'landscape', unit:'px', format:[canvas.width/2, canvas.height/2] });
-      pdf.addImage(imgData, 'PNG', 0, 0, canvas.width/2, canvas.height/2);
+      // Dimensiones del PDF en px (escalar a /2 mantiene proporciones razonables para visualizar)
+      const pdfW = canvas.width / 2;
+      const pdfH = canvas.height / 2;
+      const pdf = new jsPDF({
+        orientation: pdfW > pdfH ? 'landscape' : 'portrait',
+        unit: 'px',
+        format: [pdfW, pdfH]
+      });
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
       pdf.save(`bracket_alangulo_${CU.u}_${Date.now()}.pdf`);
       btn.textContent = original;
       btn.disabled = false;
       toast('PDF descargado ✓');
-    }).catch(()=>{
+    }).catch((err)=>{
+      console.error('Bracket PDF error:', err);
+      if(outer) outer.style.overflow = originalOverflow;
       toast('Error al generar el PDF');
       btn.textContent = original;
       btn.disabled = false;
