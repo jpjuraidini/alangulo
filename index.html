@@ -655,6 +655,65 @@ body.dark .lp-footer{background:#000}
 .lp-pending-row:last-child{border-bottom:none}
 .lp-pending-row strong{color:var(--ink);font-weight:800;font-size:.85rem}
 
+/* ── SIGNUP STEP 1 (selector User/Pro) ── */
+.su-step{animation:suStepIn .3s cubic-bezier(.22,1,.36,1) both}
+@keyframes suStepIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.su-eyebrow{font-size:.66rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:6px;display:flex;align-items:center;gap:6px;justify-content:center}
+.su-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--green2);box-shadow:0 0 8px rgba(0,196,106,.5);animation:suPulse 1.6s ease-in-out infinite}
+@keyframes suPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+.su-h{font-weight:800;font-size:1.5rem;color:var(--ink);margin:0 0 4px;text-align:center;letter-spacing:-.5px;line-height:1.15;padding:.05em 0;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+.su-s{font-size:.82rem;color:var(--ink3);margin-bottom:18px;text-align:center;line-height:1.5;font-weight:500}
+
+.su-typecard{background:var(--surface);border:2px solid var(--border);border-radius:16px;padding:14px;cursor:pointer;transition:all .2s;margin-bottom:10px;display:flex;align-items:flex-start;gap:12px;text-align:left;width:100%;font-family:'Plus Jakarta Sans',sans-serif;position:relative;overflow:hidden}
+body.dark .su-typecard{background:#161a2e}
+.su-typecard:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(10,14,26,.08)}
+.su-typecard.user:hover{border-color:var(--blue2);box-shadow:0 12px 28px rgba(0,82,204,.12)}
+
+.su-typecard.pro{background:linear-gradient(135deg,rgba(255,200,40,.07),var(--surface) 60%);border-color:rgba(232,170,30,.35)}
+body.dark .su-typecard.pro{background:linear-gradient(135deg,rgba(232,170,30,.1),#161a2e 60%)}
+.su-typecard.pro:hover{border-color:var(--gld);box-shadow:0 12px 28px rgba(232,170,30,.18)}
+.su-typecard.pro::before{content:"";position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:radial-gradient(circle,rgba(232,170,30,.18),transparent 65%);pointer-events:none}
+
+.su-recommended{position:absolute;top:8px;right:14px;font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;background:var(--grad-tri);color:#fff;padding:3px 9px;border-radius:6px;z-index:2;box-shadow:0 4px 12px rgba(0,48,135,.25)}
+
+.su-typeicon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;color:#fff;position:relative;z-index:1}
+.su-typeicon.user{background:linear-gradient(135deg,#7880a0,#a0a8c0);box-shadow:0 4px 12px rgba(120,128,160,.25)}
+.su-typeicon.pro{background:linear-gradient(135deg,#c8900a,#e8a020,#f0c050);box-shadow:0 4px 14px rgba(232,170,30,.4)}
+
+.su-typemeta{flex:1;min-width:0;position:relative;z-index:1}
+.su-typerow{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:3px}
+.su-typename{font-weight:800;font-size:.95rem;color:var(--ink);letter-spacing:-.2px;display:flex;align-items:center;gap:5px}
+.su-typename .diamond{font-size:.82rem}
+.su-typeprice{font-weight:800;font-size:1rem;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.3px}
+.su-typecard.pro .su-typeprice{background:linear-gradient(135deg,#c8900a,#e8a020);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.su-typeprice small{font-weight:700;font-size:.6rem;color:var(--ink3);letter-spacing:.8px;text-transform:uppercase;-webkit-text-fill-color:var(--ink3);margin-left:2px}
+.su-typedesc{font-size:.72rem;color:var(--ink3);line-height:1.5;font-weight:500;margin-top:1px}
+.su-typedesc b{color:var(--ink);font-weight:700}
+
+.su-typepills{display:flex;flex-wrap:wrap;gap:4px;margin-top:9px}
+.su-typepill{font-size:.6rem;font-weight:800;padding:3px 7px;border-radius:5px;letter-spacing:.3px;display:inline-flex;align-items:center;gap:3px}
+.su-typepill.yes{background:rgba(0,196,106,.12);color:var(--green)}
+body.dark .su-typepill.yes{background:rgba(0,196,106,.18);color:var(--green2)}
+.su-typepill.no{background:var(--bg);color:var(--ink3)}
+body.dark .su-typepill.no{background:#0c0f1c}
+
+.su-step-divider{height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:14px 0}
+
+/* ── SIGNUP STEP 2 (formulario con breadcrumb) ── */
+.su-back{background:var(--bg);border:1px solid var(--border);color:var(--ink2);padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.7rem;font-weight:700;cursor:pointer;transition:all .15s;margin-bottom:8px;display:inline-flex;align-items:center;gap:4px}
+body.dark .su-back{background:#0c0f1c}
+.su-back:hover{color:var(--ink);border-color:var(--ink2);background:var(--surface)}
+body.dark .su-back:hover{background:#1a1e34}
+
+.su-chosen-pill{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:6px 11px;font-size:.74rem;font-weight:800;color:var(--ink);margin-left:6px;margin-bottom:12px}
+body.dark .su-chosen-pill{background:#0c0f1c}
+.su-chosen-pill.pro{background:linear-gradient(135deg,rgba(232,170,30,.1),var(--bg));border-color:rgba(232,170,30,.4);color:var(--gld)}
+body.dark .su-chosen-pill.pro{background:linear-gradient(135deg,rgba(232,170,30,.15),#0c0f1c);color:#f0b030}
+.su-chosen-pill .ico{font-size:.92rem}
+.su-chosen-pill .price{margin-left:6px;padding-left:6px;border-left:1px solid currentColor;opacity:.7;font-weight:700}
+
 /* eyebrow purple */
 .lp-eyebrow-p{color:#7f4dd6}
 body.dark .lp-eyebrow-p{color:#a587f0}
@@ -2946,21 +3005,76 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="lp-modal-bg" onclick="closeSignupModal()"></div>
     <div class="lp-modal-card">
       <button class="lp-modal-close" onclick="closeSignupModal()">✕</button>
-      <div class="lp-modal-h">Inscribirse</div>
-      <div class="lp-modal-sub">Llena tus datos. Te activamos cuando confirmemos tu pago.</div>
-      <label class="flabel">Nombre completo</label>
-      <input class="finput" id="su-name" type="text" placeholder="Juan Pérez" autocomplete="off" maxlength="80">
-      <label class="flabel">Teléfono (WhatsApp)</label>
-      <input class="finput" id="su-phone" type="tel" placeholder="55 1234 5678" autocomplete="off" maxlength="20" inputmode="tel">
-      <label class="flabel">Usuario</label>
-      <input class="finput" id="su-user" type="text" placeholder="tu_usuario" autocomplete="off" maxlength="30" style="text-transform:lowercase">
-      <label class="flabel">Crea tu PIN (4 a 6 dígitos)</label>
-      <input class="finput" id="su-pin" type="text" placeholder="•••••" maxlength="6" autocomplete="off" inputmode="numeric" style="letter-spacing:3px">
-      <button class="auth-btn" id="su-btn" onclick="doSignup()">Inscribirme ⚽</button>
-      <div class="auth-err" id="su-err"></div>
-      <div class="lp-modal-foot">
-        ¿Ya tienes cuenta? <a href="#" onclick="event.preventDefault();closeSignupModal();openLoginModal()">Ingresar</a>
+
+      <!-- STEP 1: Type selector -->
+      <div id="su-step-1" class="su-step">
+        <div class="su-eyebrow"><span class="su-eyebrow-dot"></span>Inscripción</div>
+        <h2 class="su-h">¿Cómo quieres entrar?</h2>
+        <div class="su-s">Elige el tipo de cuenta que mejor te queda.</div>
+
+        <button class="su-typecard pro" onclick="selectSignupType('pro')">
+          <div class="su-recommended">⭐ Recomendado</div>
+          <div class="su-typeicon pro">💎</div>
+          <div class="su-typemeta">
+            <div class="su-typerow">
+              <div class="su-typename">User Pro <span class="diamond">💎</span></div>
+              <div class="su-typeprice">$350<small>MXN</small></div>
+            </div>
+            <div class="su-typedesc">Quieres jugar por la <b>bolsa total</b> y aparecer en el ranking general.</div>
+            <div class="su-typepills">
+              <span class="su-typepill yes">✓ Bolsa total</span>
+              <span class="su-typepill yes">✓ Ranking general</span>
+              <span class="su-typepill yes">✓ Stats globales</span>
+              <span class="su-typepill yes">✓ Premios oficiales</span>
+            </div>
+          </div>
+        </button>
+
+        <button class="su-typecard user" onclick="selectSignupType('user')">
+          <div class="su-typeicon user">👤</div>
+          <div class="su-typemeta">
+            <div class="su-typerow">
+              <div class="su-typename">User</div>
+              <div class="su-typeprice">$120<small>MXN</small></div>
+            </div>
+            <div class="su-typedesc">Solo quieres jugar con tu <b>grupo privado</b>, sin participar en la bolsa.</div>
+            <div class="su-typepills">
+              <span class="su-typepill yes">✓ Acceso completo</span>
+              <span class="su-typepill yes">✓ Grupos privados</span>
+              <span class="su-typepill no">✗ No bolsa</span>
+              <span class="su-typepill no">✗ No ranking general</span>
+            </div>
+          </div>
+        </button>
+
+        <div class="su-step-divider"></div>
+        <div class="lp-modal-foot">
+          ¿Ya tienes cuenta? <a href="#" onclick="event.preventDefault();closeSignupModal();openLoginModal()">Ingresar</a>
+        </div>
       </div>
+
+      <!-- STEP 2: Formulario -->
+      <div id="su-step-2" class="su-step" style="display:none">
+        <button class="su-back" onclick="backToSignupStep1()">← Cambiar</button>
+        <div class="su-chosen-pill" id="su-chosen-pill"></div>
+
+        <div class="lp-modal-h">Inscribirse</div>
+        <div class="lp-modal-sub">Llena tus datos. Te activamos cuando confirmemos tu pago.</div>
+        <label class="flabel">Nombre completo</label>
+        <input class="finput" id="su-name" type="text" placeholder="Juan Pérez" autocomplete="off" maxlength="80">
+        <label class="flabel">Teléfono (WhatsApp)</label>
+        <input class="finput" id="su-phone" type="tel" placeholder="55 1234 5678" autocomplete="off" maxlength="20" inputmode="tel">
+        <label class="flabel">Usuario</label>
+        <input class="finput" id="su-user" type="text" placeholder="tu_usuario" autocomplete="off" maxlength="30" style="text-transform:lowercase">
+        <label class="flabel">Crea tu PIN (4 a 6 dígitos)</label>
+        <input class="finput" id="su-pin" type="text" placeholder="•••••" maxlength="6" autocomplete="off" inputmode="numeric" style="letter-spacing:3px">
+        <button class="auth-btn" id="su-btn" onclick="doSignup()">Inscribirme ⚽</button>
+        <div class="auth-err" id="su-err"></div>
+        <div class="lp-modal-foot">
+          ¿Ya tienes cuenta? <a href="#" onclick="event.preventDefault();closeSignupModal();openLoginModal()">Ingresar</a>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -2975,7 +3089,8 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
       </div>
       <div class="lp-pending-info">
         <div class="lp-pending-row"><span>👤 Usuario</span><strong id="pending-user">—</strong></div>
-        <div class="lp-pending-row"><span>💵 Costo de entrada</span><strong>$350 MXN</strong></div>
+        <div class="lp-pending-row"><span>🏷 Tipo</span><strong id="pending-type">—</strong></div>
+        <div class="lp-pending-row"><span>💵 Costo de entrada</span><strong id="pending-cost">—</strong></div>
         <div class="lp-pending-row"><span>📩 Te avisamos por</span><strong>WhatsApp</strong></div>
       </div>
       <button class="auth-btn" onclick="closePendingModal()">Entendido</button>
@@ -4165,21 +4280,80 @@ function closeLoginModal(){
   const m = document.getElementById('login-modal');
   if(m) m.style.display = 'none';
 }
+// Tipo de cuenta seleccionado en signup ('pro' o 'user')
+let _signupType = null;
+
 function openSignupModal(){
   const m = document.getElementById('signup-modal');
   if(!m) return;
   m.style.display = 'flex';
-  document.getElementById('su-err').textContent = '';
-  setTimeout(()=>{ const n=document.getElementById('su-name'); if(n && !n.value) n.focus(); }, 100);
+  // Reset al paso 1
+  _signupType = null;
+  const s1 = document.getElementById('su-step-1');
+  const s2 = document.getElementById('su-step-2');
+  if(s1) s1.style.display = '';
+  if(s2) s2.style.display = 'none';
+  const errEl = document.getElementById('su-err');
+  if(errEl) errEl.textContent = '';
 }
 function closeSignupModal(){
   const m = document.getElementById('signup-modal');
   if(m) m.style.display = 'none';
 }
-function showPendingModal(username, customMsg){
+
+function selectSignupType(type){
+  if(!['pro','user'].includes(type)) return;
+  _signupType = type;
+  const s1 = document.getElementById('su-step-1');
+  const s2 = document.getElementById('su-step-2');
+  if(s1) s1.style.display = 'none';
+  if(s2){
+    s2.style.display = '';
+    // Forzar reanimación del step 2
+    s2.style.animation = 'none';
+    void s2.offsetWidth;
+    s2.style.animation = '';
+  }
+  // Actualizar pill informativa
+  const pill = document.getElementById('su-chosen-pill');
+  if(pill){
+    if(type === 'pro'){
+      pill.className = 'su-chosen-pill pro';
+      pill.innerHTML = `<span class="ico">💎</span> User Pro <span class="price">$350 MXN</span>`;
+    } else {
+      pill.className = 'su-chosen-pill';
+      pill.innerHTML = `<span class="ico">👤</span> User <span class="price">$120 MXN</span>`;
+    }
+  }
+  // Focus al primer input
+  setTimeout(()=>{ const n=document.getElementById('su-name'); if(n && !n.value) n.focus(); }, 100);
+}
+
+function backToSignupStep1(){
+  _signupType = null;
+  const s1 = document.getElementById('su-step-1');
+  const s2 = document.getElementById('su-step-2');
+  if(s2) s2.style.display = 'none';
+  if(s1){
+    s1.style.display = '';
+    s1.style.animation = 'none';
+    void s1.offsetWidth;
+    s1.style.animation = '';
+  }
+  const errEl = document.getElementById('su-err');
+  if(errEl) errEl.textContent = '';
+}
+
+function showPendingModal(username, customMsg, requestedType){
   const m = document.getElementById('pending-modal');
   if(!m) return;
   document.getElementById('pending-user').textContent = username || '—';
+  // Tipo y costo dinámicos
+  const tEl = document.getElementById('pending-type');
+  const cEl = document.getElementById('pending-cost');
+  const tp = (requestedType || _signupType || 'pro');
+  if(tEl) tEl.innerHTML = tp === 'pro' ? '💎 User Pro' : '👤 User';
+  if(cEl) cEl.textContent = tp === 'pro' ? '$350 MXN' : '$120 MXN';
   if(customMsg && document.getElementById('pending-msg')){
     document.getElementById('pending-msg').textContent = customMsg;
   }
@@ -4210,12 +4384,15 @@ function doSignup(){
   btn.disabled = true;
   btn.textContent = 'Inscribiendo…';
 
-  api('POST','/api/signup', { full_name, phone, username, pin })
+  const requested_type = _signupType || 'pro';
+
+  api('POST','/api/signup', { full_name, phone, username, pin, requested_type })
     .then(resp=>{
       // Limpiar form y mostrar pantalla de pendiente
       ['su-name','su-phone','su-user','su-pin'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+      const chosenType = requested_type;
       closeSignupModal();
-      showPendingModal(resp.username || username);
+      showPendingModal(resp.username || username, null, chosenType);
     })
     .catch(e=>{
       errEl.textContent = e.message || 'Error al inscribirte. Intenta de nuevo.';
