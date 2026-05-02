@@ -1702,6 +1702,36 @@ body.dark .grp-modal-btn.cancel{background:#161a2e}
 
 /* ADMIN */
 .adm-section{margin-bottom:2rem}
+
+/* Pending approvals card */
+.adm-pending-card{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px}
+body.dark .adm-pending-card{background:#0c0f1c}
+.adm-pending-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.adm-pending-meta{flex:1;min-width:160px}
+.adm-pending-name{font-weight:800;color:var(--ink);font-size:.92rem;margin-bottom:2px}
+.adm-pending-sub{font-size:.74rem;color:var(--ink3);margin-bottom:6px}
+.adm-pending-info{display:flex;gap:10px;flex-wrap:wrap;font-size:.78rem}
+.adm-pending-btns{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap}
+
+/* Tipo solicitado en pending */
+.adm-pending-type{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:8px;font-size:.7rem;font-weight:800;letter-spacing:.3px}
+.adm-pending-type.pro{background:linear-gradient(135deg,rgba(232,170,30,.14),rgba(232,170,30,.06));color:var(--gld);border:1px solid rgba(232,170,30,.4)}
+body.dark .adm-pending-type.pro{color:#f0b030;background:linear-gradient(135deg,rgba(232,170,30,.18),rgba(232,170,30,.08))}
+.adm-pending-type.user{background:rgba(120,128,160,.15);color:var(--ink2);border:1px solid rgba(120,128,160,.35)}
+body.dark .adm-pending-type.user{background:rgba(120,128,160,.18)}
+
+/* Pill de tipo en tabla de users */
+.adm-type-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:7px;font-size:.65rem;font-weight:800;letter-spacing:.3px}
+.adm-type-pill.pro{background:linear-gradient(135deg,rgba(232,170,30,.16),rgba(232,170,30,.06));color:var(--gld);border:1px solid rgba(232,170,30,.4)}
+body.dark .adm-type-pill.pro{color:#f0b030}
+.adm-type-pill.user{background:rgba(120,128,160,.16);color:var(--ink2);border:1px solid rgba(120,128,160,.35)}
+body.dark .adm-type-pill.user{color:#a0a8c0}
+.adm-type-pill.admin{background:rgba(192,0,26,.12);color:var(--r);border:1px solid rgba(192,0,26,.35)}
+
+/* Botón upgrade pequeño */
+.adm-upgrade-btn{margin-left:6px;background:linear-gradient(135deg,#c8900a,#e8a020);color:#fff;border:none;padding:3px 9px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.64rem;font-weight:800;cursor:pointer;letter-spacing:.3px;transition:all .15s;box-shadow:0 2px 8px rgba(232,170,30,.3)}
+.adm-upgrade-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,170,30,.45)}
+
 .adm-title{font-weight:800;font-size:1rem;margin-bottom:.75rem;padding-bottom:6px;display:inline-block;letter-spacing:.3px;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border-bottom:2px solid transparent;border-image:var(--grad-tri) 1}
 .adm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem}
 .adm-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:14px;box-shadow:var(--sh)}
@@ -5979,7 +6009,7 @@ function renderAdmin(){
 
     <div class="users-tbl-wrap">
       <table class="rk-table">
-        <thead><tr><th>Usuario</th><th>PIN</th><th>Código</th><th>Referidos</th><th>Partidos</th><th>Puntos</th><th></th></tr></thead>
+        <thead><tr><th>Usuario</th><th>Tipo</th><th>PIN</th><th>Código</th><th>Referidos</th><th>Partidos</th><th>Puntos</th><th></th></tr></thead>
         <tbody id="users-tbody"></tbody>
       </table>
     </div>
@@ -6123,25 +6153,41 @@ function renderPendingApprovals(){
         : null;
       const created = u.created_at ? new Date(u.created_at) : null;
       const ago = created ? timeAgo(created) : '';
-      return `<div style="background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px">
-        <div style="display:flex;align-items:start;justify-content:space-between;gap:10px;flex-wrap:wrap">
-          <div style="flex:1;min-width:160px">
-            <div style="font-weight:800;color:var(--ink);font-size:.92rem;margin-bottom:2px">${fullName || '<i style="color:var(--ink3)">sin nombre</i>'}</div>
-            <div style="font-size:.78rem;color:var(--ink3);margin-bottom:6px">@${u.username} · ${ago}</div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;font-size:.78rem">
+      const requestedType = u.requested_type || 'pro';
+      const isPro = requestedType === 'pro';
+      const safeUser = u.username.replace(/'/g,"\\'");
+      const safeName = (fullName||u.username).replace(/'/g,"\\'");
+      // Costo según tipo solicitado
+      const costo = isPro ? '$350 MXN' : '$120 MXN';
+      const tipoLabel = isPro
+        ? `<span class="adm-pending-type pro">💎 Solicita Pro · ${costo}</span>`
+        : `<span class="adm-pending-type user">👤 Solicita User · ${costo}</span>`;
+      return `<div class="adm-pending-card">
+        <div class="adm-pending-row">
+          <div class="adm-pending-meta">
+            <div class="adm-pending-name">${fullName || '<i style="color:var(--ink3)">sin nombre</i>'}</div>
+            <div class="adm-pending-sub">@${u.username} · ${ago}</div>
+            <div class="adm-pending-info">
               ${phone ? `<span style="color:var(--ink2)">📱 ${phone}</span>` : ''}
               ${waLink ? `<a href="${waLink}" target="_blank" rel="noopener" style="color:var(--green2);font-weight:700;text-decoration:none">↗ WhatsApp</a>` : ''}
             </div>
+            <div style="margin-top:8px">${tipoLabel}</div>
           </div>
-          <div style="display:flex;gap:6px;flex-shrink:0">
-            <button onclick="rejectUser('${u.username.replace(/'/g,"\\'")}','${(fullName||u.username).replace(/'/g,"\\'")}')"
+          <div class="adm-pending-btns">
+            <button onclick="rejectUser('${safeUser}','${safeName}')"
               style="background:var(--r-bg);color:var(--r);border:none;padding:8px 12px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer">
               ✕ Rechazar
             </button>
-            <button onclick="approveUser('${u.username.replace(/'/g,"\\'")}','${(fullName||u.username).replace(/'/g,"\\'")}')"
-              style="background:var(--grad-tri);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.78rem;cursor:pointer">
-              ✓ Aprobar
-            </button>
+            ${isPro
+              ? `<button onclick="approveUser('${safeUser}','${safeName}',true)"
+                  style="background:linear-gradient(135deg,#c8900a,#e8a020);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.78rem;cursor:pointer;box-shadow:0 4px 12px rgba(232,170,30,.3)">
+                  ✓ Aprobar Pro 💎
+                </button>`
+              : `<button onclick="approveUser('${safeUser}','${safeName}',false)"
+                  style="background:linear-gradient(135deg,#7880a0,#a0a8c0);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.78rem;cursor:pointer">
+                  ✓ Aprobar User 👤
+                </button>`
+            }
           </div>
         </div>
       </div>`;
@@ -6151,20 +6197,43 @@ function renderPendingApprovals(){
   });
 }
 
-function approveUser(username, displayName){
+function approveUser(username, displayName, isPro){
   if(!username) return;
-  api('POST', `/api/users/${encodeURIComponent(username)}/approve`)
+  // Si no se especifica isPro, lee del backend (basado en requested_type)
+  const body = (typeof isPro === 'boolean') ? { is_pro: isPro } : {};
+  api('POST', `/api/users/${encodeURIComponent(username)}/approve`, body)
     .then(()=>{
-      toast(`✓ ${displayName||username} aprobado`);
+      const tipoTxt = (typeof isPro === 'boolean')
+        ? (isPro ? 'Pro' : 'User')
+        : '';
+      toast(`✓ ${displayName||username}${tipoTxt?' aprobado como '+tipoTxt:''} ✓`);
       renderPendingApprovals();
       // Refrescar la tabla principal de usuarios
       api('GET','/api/users').then(users=>{
         dynUsers = users.filter(x=>!USERS.find(y=>y.u===x.username))
-          .map(x=>({u:x.username, p:'', admin:x.is_admin, code:x.code}));
+          .map(x=>({u:x.username, p:'', admin:x.is_admin, code:x.code, is_pro:x.is_pro!==false, requested_type:x.requested_type||'pro', full_name:x.full_name, phone:x.phone, approved:x.approved!==false}));
         renderUsersTable();
+        if(typeof renderPremios==='function') renderPremios();
       }).catch(()=>{});
     })
     .catch(e=>toast(`Error: ${e.message||'no se pudo aprobar'}`));
+}
+
+// Upgrade User → Pro (admin marca como pagado)
+function upgradeToPro(username, displayName){
+  if(!username) return;
+  if(!confirm(`¿Marcar a "${displayName||username}" como User Pro?\n\nEsto significa que ya pagó los $230 de upgrade ($120 ya + $230 = $350) y ahora aparece en ranking general, stats y bolsa.`)) return;
+  api('POST', `/api/users/${encodeURIComponent(username)}/upgrade-pro`)
+    .then(()=>{
+      toast(`💎 ${displayName||username} ahora es Pro`);
+      api('GET','/api/users').then(users=>{
+        dynUsers = users.filter(x=>!USERS.find(y=>y.u===x.username))
+          .map(x=>({u:x.username, p:'', admin:x.is_admin, code:x.code, is_pro:x.is_pro!==false, requested_type:x.requested_type||'pro', full_name:x.full_name, phone:x.phone, approved:x.approved!==false}));
+        renderUsersTable();
+        if(typeof renderPremios==='function') renderPremios();
+      }).catch(()=>{});
+    })
+    .catch(e=>toast(`Error: ${e.message||'no se pudo upgrade'}`));
 }
 
 function rejectUser(username, displayName){
@@ -6193,6 +6262,9 @@ function renderUsersTable(){
   if(!tbody) return;
   const all=allUsers();
   tbody.innerHTML='';
+  // Cutoff para deshabilitar upgrade post-cierre del torneo
+  const cutoffMs = Date.parse('2026-06-11T19:00:00Z'); // 11 jun 1pm CDMX (UTC-6 → 19:00 UTC)
+  const upgradeAllowed = Date.now() < cutoffMs;
   all.forEach(u=>{
     const code=u.code||genCode(u.u);
     const refCount=(refs[code]||[]).length;
@@ -6202,10 +6274,26 @@ function renderUsersTable(){
     const isAdmin=u.admin;
     // Can delete: any user except yourself and other admins
     const canDelete=!isMe&&!isAdmin;
+    const isPro = u.is_pro !== false; // default true (USERS hardcoded son Pro)
     const tr=document.createElement('tr');
     if(isMe) tr.className='me';
+
+    // Columna Tipo
+    let typeCell;
+    if(isAdmin){
+      typeCell = `<span class="adm-type-pill admin">⚙ admin</span>`;
+    } else if(isPro){
+      typeCell = `<span class="adm-type-pill pro">💎 Pro</span>`;
+    } else {
+      const upgradeBtn = (upgradeAllowed && !isMe)
+        ? `<button class="adm-upgrade-btn" onclick="upgradeToPro('${u.u.replace(/'/g,"\\'")}','${(u.full_name||u.u).replace(/'/g,"\\'")}')" title="Marcar como Pro (ya pagó upgrade)">↑ Pro</button>`
+        : '';
+      typeCell = `<span class="adm-type-pill user">👤 User</span>${upgradeBtn}`;
+    }
+
     tr.innerHTML=`
       <td style="font-weight:600">${u.u}${isAdmin?' <span class="pill pg" style="font-size:.6rem">admin</span>':''}${isMe?' <span class="pill pb" style="font-size:.6rem">tú</span>':''}</td>
+      <td>${typeCell}</td>
       <td>
         <div style="display:flex;align-items:center;gap:6px">
           <span id="pin-display-${u.u}" style="font-family:'Plus Jakarta Sans';font-weight:700;letter-spacing:1px;color:var(--ink3)">${u.p}</span>
@@ -6244,7 +6332,7 @@ function createUser(){
     .then(()=>api('GET','/api/users'))
     .then(users=>{
       dynUsers=users.filter(x=>!USERS.find(y=>y.u===x.username))
-        .map(x=>({u:x.username,p:'',admin:x.is_admin,code:x.code}));
+        .map(x=>({u:x.username,p:'',admin:x.is_admin,code:x.code,is_pro:x.is_pro!==false,requested_type:x.requested_type||'pro',full_name:x.full_name,phone:x.phone,approved:x.approved!==false}));
       document.getElementById('cu-u').value='';
       document.getElementById('cu-p').value='';
       document.getElementById('cu-c').value='';
@@ -6287,7 +6375,7 @@ function deleteUser(u){
         .then(()=>api('GET','/api/users'))
         .then(users=>{
           dynUsers=users.filter(x=>!USERS.find(y=>y.u===x.username))
-            .map(x=>({u:x.username,p:'',admin:x.is_admin,code:x.code}));
+            .map(x=>({u:x.username,p:'',admin:x.is_admin,code:x.code,is_pro:x.is_pro!==false,requested_type:x.requested_type||'pro',full_name:x.full_name,phone:x.phone,approved:x.approved!==false}));
           delete picks[u];
           renderUsersTable();renderPremios();renderRanking();
           toast(`Usuario "${u}" eliminado ✓`);
@@ -10008,7 +10096,7 @@ if(CU){
     try { const r=await api('GET',`/api/refs/${CU.code}`); refs[CU.code]=r; } catch(e){}
     try {
       const users=await api('GET','/api/users');
-      dynUsers=users.filter(u=>!USERS.find(x=>x.u===u.username)).map(u=>({u:u.username,p:'',admin:u.is_admin,code:u.code}));
+      dynUsers=users.filter(u=>!USERS.find(x=>x.u===u.username)).map(u=>({u:u.username,p:'',admin:u.is_admin,code:u.code,is_pro:u.is_pro!==false,requested_type:u.requested_type||'pro',full_name:u.full_name,phone:u.phone,approved:u.approved!==false}));
     } catch(e){}
     _dataDone=true;
     tryCloseSplash();
