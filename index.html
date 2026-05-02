@@ -1115,6 +1115,14 @@ body.dark .br-m.br-locked{background:repeating-linear-gradient(45deg,#1a1f33 0px
 .br-m.br-locked .br-t{filter:grayscale(.6)}
 .br-lock-icon{display:block;font-size:.62rem;margin-top:4px;line-height:1}
 
+/* Partido por el 3er lugar — estilo bronce sutil */
+.br-m.br-thirdplace{background:linear-gradient(135deg,rgba(160,103,58,.06),var(--surface) 60%);border-color:rgba(160,103,58,.3)}
+body.dark .br-m.br-thirdplace{background:linear-gradient(135deg,rgba(160,103,58,.10),#1a1f33 60%)}
+.br-m.br-thirdplace::before{background:linear-gradient(180deg,#c8875a,#a0673a)}
+.br-m.br-thirdplace:hover{border-color:#c8875a;box-shadow:0 12px 28px rgba(160,103,58,.18)}
+.br-m.br-thirdplace .br-mid{color:#a0673a;font-weight:800}
+body.dark .br-m.br-thirdplace .br-mid{color:#c8875a}
+
 .br-mid{
   font-size:.55rem;font-weight:800;
   color:var(--ink3);letter-spacing:.5px;
@@ -2118,6 +2126,8 @@ body.dark .mq-result-icon{background:#0c0f1c}
 .rnd-r16{background:var(--b-bg);color:var(--blue2)}
 .rnd-qf{background:var(--g-bg);color:var(--green)}
 .rnd-sf{background:var(--r-bg);color:var(--r)}
+.rnd-tp{background:rgba(160,103,58,.14);color:#a0673a}
+body.dark .rnd-tp{background:rgba(160,103,58,.22);color:#c8875a}
 .rnd-f{background:var(--gld-bg);color:var(--gld)}
 
 @media (max-width:520px){
@@ -3823,6 +3833,7 @@ const USERS=[
 //   Octavos: ganador +2, exacto +3 adicional
 //   Cuartos: ganador +3, exacto +5 adicional
 //   Semis:   ganador +5, exacto +8 adicional
+//   3er lugar: ganador +10, exacto +20 adicional (igual que Final)
 //   Final:   ganador +10, exacto +15 adicional
 const PTS={
   // Grupos
@@ -3833,6 +3844,7 @@ const PTS={
   r16: [3,  6],   // Octavos
   qf:  [5,  10],  // Cuartos
   sf:  [7,  14],  // Semis
+  tp:  [10, 20],  // 3er lugar
   f:   [10, 20],  // Final
 };
 
@@ -4975,14 +4987,14 @@ function totalGruposPending(u){
 
 function totalBracketPending(u){
   if(!u) return 0;
-  // Bracket completo = 16 + 8 + 4 + 2 + 1 = 31 partidos
+  // Bracket completo = 16 + 8 + 4 + 2 + 1 + 1 = 32 partidos (incluye 3er lugar)
   // Pero solo cuentan los que tienen ambos equipos definidos (algunos dependen de previos)
-  const TOTAL_BR = 31;
+  const TOTAL_BR = 32;
   const br = picks[u]?.br || {};
   const sc = picks[u]?.sc || {};
   let predicted = 0;
   // Cuenta cuántos partidos del bracket tienen score asignado
-  ['r32','r16','qf','sf','f'].forEach(rk=>{
+  ['r32','r16','qf','sf','tp','f'].forEach(rk=>{
     const n = rk==='r32'?16:rk==='r16'?8:rk==='qf'?4:rk==='sf'?2:1;
     for(let i=0;i<n;i++){
       const id = `${rk}_${i}`;
@@ -5557,7 +5569,8 @@ const MATCH_NUM={
   qf_0:'M97', qf_1:'M98', qf_2:'M99', qf_3:'M100',
   // Semis (M101=W97vsW98, M102=W99vsW100)
   sf_0:'M101', sf_1:'M102',
-  // Final de bronce M103, Final M104
+  // Tercer lugar M103, Final M104
+  tp_0:'M103',
   f_0:'M104',
 };
 
@@ -5583,9 +5596,29 @@ const BRACKET_FEEDS={
   // Semis
   sf_0:  ['qf_0',  'qf_1'],    // M101= W97 vs W98
   sf_1:  ['qf_2',  'qf_3'],    // M102= W99 vs W100
+  // Tercer lugar — recibe los PERDEDORES de las semis (no ganadores)
+  tp_0:  ['sf_0',  'sf_1', {loser:true}],  // M103= L101 vs L102
   // Final
   f_0:   ['sf_0',  'sf_1'],    // M104= W101 vs W102
 };
+
+// Helper: obtiene el "perdedor" de un partido del bracket basado en el ganador conocido
+// Lee el matchup original (h y a) del feed del partido y devuelve el código del que NO ganó
+function getBracketLoser(matchId, ub){
+  const winner = ub[matchId];
+  if(!winner) return null;
+  // Obtener los dos competidores del matchId
+  const feed = BRACKET_FEEDS[matchId];
+  if(!feed) return null;
+  let h, a;
+  if(matchId.startsWith('r16') || matchId.startsWith('qf') || matchId.startsWith('sf') || matchId.startsWith('f') || matchId.startsWith('tp')){
+    // Recursive: el competidor h es el ganador de feed[0], a el de feed[1]
+    h = ub[feed[0]] || null;
+    a = ub[feed[1]] || null;
+  }
+  if(!h && !a) return null;
+  return (winner === h) ? a : h;
+}
 
 function renderBracket(){
   const bk=document.getElementById('bk');bk.innerHTML='';
@@ -5596,18 +5629,34 @@ function renderBracket(){
     {key:'r16',name:'Octavos',      cls:'d8', n:8},
     {key:'qf', name:'Cuartos',      cls:'qf', n:4},
     {key:'sf', name:'Semis',        cls:'sf', n:2},
-    {key:'f',  name:'Final',        cls:'fi', n:1},
+    {key:'fi', name:'Final + 3er',  cls:'fi', n:2, mixed:true}, // Final + 3er lugar en la misma columna
   ];
   let mIdx = 0;
   rounds.forEach((rd)=>{
     const col=document.createElement('div');col.className='br-col';
-    col.innerHTML=`<div class="br-col-hd ${rd.cls}">${rd.name}<span class="br-col-hd-count">${rd.n} partido${rd.n!==1?'s':''}</span></div>`;
+    const headerName = rd.mixed ? 'Final + 3er lugar' : rd.name;
+    col.innerHTML=`<div class="br-col-hd ${rd.cls}">${headerName}<span class="br-col-hd-count">${rd.n} partido${rd.n!==1?'s':''}</span></div>`;
     const slots=document.createElement('div');slots.className='br-slots';
     for(let i=0;i<rd.n;i++){
-      const mid=`${rd.key}_${i}`;
+      // Para la columna final mixta: posición 0 = tp_0 (3er lugar), posición 1 = f_0 (final)
+      // Así visualmente queda "3er lugar arriba, Final abajo"... pero le ponemos al revés
+      let mid;
+      let isFinalMatch = false;
+      let isThirdPlace = false;
+      if(rd.mixed){
+        if(i === 0){ mid = 'f_0'; isFinalMatch = true; }
+        else       { mid = 'tp_0'; isThirdPlace = true; }
+      } else {
+        mid = `${rd.key}_${i}`;
+      }
+
       let h=null,a=null;
       if(rd.key==='r32'){
         const m=mu[mid];if(m){h=m.home;a=m.away;}
+      } else if(isThirdPlace){
+        // 3er lugar: los participantes son los PERDEDORES de las semis
+        h = getBracketLoser('sf_0', ub);
+        a = getBracketLoser('sf_1', ub);
       } else {
         const feed=BRACKET_FEEDS[mid];
         if(feed){
@@ -5615,8 +5664,9 @@ function renderBracket(){
           a=ub[feed[1]]||null;
         }
       }
+
       // Si es la final y ya hay ganador, mostrar card de campeón
-      if(rd.key === 'f' && ub[mid] && (h || a)){
+      if(isFinalMatch && ub[mid] && (h || a)){
         const champCode = ub[mid];
         const sc = picks[CU.u]?.sc?.[mid];
         const otherCode = (champCode === h) ? a : h;
@@ -5642,6 +5692,7 @@ function renderBracket(){
       } else {
         const m = mkBrMatch(mid,h,a,ub[mid]||null);
         m.classList.add('br-reveal');
+        if(isThirdPlace) m.classList.add('br-thirdplace');
         m.style.setProperty('--brm-i', String(mIdx));
         slots.appendChild(m);
       }
@@ -5682,9 +5733,9 @@ function observeBracketCards(){
 function updateBracketProg(){
   if(!CU) return;
   const sc = picks[CU.u]?.sc || {};
-  const TOTAL_BR = 31;
+  const TOTAL_BR = 32;  // 16 r32 + 8 r16 + 4 qf + 2 sf + 1 tp + 1 f = 32
   let predicted = 0;
-  ['r32','r16','qf','sf','f'].forEach(rk=>{
+  ['r32','r16','qf','sf','tp','f'].forEach(rk=>{
     const n = rk==='r32'?16:rk==='r16'?8:rk==='qf'?4:rk==='sf'?2:1;
     for(let i=0;i<n;i++){
       const id = `${rk}_${i}`;
@@ -5712,7 +5763,9 @@ function updateBracketProg(){
 function mkBrMatch(id,h,a,w){
   const el=document.createElement('div');
   el.className='br-m';
-  const label=MATCH_NUM[id]||id;
+  const matchNum = MATCH_NUM[id]||id;
+  // Etiqueta especial para el partido por el 3er lugar
+  const label = id === 'tp_0' ? `${matchNum} · 3er lugar 🥉` : matchNum;
   const sc=picks[CU.u]?.sc?.[id];
   const hasScore=sc!=null&&sc.h!=null;
 
@@ -5763,7 +5816,10 @@ function openBrModal(id,h,a){
   const sc=picks[CU.u]?.sc?.[id];
   const w=picks[CU.u]?.br?.[id];
   // Reset modal state
-  document.getElementById('br-sm-title').textContent=`${MATCH_NUM[id]||id} · Predecir resultado`;
+  const matchLabel = id === 'tp_0' ? `${MATCH_NUM[id]} · 3er lugar`
+                  : id === 'f_0' ? `${MATCH_NUM[id]} · Final`
+                  : `${MATCH_NUM[id]||id} · Predecir resultado`;
+  document.getElementById('br-sm-title').textContent = matchLabel;
   document.getElementById('br-sm-hname').textContent=NM[h]||h||'Local';
   document.getElementById('br-sm-aname').textContent=NM[a]||a||'Visitante';
   document.getElementById('br-sm-hflag').textContent=FL[h]||'🏳';
@@ -6237,7 +6293,7 @@ function renderAdmin(){
 
     <div class="users-tbl-wrap">
       <table class="rk-table">
-        <thead><tr><th>Usuario</th><th>Tipo</th><th>PIN</th><th>Código</th><th>Referidos</th><th>Partidos</th><th>Puntos</th><th></th></tr></thead>
+        <thead><tr><th>Usuario</th><th>Tipo</th><th>PIN</th><th>Código</th><th>Referidos</th><th title="Total de partidos predichos (grupos + bracket) sobre 104">Predicciones</th><th>Puntos</th><th></th></tr></thead>
         <tbody id="users-tbody"></tbody>
       </table>
     </div>
@@ -6283,6 +6339,7 @@ function renderAdmin(){
     {key:'r16', name:'Octavos',       n:8},
     {key:'qf',  name:'Cuartos',       n:4},
     {key:'sf',  name:'Semis',         n:2},
+    {key:'tp',  name:'3er lugar 🥉',  n:1},
     {key:'f',   name:'Final',         n:1},
   ];
 
@@ -6496,12 +6553,32 @@ function renderUsersTable(){
     const code=u.code||genCode(u.u);
     const refCount=(refs[code]||[]).length;
     const sc=picks[u.u]?.sc||{};
+    const br=picks[u.u]?.br||{};
     const pts=calcScore(u.u).total;
     const isMe=u.u===CU.u;
     const isAdmin=u.admin;
     // Can delete: any user except yourself and other admins
     const canDelete=!isMe&&!isAdmin;
     const isPro = u.is_pro !== false; // default true (USERS hardcoded son Pro)
+
+    // Conteo separado: grupos (solo en sc, IDs sin _) y bracket (winners en br)
+    let grpCount = 0, brCount = 0;
+    Object.keys(sc).forEach(id=>{
+      // Grupos tienen IDs como "g_A1", "g_B2", etc. Bracket tiene "r32_0", "r16_0", "qf_0", "sf_0", "tp_0", "f_0"
+      if(id.startsWith('r32_') || id.startsWith('r16_') || id.startsWith('qf_') || id.startsWith('sf_') || id.startsWith('tp_') || id.startsWith('f_')){
+        // Marcador del bracket: cuenta solo si también tiene winner en br (predicción completa)
+      } else {
+        // Es un partido de grupos: cuenta si tiene marcador
+        const v = sc[id];
+        if(v != null && v.h != null && v.a != null) grpCount++;
+      }
+    });
+    // Bracket: cuenta predicciones que tengan tanto marcador como winner (br_id)
+    Object.keys(br).forEach(id=>{
+      if(br[id]) brCount++;
+    });
+    const totalCount = grpCount + brCount;
+
     const tr=document.createElement('tr');
     if(isMe) tr.className='me';
 
@@ -6518,6 +6595,12 @@ function renderUsersTable(){
       typeCell = `<span class="adm-type-pill user">👤 User</span>${upgradeBtn}`;
     }
 
+    // Color verde si está completo, rojo si está vacío
+    const isComplete = totalCount === TOTAL_MATCHES;
+    const isEmpty = totalCount === 0;
+    const partidosColor = isComplete ? 'var(--green)' : isEmpty ? 'var(--ink3)' : 'var(--ink2)';
+    const partidosFW = isComplete ? '800' : '600';
+
     tr.innerHTML=`
       <td style="font-weight:600">${u.u}${isAdmin?' <span class="pill pg" style="font-size:.6rem">admin</span>':''}${isMe?' <span class="pill pb" style="font-size:.6rem">tú</span>':''}</td>
       <td>${typeCell}</td>
@@ -6529,7 +6612,7 @@ function renderUsersTable(){
       </td>
       <td><span style="font-family:'Plus Jakarta Sans';font-weight:800;color:var(--g);letter-spacing:1.5px">${code}</span></td>
       <td style="color:var(--b2);font-weight:600">${refCount}</td>
-      <td style="color:var(--ink3);font-size:.82rem">${Object.keys(sc).length}/${GROUP_MATCHES}</td>
+      <td style="color:${partidosColor};font-size:.78rem;font-weight:${partidosFW}" title="Grupos: ${grpCount}/${GROUP_MATCHES} · Bracket: ${brCount}/32">${totalCount}/${TOTAL_MATCHES}${isComplete?' ✓':''}</td>
       <td style="font-family:'Plus Jakarta Sans';font-weight:800;color:var(--g)">${pts}</td>
       <td>${canDelete?`<button class="del-btn" onclick="deleteUser('${u.u}')" title="Eliminar usuario">✕</button>`:'<span style="color:var(--border2);font-size:.7rem">—</span>'}</td>`;
     tbody.appendChild(tr);
@@ -6680,7 +6763,7 @@ let _savingBrRes=false;
 function saveBrRes(roundKey){
   if(_savingBrRes){toast('Espera, guardando...');return;}
   if(!results.bracket) results.bracket={};
-  const n={r32:16,r16:8,qf:4,sf:2,f:1}[roundKey]||0;
+  const n={r32:16,r16:8,qf:4,sf:2,tp:1,f:1}[roundKey]||0;
   for(let i=0;i<n;i++){
     const mid=`${roundKey}_${i}`;
     const hv=document.getElementById(`br_${mid}_h`)?.value;
@@ -6705,7 +6788,7 @@ function saveBrRes(roundKey){
   api('POST','/api/results',{data:results})
     .then(()=>{
       renderRanking();
-      const rName={r32:'Dieciseisavos',r16:'Octavos',qf:'Cuartos',sf:'Semis',f:'Final'}[roundKey];
+      const rName={r32:'Dieciseisavos',r16:'Octavos',qf:'Cuartos',sf:'Semis',tp:'3er lugar',f:'Final'}[roundKey];
       toast(`${rName} guardado ✓`);
       if(btn){btn.classList.add('ok');btn.textContent=`Guardar ${rName}`;btn.disabled=false;setTimeout(()=>btn.classList.remove('ok'),2000);}
     })
@@ -7021,7 +7104,7 @@ function renderReglas(){
           <div class="rules-chip"><span class="rules-chip-icon">⚽</span> 48 equipos · 12 grupos</div>
         </div>
         <p><b>Fase de Grupos:</b> Predice el marcador exacto de cada partido. La app calcula automáticamente la tabla de posiciones usando reglas FIFA (victoria = 3 pts, empate = 1 pt, derrota = 0). Los dos primeros de cada grupo y los 8 mejores terceros avanzan al bracket.</p>
-        <p><b>Fase Eliminatoria:</b> Completa el bracket desde Dieciseisavos hasta la Final. El marcador a 90 minutos es obligatorio. Si predices empate, elige quién avanza. Si no aciertas al que pasa, no ganas ningún punto.</p>
+        <p><b>Fase Eliminatoria:</b> Completa el bracket desde Dieciseisavos hasta la Final, incluyendo el partido por el 3er lugar. El marcador a 90 minutos es obligatorio. Si predices empate, elige quién avanza. Si no aciertas al que pasa, no ganas ningún punto.</p>
         <p><b>Fecha límite:</b> Todas las predicciones se cierran al mismo tiempo, al pitazo inicial del primer partido — <b>11 de junio de 2026 · 1:00pm CDMX</b>. No se aceptan cambios después.</p>
       `
     },
@@ -7048,6 +7131,7 @@ function renderReglas(){
             <tr><td class="pt-round">Octavos</td><td><span class="pt-win">+3</span></td><td><span class="pt-exact">+6</span></td><td><span class="pt-max">+9</span></td></tr>
             <tr><td class="pt-round">Cuartos</td><td><span class="pt-win">+5</span></td><td><span class="pt-exact">+10</span></td><td><span class="pt-max">+15</span></td></tr>
             <tr><td class="pt-round">Semis</td><td><span class="pt-win">+7</span></td><td><span class="pt-exact">+14</span></td><td><span class="pt-max">+21</span></td></tr>
+            <tr><td class="pt-round">3er lugar 🥉</td><td><span class="pt-win">+10</span></td><td><span class="pt-exact">+20</span></td><td><span class="pt-max">+30</span></td></tr>
             <tr><td class="pt-round">Final</td><td><span class="pt-win">+10</span></td><td><span class="pt-exact">+20</span></td><td><span class="pt-max">+30</span></td></tr>
           </tbody>
         </table>
@@ -8162,7 +8246,7 @@ function openPublicRules(){
     <div>
       <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.5rem">⚽ ¿Cómo se juega?</div>
       <p style="font-size:.85rem;color:var(--ink2);line-height:1.6;margin-bottom:.5rem"><b>Fase de Grupos:</b> Predice el marcador exacto de los 72 partidos. La app calcula la tabla de posiciones automáticamente usando reglas FIFA. Los dos primeros de cada grupo y los 8 mejores terceros avanzan al bracket.</p>
-      <p style="font-size:.85rem;color:var(--ink2);line-height:1.6"><b>Fase Eliminatoria:</b> Completa el bracket desde Dieciseisavos hasta la Final. El marcador a 90 minutos es obligatorio. Si predices empate, elige quién avanza.</p>
+      <p style="font-size:.85rem;color:var(--ink2);line-height:1.6"><b>Fase Eliminatoria:</b> Completa el bracket desde Dieciseisavos hasta la Final (incluye el partido por el 3er lugar). El marcador a 90 minutos es obligatorio. Si predices empate, elige quién avanza.</p>
     </div>
 
     <div>
@@ -8184,6 +8268,7 @@ function openPublicRules(){
           <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Octavos</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+3</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+6</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+9</td></tr>
           <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Cuartos</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+5</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+10</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+15</td></tr>
           <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">Semis</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+7</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+14</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+21</td></tr>
+          <tr><td style="padding:6px 8px;border-bottom:1px solid var(--border)">3er lugar 🥉</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green);border-bottom:1px solid var(--border)">+10</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500;border-bottom:1px solid var(--border)">+20</td><td style="padding:6px 8px;text-align:right;font-weight:800;border-bottom:1px solid var(--border)">+30</td></tr>
           <tr style="background:var(--bg)"><td style="padding:6px 8px">Final</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:var(--green)">+10</td><td style="padding:6px 8px;text-align:right;font-weight:700;color:#9a6500">+20</td><td style="padding:6px 8px;text-align:right;font-weight:800">+30</td></tr>
         </tbody>
       </table>
@@ -8745,7 +8830,7 @@ function openSharePrediction(matchId){
         homeCode = up.br[feed[0]];
         awayCode = up.br[feed[1]];
         const stage = matchId.split('_')[0];
-        const stageLbl = {r16:'Octavos',qf:'Cuartos',sf:'Semifinal',f:'Final'}[stage] || 'Eliminatoria';
+        const stageLbl = {r16:'Octavos',qf:'Cuartos',sf:'Semifinal',tp:'3er lugar',f:'Final'}[stage] || 'Eliminatoria';
         label = stageLbl;
       }
     }
@@ -8848,9 +8933,9 @@ function calcStreak(u){
   if (!results.bracket) return 0;
   const up = picks[u];
   if (!up) return 0;
-  // Walk bracket matches in order: r32_0..15, r16_0..7, qf_0..3, sf_0..1, f_0
+  // Walk bracket matches in order: r32_0..15, r16_0..7, qf_0..3, sf_0..1, tp_0, f_0
   const order = [];
-  ['r32','r16','qf','sf','f'].forEach(rk => {
+  ['r32','r16','qf','sf','tp','f'].forEach(rk => {
     const n = rk==='r32'?16:rk==='r16'?8:rk==='qf'?4:rk==='sf'?2:1;
     for(let i=0;i<n;i++) order.push(`${rk}_${i}`);
   });
@@ -8870,7 +8955,7 @@ function currentStreak(u){
   if (!results.bracket) return 0;
   const up = picks[u]; if (!up) return 0;
   const order = [];
-  ['r32','r16','qf','sf','f'].forEach(rk=>{
+  ['r32','r16','qf','sf','tp','f'].forEach(rk=>{
     const n=rk==='r32'?16:rk==='r16'?8:rk==='qf'?4:rk==='sf'?2:1;
     for(let i=0;i<n;i++) order.push(`${rk}_${i}`);
   });
@@ -9187,6 +9272,7 @@ function renderMiQuiniela(){
     {key:'r16',name:'Octavos',cls:'rnd-r16'},
     {key:'qf', name:'Cuartos',cls:'rnd-qf'},
     {key:'sf', name:'Semis',cls:'rnd-sf'},
+    {key:'tp', name:'3er lugar',cls:'rnd-tp'},
     {key:'f',  name:'Final',cls:'rnd-f'},
   ];
   const mu = buildR32Matchups();
@@ -9209,6 +9295,11 @@ function renderMiQuiniela(){
       // Get team names from matchup
       let homeTeam=null, awayTeam=null;
       if(key==='r32'){const m=mu[id];homeTeam=m?.home;awayTeam=m?.away;}
+      else if(key==='tp'){
+        // 3er lugar: los participantes son los PERDEDORES de las semis
+        homeTeam = getBracketLoser('sf_0', up.br||{});
+        awayTeam = getBracketLoser('sf_1', up.br||{});
+      }
       else{
         const feed=BRACKET_FEEDS[id];
         if(feed){homeTeam=up.br?.[feed[0]]||null;awayTeam=up.br?.[feed[1]]||null;}
@@ -10563,7 +10654,7 @@ function renderStats(){
       wrap.innerHTML = `<div class="st-empty">
         <div class="st-empty-icon">📊</div>
         <div class="st-empty-t">Sin jugadores con bracket completo</div>
-        <div class="st-empty-s">Las estadísticas aparecen cuando al menos un jugador llene los 31 partidos del bracket.</div>
+        <div class="st-empty-s">Las estadísticas aparecen cuando al menos un jugador llene los 32 partidos del bracket.</div>
       </div>`;
       return;
     }
