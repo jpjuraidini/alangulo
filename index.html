@@ -2662,7 +2662,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
           <div class="lp-hero-stats lp-reveal">
             <div><div class="lp-stat-num">104</div><div class="lp-stat-lbl">partidos</div></div>
             <div><div class="lp-stat-num">48</div><div class="lp-stat-lbl">selecciones</div></div>
-            <div><div class="lp-stat-num">$120<span style="font-size:.5em;opacity:.7"> /</span> $350</div><div class="lp-stat-lbl">User / Pro 💎</div></div>
+            <div><div class="lp-stat-num">$99<span style="font-size:.5em;opacity:.7"> /</span> $350</div><div class="lp-stat-lbl">User / Pro 💎</div></div>
           </div>
         </div>
 
@@ -3005,7 +3005,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="faq-list lp-reveal">
       <div class="faq-item">
         <button class="faq-q" type="button">¿Cuánto cuesta inscribirse?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">Hay dos tipos de cuenta. <b>User Pro 💎</b> cuesta <b>$350 MXN</b> y participa en el ranking general, stats globales y la bolsa total. <b>User</b> cuesta <b>$120 MXN</b> y tiene acceso completo a la plataforma para jugar en grupos privados, sin participar en la bolsa. Pago único.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Hay dos tipos de cuenta. <b>User Pro 💎</b> cuesta <b>$350 MXN</b> y participa en el ranking general, stats globales y la bolsa total. <b>User</b> cuesta <b>$99 MXN</b> y tiene acceso completo a la plataforma para jugar en grupos privados, sin participar en la bolsa. Pago único.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" type="button">¿Cuándo cierran las predicciones?<span class="faq-icon">+</span></button>
@@ -3101,7 +3101,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
           <div class="su-typemeta">
             <div class="su-typerow">
               <div class="su-typename">User</div>
-              <div class="su-typeprice">$120<small>MXN</small></div>
+              <div class="su-typeprice">$99<small>MXN</small></div>
             </div>
             <div class="su-typedesc">Solo quieres jugar con tu <b>grupo privado</b>, sin participar en la bolsa.</div>
             <div class="su-typepills">
@@ -3211,7 +3211,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <button class="drawer-item drawer-upgrade user-only drawer-user-item" onclick="closeDrawer();showUpgradeModal()" style="display:none">
       <span style="display:flex;align-items:center;gap:8px;justify-content:space-between;width:100%">
         <span>Quiero ser Pro 💎</span>
-        <span class="drawer-upgrade-tag">$230 extra</span>
+        <span class="drawer-upgrade-tag">$251 extra</span>
       </span>
     </button>
     <div class="drawer-item-sep admin-only drawer-admin-item" style="display:none"></div>
@@ -3700,7 +3700,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <button class="grp-modal-close" onclick="closeUpgradeModal()" aria-label="Cerrar">✕</button>
     <div class="grp-modal-icon" style="background:linear-gradient(135deg,#c8900a,#e8a020,#f0c050);box-shadow:0 4px 14px rgba(232,170,30,.4)">💎</div>
     <div class="grp-modal-h">Hazte User Pro</div>
-    <div class="grp-modal-s">Paga <b>$230 MXN</b> adicionales para entrar al ranking general, las stats globales y la bolsa total. <b>$275</b> de tu pago se suman a la bolsa.</div>
+    <div class="grp-modal-s">Paga <b>$251 MXN</b> adicionales para entrar al ranking general, las stats globales y la bolsa total. <b>$275</b> de tu pago se suman a la bolsa.</div>
     <div class="upg-perks">
       <div class="upg-perk"><span class="upg-perk-i">🏆</span><span>Apareces en el ranking general</span></div>
       <div class="upg-perk"><span class="upg-perk-i">📊</span><span>Compites por stats globales</span></div>
@@ -3711,7 +3711,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     </div>
     <div class="upg-cta">
       <div class="upg-cta-h">¿Cómo lo hago?</div>
-      <div class="upg-cta-s">Manda los <b>$230 MXN</b> al organizador y avísale que quieres pasar a Pro. Una vez confirmado el pago, tu cuenta queda como Pro automáticamente.</div>
+      <div class="upg-cta-s">Manda los <b>$251 MXN</b> al organizador y avísale que quieres pasar a Pro. Una vez confirmado el pago, tu cuenta queda como Pro automáticamente.</div>
     </div>
     <div class="grp-modal-btns">
       <button class="grp-modal-btn cancel" onclick="closeUpgradeModal()">Cerrar</button>
@@ -3873,9 +3873,9 @@ async function api(method, path, body){
 // ══════════════════════════════════════════════════════
 // Precios y bolsa
 const ENTRY_PRO       = 350;  // Precio total que paga un User Pro
-const ENTRY_USER      = 120;  // Precio total que paga un User regular
+const ENTRY_USER      = 99;   // Precio total que paga un User regular
 const POT_PER_PRO     = 275;  // De los $350, esto va a la bolsa (resto = comisión)
-const UPGRADE_DELTA   = 230;  // Diferencia para upgrade User → Pro ($350 - $120)
+const UPGRADE_DELTA   = 251;  // Diferencia para upgrade User → Pro ($350 - $99)
 const PRICE_PER_USER  = POT_PER_PRO;  // alias legacy
 const REF_BONUS       = 500;  // MXN al referidor si su invitado gana 1er lugar (fuera de bolsa)
 
@@ -4450,7 +4450,7 @@ function selectSignupType(type){
       pill.innerHTML = `<span class="ico">💎</span> User Pro <span class="price">$350 MXN</span>`;
     } else {
       pill.className = 'su-chosen-pill';
-      pill.innerHTML = `<span class="ico">👤</span> User <span class="price">$120 MXN</span>`;
+      pill.innerHTML = `<span class="ico">👤</span> User <span class="price">$99 MXN</span>`;
     }
   }
   // Focus al primer input
@@ -4481,7 +4481,7 @@ function showPendingModal(username, customMsg, requestedType){
   const cEl = document.getElementById('pending-cost');
   const tp = (requestedType || _signupType || 'pro');
   if(tEl) tEl.innerHTML = tp === 'pro' ? '💎 User Pro' : '👤 User';
-  if(cEl) cEl.textContent = tp === 'pro' ? '$350 MXN' : '$120 MXN';
+  if(cEl) cEl.textContent = tp === 'pro' ? '$350 MXN' : '$99 MXN';
   if(customMsg && document.getElementById('pending-msg')){
     document.getElementById('pending-msg').textContent = customMsg;
   }
@@ -6386,7 +6386,7 @@ function renderPendingApprovals(){
       const safeUser = u.username.replace(/'/g,"\\'");
       const safeName = (fullName||u.username).replace(/'/g,"\\'");
       // Costo según tipo solicitado
-      const costo = isPro ? '$350 MXN' : '$120 MXN';
+      const costo = isPro ? '$350 MXN' : '$99 MXN';
       const tipoLabel = isPro
         ? `<span class="adm-pending-type pro">💎 Solicita Pro · ${costo}</span>`
         : `<span class="adm-pending-type user">👤 Solicita User · ${costo}</span>`;
@@ -6450,7 +6450,7 @@ function approveUser(username, displayName, isPro){
 // Upgrade User → Pro (admin marca como pagado)
 function upgradeToPro(username, displayName){
   if(!username) return;
-  if(!confirm(`¿Marcar a "${displayName||username}" como User Pro?\n\nEsto significa que ya pagó los $230 de upgrade ($120 ya + $230 = $350) y ahora aparece en ranking general, stats y bolsa.`)) return;
+  if(!confirm(`¿Marcar a "${displayName||username}" como User Pro?\n\nEsto significa que ya pagó los $251 de upgrade ($99 ya + $251 = $350) y ahora aparece en ranking general, stats y bolsa.`)) return;
   api('POST', `/api/users/${encodeURIComponent(username)}/upgrade-pro`)
     .then(()=>{
       toast(`💎 ${displayName||username} ahora es Pro`);
