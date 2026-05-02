@@ -8279,12 +8279,12 @@ function getProfileStats(username){
   const totalExacts = grpExacts + brExacts;
   const accuracyPct = totalJudged > 0 ? Math.round((totalHits/totalJudged) * 100) : null;
 
-  // Posición en ranking (excluye admins)
+  // Posición en ranking (excluye admins, solo Pros — igual que ranking general)
   let position = null, rankSize = 0;
   try {
-    const adminSet = new Set((dynUsers||[]).filter(x=>x.admin).map(x=>x.u));
     const rank = Object.keys(picks)
-      .filter(k=>!adminSet.has(k))
+      .filter(k=>!isAdminUser(k))   // excluye admins (hardcoded + dynUsers)
+      .filter(k=>isProUser(k))       // solo Pros, igual que ranking general
       .map(k=>({u:k, total:calcScore(k).total}))
       .sort((a,b)=>{ if(b.total !== a.total) return b.total - a.total; return a.u.localeCompare(b.u,'es'); });
     rankSize = rank.length;
