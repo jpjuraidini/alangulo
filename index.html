@@ -3977,7 +3977,7 @@ function doLogin(){
       // Preserve refSeen from previous session so modal doesn't re-appear
       const prev = JSON.parse(localStorage.getItem('q26u')||'null');
       const refSeen = prev?.u === user.username ? (prev.refSeen || false) : false;
-      CU={u:user.username, admin:user.is_admin, code:user.code, refSeen};
+      CU={u:user.username, admin:user.is_admin, code:user.code, is_pro:user.is_pro!==false, refSeen};
       localStorage.setItem('q26u',JSON.stringify(CU));
       boot();
     })
@@ -5089,7 +5089,16 @@ function boot(){
         const users = await api('GET','/api/users');
         dynUsers = users
           .filter(u=>!USERS.find(x=>x.u===u.username))
-          .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code}));
+          .map(u=>({u:u.username, p:'', admin:u.is_admin, code:u.code, is_pro:u.is_pro!==false, requested_type:u.requested_type||'pro', full_name:u.full_name, phone:u.phone, approved:u.approved!==false}));
+        // Sincronizar CU.is_pro si falta o está desactualizado
+        const me = users.find(x=>x.username===CU.u);
+        if(me){
+          const trueIsPro = me.is_pro !== false;
+          if(CU.is_pro !== trueIsPro){
+            CU.is_pro = trueIsPro;
+            localStorage.setItem('q26u', JSON.stringify(CU));
+          }
+        }
       } catch(e){}
 
       _dataDone=true;
@@ -9006,16 +9015,26 @@ function isAdminUser(u){
   return false;
 }
 
-// Determinar si un usuario es Pro (default: true para usuarios hardcoded de USERS)
+// Determinar si un usuario es Pro
+// Reglas (en orden):
+// - Sin username: false
+// - Admin: true (no estorba en filtros)
+// - Si es el usuario actual (CU): respeta CU.is_pro (source of truth del login)
+// - USERS hardcoded (no admin): son Pro
+// - dynUsers (cargados de BD): respeta is_pro
+// - Sin info: NO es Pro (default conservador)
 function isProUser(u){
-  if(!u) return true;
-  if(isAdminUser(u)) return true; // admins se tratan como Pro para no estorbar
-  // USERS hardcoded son Pro por default (o admin)
+  if(!u) return false;
+  if(isAdminUser(u)) return true;
+  // Source of truth para el usuario actual: CU
+  if(CU && u === CU.u && typeof CU.is_pro === 'boolean') return CU.is_pro;
+  // USERS hardcoded son Pro por default
   if(USERS.find(x=>x.u===u)) return true;
   // Check dynUsers (cargados de BD)
   const found = dynUsers.find(x=>x.u===u);
   if(found && typeof found.is_pro === 'boolean') return found.is_pro;
-  return true; // default Pro si no hay info
+  // Si está en picks pero no en dynUsers, NO asumir Pro
+  return false;
 }
 
 // Devuelve el badge HTML para mostrar al lado del nombre. String vacío si no es Pro.
@@ -10399,6 +10418,15 @@ if(CU){
     try {
       const users=await api('GET','/api/users');
       dynUsers=users.filter(u=>!USERS.find(x=>x.u===u.username)).map(u=>({u:u.username,p:'',admin:u.is_admin,code:u.code,is_pro:u.is_pro!==false,requested_type:u.requested_type||'pro',full_name:u.full_name,phone:u.phone,approved:u.approved!==false}));
+      // Sincronizar CU.is_pro si falta (sesiones viejas o cambios admin)
+      const me = users.find(x=>x.username===CU.u);
+      if(me){
+        const trueIsPro = me.is_pro !== false;
+        if(CU.is_pro !== trueIsPro){
+          CU.is_pro = trueIsPro;
+          localStorage.setItem('q26u', JSON.stringify(CU));
+        }
+      }
     } catch(e){}
     _dataDone=true;
     tryCloseSplash();
