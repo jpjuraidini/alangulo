@@ -1469,9 +1469,6 @@ body.dark .pp-code{background:#161a2e}
   .pp-code-l .code{font-size:1.4rem}
 }
 
-/* Legacy styles para evitar romper si quedan referencias */
-.prizes-hero,.prizes-grid,.prize-card,.prize-medal,.prize-pos,.prize-pct,.prize-amt,.prize-bar-w,.prize-bar,.prizes-ref-section,.bono-card,.bono-label,.bono-amount,.bono-sub,.my-ref-box,.my-ref-left,.my-ref-right,.copy-code-btn{ /* deprecated */ }
-
 /* ── STATS v2 ── */
 
 /* Overview integrado al hero */
@@ -2665,7 +2662,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
           <div class="lp-hero-stats lp-reveal">
             <div><div class="lp-stat-num">104</div><div class="lp-stat-lbl">partidos</div></div>
             <div><div class="lp-stat-num">48</div><div class="lp-stat-lbl">selecciones</div></div>
-            <div><div class="lp-stat-num">$350</div><div class="lp-stat-lbl">entrada (MXN)</div></div>
+            <div><div class="lp-stat-num">$120<span style="font-size:.5em;opacity:.7"> /</span> $350</div><div class="lp-stat-lbl">User / Pro 💎</div></div>
           </div>
         </div>
 
@@ -3008,7 +3005,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="faq-list lp-reveal">
       <div class="faq-item">
         <button class="faq-q" type="button">¿Cuánto cuesta inscribirse?<span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">$350 MXN por persona. Pago único, te da acceso a toda la quiniela del Mundial. El bote total se reparte entre los primeros lugares.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Hay dos tipos de cuenta. <b>User Pro 💎</b> cuesta <b>$350 MXN</b> y participa en el ranking general, stats globales y la bolsa total. <b>User</b> cuesta <b>$120 MXN</b> y tiene acceso completo a la plataforma para jugar en grupos privados, sin participar en la bolsa. Pago único.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" type="button">¿Cuándo cierran las predicciones?<span class="faq-icon">+</span></button>
@@ -3033,7 +3030,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <section class="lp-section lp-cta-final lp-reveal">
     <h2 class="lp-cta-title">¿Listo para meterle<br>al ángulo?</h2>
     <p class="lp-cta-sub">El Mundial empieza el 11 de junio. No te quedes fuera.</p>
-    <button class="lp-btn-white" onclick="openSignupModal()">Inscribirse gratis ⚽</button>
+    <button class="lp-btn-white" onclick="openSignupModal()">Inscribirme ⚽</button>
     <button class="lp-btn-ghost-white" onclick="openLoginModal()">Ya tengo cuenta</button>
   </section>
 
@@ -3594,7 +3591,6 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div id="referidos-wrap"></div>
   </div>
 
-  <!-- NOTIFICACIONES -->
   <!-- COUNTDOWN -->
   <div class="page" id="page-countdown">
     <div class="ph">
@@ -3873,6 +3869,35 @@ async function api(method, path, body){
 }
 
 // ══════════════════════════════════════════════════════
+//  CONSTANTES GLOBALES
+// ══════════════════════════════════════════════════════
+// Precios y bolsa
+const ENTRY_PRO       = 350;  // Precio total que paga un User Pro
+const ENTRY_USER      = 120;  // Precio total que paga un User regular
+const POT_PER_PRO     = 275;  // De los $350, esto va a la bolsa (resto = comisión)
+const UPGRADE_DELTA   = 230;  // Diferencia para upgrade User → Pro ($350 - $120)
+const PRICE_PER_USER  = POT_PER_PRO;  // alias legacy
+const REF_BONUS       = 500;  // MXN al referidor si su invitado gana 1er lugar (fuera de bolsa)
+
+// Conteo del Mundial 26
+const TOTAL_MATCHES   = 104;  // Total de partidos del torneo
+const GROUP_MATCHES   = 72;   // Partidos de fase de grupos
+const TOTAL_TEAMS     = 48;   // Selecciones participantes
+const TOTAL_GROUPS    = 12;   // Grupos en fase de grupos
+
+// Fecha clave: arranque del Mundial 26 (México vs Sudáfrica) — 11 jun 2026 1:00pm CDMX (UTC-6)
+const TOURNAMENT_START_ISO = '2026-06-11T13:00:00-06:00';
+const TOURNAMENT_START_MS  = Date.parse(TOURNAMENT_START_ISO);
+
+// Helpers de candado del torneo
+function isTournamentLocked(){
+  return Date.now() >= TOURNAMENT_START_MS;
+}
+function tournamentLockedToast(){
+  toast('🔒 El torneo ya empezó · Predicciones cerradas');
+}
+
+// ══════════════════════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════════════════════
 let CU=null;
@@ -4009,7 +4034,7 @@ function startLandingCountdown(){
   if(!wrap) return;
   if(_lpCdTimer) clearInterval(_lpCdTimer);
 
-  const TARGET = new Date('2026-06-11T13:00:00-06:00');
+  const TARGET = new Date(TOURNAMENT_START_MS);
   let prev = {d:-1, h:-1, m:-1, s:-1};
 
   function tick(){
@@ -4820,19 +4845,45 @@ function renderInicio(){
   // Stats básicas
   const stats = getProfileStats(u);
 
-  // Posición
+  // Posición — si soy User (no Pro), muestro posición SIMULADA en ranking de TODOS (Pros+Users)
   const posEl = document.getElementById('hp-pos');
   const posSufEl = document.getElementById('hp-pos-suffix');
   const posSubEl = document.getElementById('hp-pos-sub');
-  if(stats.position){
-    posEl.textContent = String(stats.position);
-    posSufEl.textContent = '°';
-    const streakTxt = stats.streak >= 3 ? ` · 🔥 racha de ${stats.streak}` : '';
-    posSubEl.textContent = `de ${stats.rankSize} jugador${stats.rankSize!==1?'es':''}${streakTxt}`;
+  const meIsPro = isProUser(u);
+
+  if(meIsPro){
+    // Pros: posición real en ranking general (solo Pros)
+    if(stats.position){
+      posEl.textContent = String(stats.position);
+      posSufEl.textContent = '°';
+      const streakTxt = stats.streak >= 3 ? ` · 🔥 racha de ${stats.streak}` : '';
+      posSubEl.textContent = `de ${stats.rankSize} jugador${stats.rankSize!==1?'es':''}${streakTxt}`;
+    } else {
+      posEl.textContent = '—';
+      posSufEl.textContent = '';
+      posSubEl.textContent = 'Aún sin clasificar';
+    }
   } else {
-    posEl.textContent = '—';
-    posSufEl.textContent = '';
-    posSubEl.textContent = 'Aún sin clasificar';
+    // Users: cargar ranking simulado (Pros + Users) y mostrar posición ahí
+    api('GET','/api/ranking/simulated').then(simulated=>{
+      const idx = (simulated||[]).findIndex(p=>p.name===u);
+      if(idx>=0){
+        const pos = idx+1;
+        const total = simulated.length;
+        posEl.textContent = String(pos);
+        posSufEl.textContent = '°';
+        const streakTxt = stats.streak >= 3 ? ` · 🔥 racha de ${stats.streak}` : '';
+        posSubEl.innerHTML = `simulado · de ${total}${streakTxt} <span style="font-size:.65rem;color:var(--gld);font-weight:800">💎 si fueras Pro</span>`;
+      } else {
+        posEl.textContent = '—';
+        posSufEl.textContent = '';
+        posSubEl.textContent = 'Aún sin clasificar';
+      }
+    }).catch(()=>{
+      posEl.textContent = '—';
+      posSufEl.textContent = '';
+      posSubEl.textContent = 'Modo User · No participas en ranking';
+    });
   }
 
   // Puntos con count-up
@@ -4843,7 +4894,7 @@ function renderInicio(){
   }
 
   // Progreso de predicciones (grupos + bracket)
-  const totalMatches = 104;
+  const totalMatches = TOTAL_MATCHES;
   const predicted = (stats.grpPredCount || 0) + (stats.brPredCount || 0);
   const pct = Math.min(100, Math.round((predicted / totalMatches) * 100));
 
@@ -5243,6 +5294,7 @@ function updateProg(){
 let _m={};
 function openM(id,h,a,g,ex){
   _m={id,h,a,g};
+  const locked = isTournamentLocked();
   document.getElementById('mh').textContent=`${NM[h]||h} vs ${NM[a]||a}`;
   document.getElementById('ms').textContent=`Grupo ${g}`;
   document.getElementById('mhf').textContent=FL[h]||'🏳';
@@ -5251,14 +5303,37 @@ function openM(id,h,a,g,ex){
   document.getElementById('man').textContent=NM[a]||a;
   document.getElementById('mhi').value=ex!=null?ex.h:'';
   document.getElementById('mai').value=ex!=null?ex.a:'';
+  // Read-only si el torneo ya empezó
+  document.getElementById('mhi').readOnly = locked;
+  document.getElementById('mai').readOnly = locked;
   // Mostrar botón compartir solo si ya hay predicción guardada
   const sh = document.getElementById('m-share-btn');
   if(sh) sh.style.display = (ex!=null && ex.h!=null && ex.a!=null) ? 'block' : 'none';
+  // Ocultar botones save/clear si está lockeado
+  const saveBtn = document.querySelector('#modal [onclick="saveSc()"]');
+  const clearBtn = document.querySelector('#modal [onclick="clearSc()"]');
+  if(saveBtn) saveBtn.style.display = locked ? 'none' : '';
+  if(clearBtn) clearBtn.style.display = locked ? 'none' : '';
+  // Mostrar mensaje de candado
+  let lockMsg = document.getElementById('m-lock-msg');
+  if(locked){
+    if(!lockMsg){
+      lockMsg = document.createElement('div');
+      lockMsg.id = 'm-lock-msg';
+      lockMsg.style.cssText = 'background:rgba(232,170,30,.12);border:1px solid rgba(232,170,30,.4);border-radius:10px;padding:10px 14px;font-size:.78rem;color:#8a5a00;font-weight:700;margin-top:10px;text-align:center';
+      lockMsg.innerHTML = '🔒 El torneo ya empezó · Predicciones cerradas';
+      document.querySelector('#modal .modal-content')?.appendChild(lockMsg) || document.querySelector('#modal')?.appendChild(lockMsg);
+    }
+    lockMsg.style.display = '';
+  } else if(lockMsg){
+    lockMsg.style.display = 'none';
+  }
   document.getElementById('modal').classList.add('open');
   setTimeout(()=>document.getElementById('mhi').focus(),60);
 }
 function closeM(){document.getElementById('modal').classList.remove('open');}
 function clearSc(){
+  if(isTournamentLocked()){ tournamentLockedToast(); return; }
   delete picks[CU.u].sc[_m.id];
   persist(); // async
   closeM();
@@ -5267,6 +5342,7 @@ function clearSc(){
   updateProg();renderBracket();toast('Marcador borrado');
 }
 function saveSc(){
+  if(isTournamentLocked()){ tournamentLockedToast(); return; }
   const hv=document.getElementById('mhi').value;
   const av=document.getElementById('mai').value;
   if(hv===''||av===''){toast('Ingresa ambos marcadores');return;}
@@ -5674,6 +5750,7 @@ let _brId=null, _brH=null, _brA=null;
 function openBrModal(id,h,a){
   if(!h&&!a){toast('Completa la fase de grupos primero');return;}
   _brId=id; _brH=h; _brA=a;
+  const locked = isTournamentLocked();
   const sc=picks[CU.u]?.sc?.[id];
   const w=picks[CU.u]?.br?.[id];
   // Reset modal state
@@ -5684,11 +5761,39 @@ function openBrModal(id,h,a){
   document.getElementById('br-sm-aflag').textContent=FL[a]||'🏳';
   document.getElementById('br-sm-h').value=sc?.h??'';
   document.getElementById('br-sm-a').value=sc?.a??'';
+  // Read-only si el torneo ya empezó
+  document.getElementById('br-sm-h').readOnly = locked;
+  document.getElementById('br-sm-a').readOnly = locked;
+  // Deshabilitar botones de winner si lockeado
+  document.querySelectorAll('.br-sm-winner-btn').forEach(b=>{
+    b.disabled = locked;
+    b.style.cursor = locked ? 'not-allowed' : '';
+    b.style.opacity = locked ? '.5' : '';
+  });
   // Botón compartir solo si ya hay marcador o ganador guardado
   const brSh = document.getElementById('br-share-btn');
   if(brSh){
     const hasPrediction = (sc!=null && sc.h!=null && sc.a!=null);
     brSh.style.display = hasPrediction ? 'block' : 'none';
+  }
+  // Ocultar save/clear si lockeado
+  const brSaveBtn = document.querySelector('#br-score-modal [onclick="saveBrScore()"]');
+  const brClearBtn = document.querySelector('#br-score-modal [onclick="clearBrScore()"]');
+  if(brSaveBtn) brSaveBtn.style.display = locked ? 'none' : '';
+  if(brClearBtn) brClearBtn.style.display = locked ? 'none' : '';
+  // Mensaje de candado
+  let brLockMsg = document.getElementById('br-lock-msg');
+  if(locked){
+    if(!brLockMsg){
+      brLockMsg = document.createElement('div');
+      brLockMsg.id = 'br-lock-msg';
+      brLockMsg.style.cssText = 'background:rgba(232,170,30,.12);border:1px solid rgba(232,170,30,.4);border-radius:10px;padding:10px 14px;font-size:.78rem;color:#8a5a00;font-weight:700;margin-top:10px;text-align:center';
+      brLockMsg.innerHTML = '🔒 El torneo ya empezó · Predicciones cerradas';
+      document.querySelector('#br-score-modal .br-sm-card')?.appendChild(brLockMsg) || document.getElementById('br-score-modal')?.appendChild(brLockMsg);
+    }
+    brLockMsg.style.display = '';
+  } else if(brLockMsg){
+    brLockMsg.style.display = 'none';
   }
   // Show/hide tie-breaker based on current score
   updateBrTiebreaker();
@@ -5737,6 +5842,7 @@ function updateBrTiebreaker(){
 }
 
 function selectBrWinner(team){
+  if(isTournamentLocked()){ tournamentLockedToast(); return; }
   picks[CU.u].br[_brId]=team;
   document.querySelectorAll('.br-sm-winner-btn').forEach(b=>{
     b.classList.toggle('active',b.dataset.team===team);
@@ -5744,6 +5850,7 @@ function selectBrWinner(team){
 }
 
 function saveBrScore(){
+  if(isTournamentLocked()){ tournamentLockedToast(); return; }
   const hv=document.getElementById('br-sm-h').value;
   const av=document.getElementById('br-sm-a').value;
   const w=picks[CU.u]?.br?.[_brId];
@@ -5777,6 +5884,7 @@ function saveBrScore(){
 }
 
 function clearBrScore(){
+  if(isTournamentLocked()){ tournamentLockedToast(); return; }
   if(picks[CU.u].sc) delete picks[CU.u].sc[_brId];
   if(picks[CU.u].br) delete picks[CU.u].br[_brId];
   closeBrScoreModal();
@@ -6374,8 +6482,7 @@ function renderUsersTable(){
   const all=allUsers();
   tbody.innerHTML='';
   // Cutoff para deshabilitar upgrade post-cierre del torneo
-  const cutoffMs = Date.parse('2026-06-11T19:00:00Z'); // 11 jun 1pm CDMX (UTC-6 → 19:00 UTC)
-  const upgradeAllowed = Date.now() < cutoffMs;
+  const upgradeAllowed = !isTournamentLocked();
   all.forEach(u=>{
     const code=u.code||genCode(u.u);
     const refCount=(refs[code]||[]).length;
@@ -6413,7 +6520,7 @@ function renderUsersTable(){
       </td>
       <td><span style="font-family:'Plus Jakarta Sans';font-weight:800;color:var(--g);letter-spacing:1.5px">${code}</span></td>
       <td style="color:var(--b2);font-weight:600">${refCount}</td>
-      <td style="color:var(--ink3);font-size:.82rem">${Object.keys(sc).length}/48</td>
+      <td style="color:var(--ink3);font-size:.82rem">${Object.keys(sc).length}/${GROUP_MATCHES}</td>
       <td style="font-family:'Plus Jakarta Sans';font-weight:800;color:var(--g)">${pts}</td>
       <td>${canDelete?`<button class="del-btn" onclick="deleteUser('${u.u}')" title="Eliminar usuario">✕</button>`:'<span style="color:var(--border2);font-size:.7rem">—</span>'}</td>`;
     tbody.appendChild(tr);
@@ -6643,11 +6750,7 @@ const PRIZE_PCT=[
   {pos:5, label:'5to lugar',  medal:'🏅', pct:5,  cls:'p5', pctCls:'c45', barColor:'var(--b2)'},
   {pos:-1,label:'Último lugar',medal:'🪦', pct:5,  cls:'p6', pctCls:'c45', barColor:'var(--red)'},
 ];
-const PRICE_PER_USER=275; // MXN (de $350 totales, $75 son comisión)
-// Sin límite de participantes — la bolsa crece ilimitadamente
-const REF_BONUS=500;      // MXN que caen a la cuenta del referidor si su invitado gana el 1er lugar
-// Bono referido campeón: $500 MXN financiados por los organizadores
-// Esto se financia fuera de la bolsa de premios.
+// Bono referido campeón: $500 MXN financiados por los organizadores (fuera de la bolsa).
 
 // Finds who referred a given username (returns referrer code or null)
 function findReferrerOf(username){
@@ -6664,10 +6767,9 @@ function usernameFromCode(code){
 
 function renderPremios(){
   const wrap=document.getElementById('premios-wrap');
-  // Solo Pros suman a la bolsa. Cada Pro aporta $275 (de los $350 que pagan).
+  // Solo Pros suman a la bolsa. Cada Pro aporta POT_PER_PRO (de los ENTRY_PRO que pagan).
   const proUsers = Object.keys(picks).filter(u=>!isAdminUser(u) && isProUser(u));
   const totalUsers = proUsers.length;
-  const POT_PER_PRO = 275; // $275 de los $350 van a la bolsa
   const bolsa = Math.max(totalUsers, 0) * POT_PER_PRO;
   const myCode=CU.code||genCode(CU.u);
   const myRefs=refs[myCode]||[];
@@ -7796,7 +7898,6 @@ function toggleReaction(postId, emoji){
     .then(()=>{
       api('GET','/api/wall').then(posts=>{
         const fresh = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)})).find(p=>p.id===postId);
-        console.log('Fresh reactions from server:', JSON.stringify(fresh?.reactions));
         if(fresh){
           const idx = _wallPosts.findIndex(x=>x.id===postId);
           if(idx>=0) _wallPosts[idx] = fresh;
@@ -7896,7 +7997,6 @@ function startWallPolling(){
         const reactionsChanged = serverTotal !== localTotal;
 
         if(reactionsChanged || commentChanged){
-          console.log(`Poll updating post ${p.id} - serverTotal:${serverTotal} localTotal:${localTotal}`);
           const idx = _wallPosts.findIndex(x=>x.id===p.id);
           if(idx>=0) _wallPosts[idx] = p;
           const tmp = document.createElement('div');
@@ -8974,9 +9074,8 @@ function syncDrawer(){
   if(label) label.textContent = isDark?'Modo claro':'Modo oscuro';
   // show admin item in drawer if admin
   if(CU?.admin) document.querySelectorAll('.drawer-admin-item').forEach(e=>e.style.display='');
-  // show "Quiero ser Pro" item in drawer if user is NOT pro and NOT admin and antes del cutoff (11 jun 2026 1pm CDMX)
-  const cutoffMs = Date.parse('2026-06-11T19:00:00Z');
-  const upgradeAvail = CU && !CU.admin && !isProUser(CU.u) && Date.now() < cutoffMs;
+  // show "Quiero ser Pro" item in drawer if user is NOT pro and NOT admin y antes del cutoff
+  const upgradeAvail = CU && !CU.admin && !isProUser(CU.u) && !isTournamentLocked();
   if(upgradeAvail) document.querySelectorAll('.drawer-user-item').forEach(e=>e.style.display='');
   // show main nav in drawer on mobile
   const isMobile=window.innerWidth<=768;
@@ -9371,7 +9470,7 @@ function renderCountdown(){
   if(!wrap) return;
   if(_cdTimer) clearInterval(_cdTimer);
 
-  const TARGET=new Date('2026-06-11T13:00:00-06:00');
+  const TARGET=new Date(TOURNAMENT_START_MS);
 
   // Add keyframes once
   if(!document.getElementById('cd-styles')){
@@ -10053,8 +10152,7 @@ function closeGrpModal(){
 
 // ── Upgrade modal (User → Pro) ──
 function showUpgradeModal(){
-  const cutoffMs = Date.parse('2026-06-11T19:00:00Z');
-  if(Date.now() >= cutoffMs){
+  if(isTournamentLocked()){
     toast('El upgrade a Pro ya no está disponible — el torneo ya empezó');
     return;
   }
