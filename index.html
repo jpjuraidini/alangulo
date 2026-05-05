@@ -9890,13 +9890,13 @@ function renderCountdown(){
   if(!document.getElementById('cd-styles')){
     const s=document.createElement('style');s.id='cd-styles';
     s.textContent=`
-      @keyframes cdPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+      @keyframes cdPulse{0%,100%{transform:scale(1);box-shadow:0 0 8px rgba(255,255,255,0.7)}50%{transform:scale(1.4);box-shadow:0 0 12px rgba(255,255,255,0.9)}}
       @keyframes cdTick{0%{transform:translateY(-8px);opacity:0}100%{transform:translateY(0);opacity:1}}
-      .cd-block{background:rgba(255,255,255,.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:.875rem .5rem;text-align:center;min-width:56px;flex:1}
-      .cd-num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(1.8rem,7vw,3rem);line-height:1;color:#fff;letter-spacing:-1px}
+      .cd-block{background:rgba(255,255,255,.14);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.22);border-radius:14px;padding:14px 8px;min-width:64px;flex:1;text-align:center}
+      .cd-num{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(2rem,8vw,2.6rem);line-height:1;color:#fff;letter-spacing:-1.5px;font-variant-numeric:tabular-nums}
       .cd-num.tick{animation:cdTick .18s ease-out}
-      .cd-label{font-size:.55rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.75;color:#fff;margin-top:6px}
-      .cd-sep{font-size:1.8rem;font-weight:800;color:rgba(255,255,255,.5);align-self:center;margin-bottom:6px;animation:cdPulse 1s ease-in-out infinite}
+      .cd-label{font-size:.55rem;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;opacity:.78;color:#fff;margin-top:6px}
+      .cd-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:cdPulse 1.6s ease-in-out infinite;display:inline-block}
     `;
     document.head.appendChild(s);
   }
@@ -9919,46 +9919,66 @@ function renderCountdown(){
     // First render — build full HTML
     if(prev.s===-1){
       wrap.innerHTML=`
-      <div style="display:flex;flex-direction:column;align-items:center;gap:1.5rem;max-width:600px;margin:0 auto">
-        <div style="background:var(--grad-tri);border-radius:24px;padding:1.5rem 1.25rem 1.25rem;width:100%;position:relative;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.25)">
-          <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 20% 120%,rgba(255,255,255,.15),transparent 55%),radial-gradient(ellipse at 80% -20%,rgba(255,255,255,.1),transparent 55%)"></div>
-          <div style="position:relative;z-index:1">
-            <div style="font-size:.68rem;font-weight:700;letter-spacing:3px;opacity:.8;margin-bottom:1.5rem;text-transform:uppercase;text-align:center;color:#fff">⚽ El Mundial comienza en</div>
-            <div style="display:flex;align-items:flex-start;justify-content:center;gap:.5rem">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:14px;max-width:600px;margin:0 auto">
+
+        <!-- Hero countdown -->
+        <div style="position:relative;overflow:hidden;background:var(--grad-tri);border-radius:24px;padding:24px 20px 20px;width:100%;box-shadow:0 12px 32px rgba(0,0,0,.25)">
+          <div style="position:absolute;top:-60px;right:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 65%);pointer-events:none"></div>
+          <div style="position:absolute;bottom:-40px;left:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.12),transparent 65%);pointer-events:none"></div>
+          <div style="position:relative;z-index:1;text-align:center">
+            <div style="display:inline-flex;align-items:center;gap:6px;font-size:.62rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.92);margin-bottom:5px">
+              <span class="cd-eyebrow-dot"></span>La cuenta regresiva
+            </div>
+            <div style="font-weight:800;font-size:1.35rem;color:#fff;margin-bottom:18px;letter-spacing:-.3px">El Mundial comienza en</div>
+            <div style="display:flex;align-items:stretch;justify-content:center;gap:5px">
               <div class="cd-block"><div class="cd-num" id="cd-d">${String(days).padStart(2,'0')}</div><div class="cd-label">Días</div></div>
-              <div class="cd-sep">:</div>
               <div class="cd-block"><div class="cd-num" id="cd-h">${String(hrs).padStart(2,'0')}</div><div class="cd-label">Horas</div></div>
-              <div class="cd-sep">:</div>
               <div class="cd-block"><div class="cd-num" id="cd-m">${String(mins).padStart(2,'0')}</div><div class="cd-label">Min</div></div>
-              <div class="cd-sep">:</div>
               <div class="cd-block"><div class="cd-num" id="cd-s">${String(secs).padStart(2,'0')}</div><div class="cd-label">Seg</div></div>
+            </div>
+            <div style="margin-top:16px;padding:8px 12px;background:rgba(255,255,255,.10);border-radius:10px;font-size:.7rem;font-weight:600;color:rgba(255,255,255,.9);letter-spacing:.2px">
+              ⚠️ Cuando llegue a cero se cierran las predicciones
             </div>
           </div>
         </div>
-        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:20px;padding:1.1rem 1.25rem;width:100%;box-shadow:var(--sh2);display:flex;align-items:center;justify-content:space-between;gap:.75rem">
-          <div style="text-align:center;flex:1">
-            <div style="font-size:2.5rem;line-height:1;margin-bottom:6px">🇲🇽</div>
-            <div style="font-weight:800;font-size:1rem;color:var(--ink)">México</div>
-            <div style="font-size:.7rem;color:var(--ink3);margin-top:2px">Local</div>
+
+        <!-- Card del partido inaugural -->
+        <div style="background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:16px 18px;width:100%;box-shadow:var(--sh)">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+            <div style="background:var(--grad-tri);color:#fff;font-weight:800;font-size:.6rem;letter-spacing:.8px;padding:3px 8px;border-radius:5px">M1</div>
+            <div style="font-size:.66rem;font-weight:700;color:var(--ink3);letter-spacing:.4px">PARTIDO INAUGURAL · GRUPO A</div>
           </div>
-          <div style="text-align:center;flex-shrink:0">
-            <div style="background:var(--grad-tri);border-radius:12px;padding:8px 20px;color:#fff;font-weight:800;font-size:1.1rem;margin-bottom:6px">VS</div>
-            <div style="font-size:.65rem;color:var(--ink3);font-weight:600;letter-spacing:.5px">PARTIDO 1 · M1</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0">
+            <div style="text-align:center;flex:1">
+              <div style="font-size:2.4rem;line-height:1;margin-bottom:6px">🇲🇽</div>
+              <div style="font-weight:800;font-size:.95rem;color:var(--ink)">México</div>
+              <div style="font-size:.62rem;color:var(--ink3);margin-top:1px;font-weight:600">Anfitrión</div>
+            </div>
+            <div style="text-align:center;flex-shrink:0">
+              <div style="background:var(--grad-tri);color:#fff;font-weight:800;font-size:.86rem;padding:6px 18px;border-radius:10px;letter-spacing:1.5px;box-shadow:0 4px 12px rgba(0,48,135,.25)">VS</div>
+            </div>
+            <div style="text-align:center;flex:1">
+              <div style="font-size:2.4rem;line-height:1;margin-bottom:6px">🇿🇦</div>
+              <div style="font-weight:800;font-size:.95rem;color:var(--ink)">Sudáfrica</div>
+              <div style="font-size:.62rem;color:var(--ink3);margin-top:1px;font-weight:600">Grupo A</div>
+            </div>
           </div>
-          <div style="text-align:center;flex:1">
-            <div style="font-size:2.5rem;line-height:1;margin-bottom:6px">🇿🇦</div>
-            <div style="font-weight:800;font-size:1rem;color:var(--ink)">Sudáfrica</div>
-            <div style="font-size:.7rem;color:var(--ink3);margin-top:2px">Visitante</div>
+          <div style="display:flex;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="flex:1;text-align:center">
+              <div style="font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Fecha</div>
+              <div style="font-weight:800;font-size:.78rem;color:var(--ink)">11 jun 2026</div>
+            </div>
+            <div style="flex:1;text-align:center;border-left:1px solid var(--border);border-right:1px solid var(--border)">
+              <div style="font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Kickoff</div>
+              <div style="font-weight:800;font-size:.78rem;color:var(--green)">13:00 CDMX</div>
+            </div>
+            <div style="flex:1;text-align:center">
+              <div style="font-size:.58rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:3px">Sede</div>
+              <div style="font-weight:800;font-size:.78rem;color:var(--ink)">Ciudad de México</div>
+            </div>
           </div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;width:100%">
-          ${[{icon:'📅',label:'Fecha',val:'11 jun 2026'},{icon:'🕐',label:'Hora CDMX',val:'13:00'},{icon:'🏟',label:'Estadio',val:'Azteca, CDMX'}]
-            .map(c=>`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem;text-align:center;box-shadow:var(--sh)">
-              <div style="font-size:1.4rem;margin-bottom:5px">${c.icon}</div>
-              <div style="font-size:.6rem;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${c.label}</div>
-              <div style="font-weight:800;font-size:.82rem;color:var(--ink)">${c.val}</div>
-            </div>`).join('')}
-        </div>
+
       </div>`;
     } else {
       // Subsequent ticks — only update changed numbers
