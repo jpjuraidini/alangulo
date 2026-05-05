@@ -8243,12 +8243,29 @@ function deleteWallComment(id, postId){
 // ── WALL POLLING ──
 let _wallPollInterval = null;
 let _lastWallPostCount = 0;
+let _wallPollFn = null;
 
 function startWallPolling(){
   stopWallPolling();
-  _wallPollInterval = setInterval(()=>{
-    if(localStorage.getItem('q26page') !== 'chat') { stopWallPolling(); return; }
+  // Loop de polling — ejecuta UNA pasada y reagenda
+  // Usa setTimeout en lugar de setInterval para evitar overlap si una request es lenta
+  let _running = true;
+  const POLL_MS = 1500; // 1.5s — equilibrio entre tiempo real y carga de Postgres
+
+  const pollOnce = ()=>{
+    // Si el usuario salió del muro, parar
+    if(localStorage.getItem('q26page') !== 'chat'){
+      _running = false;
+      return;
+    }
+    // Solo hacer fetch si la pestaña está visible (ahorrar batería)
+    if(document.hidden){
+      // Reagendar pero no hacer fetch
+      if(_running) _wallPollInterval = setTimeout(pollOnce, POLL_MS);
+      return;
+    }
     api('GET','/api/wall').then(posts=>{
+      if(!_running) return;
       posts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
       posts.forEach(p=>{
         const existing = document.getElementById(`post-${p.id}`);
@@ -8304,7 +8321,6 @@ function startWallPolling(){
           const tmp = document.createElement('div');
           tmp.innerHTML = renderPost(p);
           const newEl = tmp.firstChild;
-          // Mantener visible — ya estaba en pantalla
           if(newEl) newEl.classList.add('show');
           existing.replaceWith(newEl);
           if(_openComments[p.id]) loadComments(p.id);
@@ -8331,13 +8347,33 @@ function startWallPolling(){
       if(eReact) eReact.textContent = String(totalReactions);
       if(eEye) eEye.textContent = `En vivo · ${totalPosts} publicación${totalPosts!==1?'es':''}`;
       if(eStk) eStk.textContent = `${totalPosts} publicación${totalPosts!==1?'es':''}`;
-    }).catch(()=>{});
-  }, 500);
+    }).catch(()=>{
+      // Silencioso — no detener el polling por un error de red
+    }).finally(()=>{
+      // Reagendar siempre que sigamos en muro
+      if(_running) _wallPollInterval = setTimeout(pollOnce, POLL_MS);
+    });
+  };
+
+  // Guardar referencia para que stopWallPolling pueda matar la cadena
+  _wallPollFn = ()=>{ _running = false; };
+
+  // Primer tick inmediato (no esperar 1.5s al entrar)
+  pollOnce();
 }
 
 function stopWallPolling(){
-  if(_wallPollInterval){ clearInterval(_wallPollInterval); _wallPollInterval=null; }
+  if(_wallPollFn){ _wallPollFn(); _wallPollFn = null; }
+  if(_wallPollInterval){ clearTimeout(_wallPollInterval); _wallPollInterval=null; }
 }
+
+// Cuando la pestaña vuelve a primer plano, hacer un poll inmediato
+document.addEventListener('visibilitychange', ()=>{
+  if(!document.hidden && localStorage.getItem('q26page') === 'chat'){
+    // Reanudar polling si estaba en muro
+    if(!_wallPollFn) startWallPolling();
+  }
+});
 
 function timeAgo(dateStr){
   const diff = Date.now() - new Date(dateStr).getTime();
