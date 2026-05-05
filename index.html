@@ -2604,11 +2604,11 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div style="font-weight:800;font-size:.95rem;color:var(--ink);margin-bottom:.25rem">🔑 Cambiar mi PIN</div>
     <div style="font-size:.75rem;color:var(--ink3);margin-bottom:1.25rem">El nuevo PIN debe tener exactamente 5 caracteres alfanuméricos (ej. aB3x9)</div>
     <label style="display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:5px">PIN actual</label>
-    <input id="current-pin-input" type="password" maxlength="10" placeholder="Tu PIN actual"
+    <input id="current-pin-input" type="password" maxlength="10" placeholder="Tu PIN actual" inputmode="text" autocapitalize="characters"
       style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;box-sizing:border-box;outline:none;margin-bottom:.75rem;transition:border-color .2s"
       onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
     <label style="display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink3);margin-bottom:5px">Nuevo PIN</label>
-    <input id="new-pin-input" type="text" maxlength="5" placeholder="Nuevo PIN"
+    <input id="new-pin-input" type="text" maxlength="5" placeholder="Nuevo PIN" inputmode="text" autocapitalize="characters"
       style="width:100%;padding:11px 14px;border:2px solid var(--border);border-radius:10px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.9rem;text-align:left;letter-spacing:3px;box-sizing:border-box;outline:none;margin-bottom:1rem;transition:border-color .2s"
       oninput="this.value=this.value.toUpperCase()"
       onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--border)'">
@@ -3109,7 +3109,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
       <label class="flabel">Usuario</label>
       <input class="finput" id="lu" type="text" placeholder="tu_usuario" autocomplete="off">
       <label class="flabel">PIN</label>
-      <input class="finput" id="lp" type="text" placeholder="•••••" maxlength="6" autocomplete="off" inputmode="numeric" style="letter-spacing:3px">
+      <input class="finput" id="lp" type="text" placeholder="•••••" maxlength="6" autocomplete="off" inputmode="text" autocapitalize="characters" style="letter-spacing:3px;text-transform:uppercase">
       <button class="auth-btn" onclick="doLogin()">Ingresar ⚽</button>
       <div class="auth-err" id="lerr"></div>
       <input type="hidden" id="lref" value="">
@@ -3185,8 +3185,8 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
         <input class="finput" id="su-phone" type="tel" placeholder="55 1234 5678" autocomplete="off" maxlength="20" inputmode="tel">
         <label class="flabel">Usuario</label>
         <input class="finput" id="su-user" type="text" placeholder="tu_usuario" autocomplete="off" maxlength="30" style="text-transform:lowercase">
-        <label class="flabel">Crea tu PIN (4 a 6 dígitos)</label>
-        <input class="finput" id="su-pin" type="text" placeholder="•••••" maxlength="6" autocomplete="off" inputmode="numeric" style="letter-spacing:3px">
+        <label class="flabel">Crea tu PIN (4 a 6 caracteres)</label>
+        <input class="finput" id="su-pin" type="text" placeholder="•••••" maxlength="6" autocomplete="off" inputmode="text" autocapitalize="characters" style="letter-spacing:3px;text-transform:uppercase">
         <button class="auth-btn" id="su-btn" onclick="doSignup()">Inscribirme ⚽</button>
         <div class="auth-err" id="su-err"></div>
         <div class="lp-modal-foot">
@@ -4086,7 +4086,7 @@ function genCode(u){
 
 function doLogin(){
   const u=document.getElementById('lu').value.trim().toLowerCase();
-  const p=document.getElementById('lp').value.trim();
+  const p=document.getElementById('lp').value.trim().toUpperCase();
   const refCode=document.getElementById('lref').value.trim().toUpperCase();
   const errEl=document.getElementById('lerr');
   errEl.textContent='';
@@ -4622,13 +4622,13 @@ function doSignup(){
   const full_name = document.getElementById('su-name').value.trim();
   const phone     = document.getElementById('su-phone').value.trim();
   const username  = document.getElementById('su-user').value.trim().toLowerCase();
-  const pin       = document.getElementById('su-pin').value.trim();
+  const pin       = document.getElementById('su-pin').value.trim().toUpperCase();
 
   // Validaciones cliente
   if(full_name.length < 2){ errEl.textContent = 'Escribe tu nombre completo.'; return; }
   if(phone.replace(/\D/g,'').length < 8){ errEl.textContent = 'Teléfono inválido.'; return; }
   if(!/^[a-z0-9_]{3,30}$/.test(username)){ errEl.textContent = 'Usuario: 3-30 caracteres, solo letras, números y _.'; return; }
-  if(!/^\d{4,6}$/.test(pin)){ errEl.textContent = 'PIN debe tener entre 4 y 6 dígitos.'; return; }
+  if(!/^[A-Z0-9]{4,6}$/.test(pin)){ errEl.textContent = 'PIN: 4 a 6 caracteres (letras y números).'; return; }
 
   btn.disabled = true;
   btn.textContent = 'Inscribiendo…';
