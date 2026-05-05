@@ -8332,7 +8332,7 @@ function startWallPolling(){
       if(eEye) eEye.textContent = `En vivo · ${totalPosts} publicación${totalPosts!==1?'es':''}`;
       if(eStk) eStk.textContent = `${totalPosts} publicación${totalPosts!==1?'es':''}`;
     }).catch(()=>{});
-  }, 1000);
+  }, 500);
 }
 
 function stopWallPolling(){
