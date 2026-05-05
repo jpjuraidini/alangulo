@@ -4094,10 +4094,12 @@ function doLogin(){
   api('POST','/api/login',{username:u, pin:p, refCode})
     .then(user=>{
       // Preserve refSeen from previous session so modal doesn't re-appear
-      const prev = JSON.parse(localStorage.getItem('q26u')||'null');
-      const refSeen = prev?.u === user.username ? (prev.refSeen || false) : false;
+      let prev = null;
+      try { prev = JSON.parse(localStorage.getItem('q26u')||'null'); } catch(_){ prev = null; }
+      const sameUser = prev && prev.u === user.username;
+      const refSeen = sameUser ? (prev.refSeen || false) : false;
       CU={u:user.username, admin:user.is_admin, code:user.code, is_pro:user.is_pro!==false, refSeen};
-      localStorage.setItem('q26u',JSON.stringify(CU));
+      try { localStorage.setItem('q26u',JSON.stringify(CU)); } catch(_){}
       boot();
     })
     .catch(e=>{
