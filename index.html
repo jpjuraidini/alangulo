@@ -8253,6 +8253,7 @@ let _wallPollFn = null;
 
 function startWallPolling(){
   stopWallPolling();
+  console.log('🟢 [WALL] startWallPolling INICIADO');
   // Loop de polling — ejecuta UNA pasada y reagenda
   // Usa setTimeout en lugar de setInterval para evitar overlap si una request es lenta
   let _running = true;
@@ -8260,26 +8261,32 @@ function startWallPolling(){
 
   const pollOnce = ()=>{
     // Si el usuario salió del muro, parar
-    if(localStorage.getItem('q26page') !== 'chat'){
+    const currentPage = localStorage.getItem('q26page');
+    if(currentPage !== 'chat'){
+      console.log('🔴 [WALL] polling DETENIDO porque q26page=', currentPage);
       _running = false;
       return;
     }
     // Solo hacer fetch si la pestaña está visible (ahorrar batería)
     if(document.hidden){
+      console.log('💤 [WALL] tab oculto, esperando...');
       // Reagendar pero no hacer fetch
       if(_running) _wallPollInterval = setTimeout(pollOnce, POLL_MS);
       return;
     }
+    console.log('📡 [WALL] fetch /api/wall...');
     api('GET','/api/wall').then(posts=>{
       if(!_running) return;
-      // Debug temporal — quitar después
-      if(window.__wallDebug) console.log('[wall poll] received', posts?.length, 'posts at', new Date().toLocaleTimeString());
+      console.log('✅ [WALL] received', Array.isArray(posts) ? posts.length : 'NO ARRAY', 'posts; tipo:', typeof posts);
       posts = posts.map(p=>({...p,reactions:normalizeReactions(p.reactions)}));
+      let newCount = 0, changedCount = 0, deletedCount = 0;
       posts.forEach(p=>{
         const existing = document.getElementById(`post-${p.id}`);
         const localPost = _wallPosts.find(x=>x.id===p.id);
 
         if(!existing){
+          newCount++;
+          console.log('🆕 [WALL] post nuevo detectado:', p.id, p.username);
           // New post — add to DOM
           _wallPosts.unshift(p);
           const wrap = document.getElementById('wall-wrap');
@@ -8336,11 +8343,17 @@ function startWallPolling(){
       });
 
       // Remove deleted posts
+      const beforeCount = _wallPosts.length;
       _wallPosts = _wallPosts.filter(p=>posts.find(x=>x.id===p.id));
+      deletedCount = beforeCount - _wallPosts.length;
       document.querySelectorAll('[id^="post-"]').forEach(el=>{
         const id = parseInt(el.id.replace('post-',''));
         if(!posts.find(p=>p.id===id)) el.remove();
       });
+
+      if(newCount>0 || deletedCount>0){
+        console.log(`📊 [WALL] resumen: ${newCount} nuevos, ${deletedCount} borrados, total ahora: ${posts.length}`);
+      }
 
       // Actualizar stats del hero
       const totalPosts = posts.length;
@@ -8355,8 +8368,9 @@ function startWallPolling(){
       if(eReact) eReact.textContent = String(totalReactions);
       if(eEye) eEye.textContent = `En vivo · ${totalPosts} publicación${totalPosts!==1?'es':''}`;
       if(eStk) eStk.textContent = `${totalPosts} publicación${totalPosts!==1?'es':''}`;
-    }).catch(()=>{
+    }).catch((err)=>{
       // Silencioso — no detener el polling por un error de red
+      console.error('❌ [WALL] error en fetch:', err?.message || err);
     }).finally(()=>{
       // Reagendar siempre que sigamos en muro
       if(_running) _wallPollInterval = setTimeout(pollOnce, POLL_MS);
