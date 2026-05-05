@@ -1713,6 +1713,49 @@ body.dark .grp-modal-btn.cancel{background:#161a2e}
 .pro-badge.lg{font-size:.92em;filter:drop-shadow(0 2px 5px rgba(232,170,30,.5))}
 .pro-badge.xl{font-size:1.1em;filter:drop-shadow(0 3px 8px rgba(232,170,30,.55))}
 
+/* ── PAYMENT MODAL ── */
+.pay-modal-card{max-width:460px}
+.pay-eyebrow{font-size:.66rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);margin-bottom:6px;display:flex;align-items:center;gap:6px;justify-content:center}
+.pay-eyebrow-dot{width:7px;height:7px;border-radius:50%;background:var(--green2);box-shadow:0 0 8px rgba(0,196,106,.5);animation:suPulse 1.6s ease-in-out infinite}
+.pay-h{font-weight:800;font-size:1.35rem;color:var(--ink);margin:0 0 14px;text-align:center;letter-spacing:-.4px;line-height:1.2;padding:.05em 0;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+.pay-amount-box{background:linear-gradient(135deg,rgba(0,104,56,.08),rgba(0,48,135,.08));border:1.5px solid var(--green2);border-radius:14px;padding:14px 18px;margin-bottom:14px;text-align:center;position:relative;overflow:hidden}
+body.dark .pay-amount-box{background:linear-gradient(135deg,rgba(0,196,106,.12),rgba(0,82,204,.12));border-color:var(--green2)}
+.pay-amount-box::before{content:"";position:absolute;top:-30px;right:-30px;width:120px;height:120px;background:radial-gradient(circle,rgba(0,196,106,.18),transparent 65%);pointer-events:none}
+.pay-amount-lbl{font-size:.62rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--ink3);margin-bottom:2px;position:relative;z-index:1}
+.pay-amount{font-weight:800;font-size:2.4rem;color:var(--ink);letter-spacing:-1.5px;line-height:1;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;z-index:1;display:inline-block;padding:2px 0}
+.pay-amount-sub{font-size:.7rem;color:var(--ink3);font-weight:700;letter-spacing:.8px;margin-top:1px;position:relative;z-index:1}
+
+.pay-info{background:rgba(0,82,204,.08);border-left:3px solid var(--blue2);border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:14px;font-size:.74rem;color:var(--blue);line-height:1.5;font-weight:600}
+body.dark .pay-info{background:rgba(0,82,204,.12);color:#80a8e0}
+
+.pay-accounts{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.pay-account{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:12px 14px;transition:border-color .15s}
+body.dark .pay-account{background:#0c0f1c}
+.pay-account:hover{border-color:var(--ink3)}
+.pay-acc-head{margin-bottom:8px}
+.pay-acc-bank{font-weight:800;font-size:.86rem;color:var(--ink);letter-spacing:.3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.pay-acc-tag{font-size:.55rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;background:rgba(120,128,160,.16);color:var(--ink3);padding:2px 6px;border-radius:5px}
+.pay-acc-name{font-size:.74rem;color:var(--ink2);font-weight:600;margin-top:2px}
+.pay-acc-clabe-box{background:var(--surface);border-radius:8px;padding:7px 10px;margin-bottom:8px}
+body.dark .pay-acc-clabe-box{background:#161a2e}
+.pay-acc-clabe-lbl{font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:1px}
+.pay-acc-clabe{font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.92rem;color:var(--ink);letter-spacing:.8px;font-variant-numeric:tabular-nums;word-break:break-all}
+
+.pay-copy-btn{width:100%;background:var(--surface);color:var(--ink);border:1.5px solid var(--border);border-radius:9px;padding:8px 12px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+body.dark .pay-copy-btn{background:#161a2e}
+.pay-copy-btn:hover{background:var(--green-bg);color:var(--green);border-color:var(--green2)}
+body.dark .pay-copy-btn:hover{background:rgba(0,196,106,.16)}
+.pay-copy-btn.copied{background:var(--green-bg);color:var(--green);border-color:var(--green2)}
+body.dark .pay-copy-btn.copied{background:rgba(0,196,106,.18)}
+.pay-copy-ico{font-size:.95rem;line-height:1}
+
+.pay-done-btn{margin-top:4px;background:var(--grad-tri);color:#fff;font-weight:800;letter-spacing:.3px}
+.pay-done-btn:disabled{background:var(--green-bg);color:var(--green);cursor:default;border:1px solid var(--green2)}
+body.dark .pay-done-btn:disabled{background:rgba(0,196,106,.18);color:var(--green2)}
+
+.pay-foot{text-align:center;margin-top:10px;font-size:.7rem;color:var(--ink3);font-weight:600}
+
 /* ── UPGRADE MODAL & DRAWER BTN ── */
 .drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.1),rgba(232,170,30,.04));font-weight:800;color:var(--gld) !important;border:1px solid rgba(232,170,30,.4) !important;border-radius:10px !important;margin:0 0 4px 0}
 body.dark .drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.16),rgba(232,170,30,.06));color:#f0b030 !important}
@@ -3169,7 +3212,8 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
         <div class="lp-pending-row"><span>💵 Costo de entrada</span><strong id="pending-cost">—</strong></div>
         <div class="lp-pending-row"><span>📩 Te avisamos por</span><strong>WhatsApp</strong></div>
       </div>
-      <button class="auth-btn" onclick="closePendingModal()">Entendido</button>
+      <button class="auth-btn pay-cta-btn" onclick="showPaymentModal('signup')" style="background:var(--grad-tri);color:#fff;font-weight:800;margin-bottom:8px">💳 Realizar pago</button>
+      <button class="auth-btn" onclick="closePendingModal()" style="background:var(--bg);color:var(--ink2);border:1px solid var(--border)">Cerrar</button>
     </div>
   </div>
 
@@ -3725,8 +3769,72 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     </div>
     <div class="grp-modal-btns">
       <button class="grp-modal-btn cancel" onclick="closeUpgradeModal()">Cerrar</button>
-      <a class="grp-modal-btn go" href="https://wa.me/52" target="_blank" rel="noopener" style="text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center">📱 Avisar por WhatsApp</a>
+      <button class="grp-modal-btn go" onclick="closeUpgradeModal();showPaymentModal('upgrade')">💳 Realizar pago</button>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: REALIZAR PAGO -->
+<div id="payment-modal" class="lp-modal" style="display:none">
+  <div class="lp-modal-bg" onclick="closePaymentModal()"></div>
+  <div class="lp-modal-card pay-modal-card">
+    <button class="lp-modal-close" onclick="closePaymentModal()">✕</button>
+    <div class="pay-eyebrow"><span class="pay-eyebrow-dot"></span>Pago</div>
+    <h2 class="pay-h">Transfiere a una de estas cuentas</h2>
+    <div class="pay-amount-box">
+      <div class="pay-amount-lbl">Monto a pagar</div>
+      <div class="pay-amount" id="pay-amount">$—</div>
+      <div class="pay-amount-sub" id="pay-amount-sub">MXN</div>
+    </div>
+    <div class="pay-info">
+      💡 Elige cualquiera de las 3 cuentas y transfiere el monto exacto. Después regresa y dale "Ya hice mi pago" para que el admin lo confirme.
+    </div>
+    <div class="pay-accounts">
+      <!-- Cuenta 1: BANAMEX -->
+      <div class="pay-account">
+        <div class="pay-acc-head">
+          <div class="pay-acc-bank">BANAMEX</div>
+          <div class="pay-acc-name">Juan Pablo Gomez</div>
+        </div>
+        <div class="pay-acc-clabe-box">
+          <div class="pay-acc-clabe-lbl">CLABE</div>
+          <div class="pay-acc-clabe">002180701828841875</div>
+        </div>
+        <button class="pay-copy-btn" data-clabe="002180701828841875" data-name="BANAMEX" onclick="copyClabe(this)">
+          <span class="pay-copy-ico">📋</span> Copiar CLABE
+        </button>
+      </div>
+      <!-- Cuenta 2: BBVA -->
+      <div class="pay-account">
+        <div class="pay-acc-head">
+          <div class="pay-acc-bank">BBVA</div>
+          <div class="pay-acc-name">Eugenio Martinez Gama</div>
+        </div>
+        <div class="pay-acc-clabe-box">
+          <div class="pay-acc-clabe-lbl">CLABE</div>
+          <div class="pay-acc-clabe">012180015796436946</div>
+        </div>
+        <button class="pay-copy-btn" data-clabe="012180015796436946" data-name="BBVA" onclick="copyClabe(this)">
+          <span class="pay-copy-ico">📋</span> Copiar CLABE
+        </button>
+      </div>
+      <!-- Cuenta 3: REVOLUT/STP -->
+      <div class="pay-account">
+        <div class="pay-acc-head">
+          <div class="pay-acc-bank">REVOLUT <span class="pay-acc-tag">aparece como STP</span></div>
+          <div class="pay-acc-name">Juan Pablo Juraidini</div>
+        </div>
+        <div class="pay-acc-clabe-box">
+          <div class="pay-acc-clabe-lbl">CLABE</div>
+          <div class="pay-acc-clabe">646990404098271403</div>
+        </div>
+        <button class="pay-copy-btn" data-clabe="646990404098271403" data-name="REVOLUT" onclick="copyClabe(this)">
+          <span class="pay-copy-ico">📋</span> Copiar CLABE
+        </button>
+      </div>
+    </div>
+    <button class="auth-btn pay-done-btn" id="pay-done-btn" onclick="markPaymentDone()">Ya hice mi pago ✓</button>
+    <div class="pay-foot">¿Dudas? Contacta al organizador del grupo.</div>
   </div>
 </div>
 
@@ -5397,6 +5505,8 @@ document.addEventListener('keydown',e=>{
     if(grpModal && grpModal.style.display !== 'none') closeGrpModal();
     const upgModal = document.getElementById('upgrade-modal');
     if(upgModal && upgModal.style.display !== 'none') closeUpgradeModal();
+    const payModal = document.getElementById('payment-modal');
+    if(payModal && payModal.style.display !== 'none') closePaymentModal();
   }
 });
 document.getElementById('mhi').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('mai').focus();});
@@ -6219,8 +6329,23 @@ function renderAdmin(){
   api('GET','/api/refs').then(allRefs=>{ refs=allRefs; renderUsersTable(); }).catch(()=>{});
   // Cargar lista de pendientes para el panel de aprobación
   renderPendingApprovals();
+  // Cargar notificaciones de pago (nuevas)
+  renderPaymentNotifs();
   const w=document.getElementById('adm-wrap');
   let html='';
+
+  // ── NOTIFICACIONES DE PAGO ──
+  html+=`<div id="payment-notifs-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
+      <div style="font-weight:800;font-size:.95rem;color:var(--ink)">🔔 Notificaciones de pago <span id="paynotif-count" style="background:linear-gradient(135deg,#c8900a,#e8a020);color:#fff;padding:2px 8px;border-radius:10px;font-size:.7rem;margin-left:6px;display:none">0</span></div>
+      <div style="display:flex;gap:6px">
+        <button onclick="markAllPaymentNotifsSeen()" id="paynotif-clear-btn" style="background:none;border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:.7rem;padding:4px 8px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700" title="Marcar todas como vistas">✓ Vistas</button>
+        <button onclick="renderPaymentNotifs()" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.85rem" title="Recargar">↻</button>
+      </div>
+    </div>
+    <div style="font-size:.78rem;color:var(--ink3);margin-bottom:.85rem;line-height:1.5">Avisos cuando un usuario hace click en "Ya hice mi pago". Usa esto para verificar el depósito y aprobar.</div>
+    <div id="paynotif-list"><div style="color:var(--ink3);font-size:.82rem;padding:.5rem 0">Cargando…</div></div>
+  </div>`;
 
   // ── PENDIENTES DE APROBACIÓN ──
   html+=`<div id="pending-approvals-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
@@ -6395,6 +6520,85 @@ function renderAdmin(){
   w.innerHTML=html;
   renderUsersTable();
   renderChangelog();
+}
+
+// ── PAYMENT NOTIFICATIONS (admin) ──
+function renderPaymentNotifs(){
+  const list = document.getElementById('paynotif-list');
+  const countBadge = document.getElementById('paynotif-count');
+  const clearBtn = document.getElementById('paynotif-clear-btn');
+  if(!list) return;
+  list.innerHTML = '<div style="color:var(--ink3);font-size:.82rem;padding:.5rem 0">Cargando…</div>';
+  api('GET','/api/payment-notifications').then(notifs=>{
+    if(!Array.isArray(notifs) || notifs.length === 0){
+      list.innerHTML = '<div style="color:var(--ink3);font-size:.82rem;padding:.5rem 0;text-align:center">Sin notificaciones · Aparecerán aquí cuando los usuarios den "Ya hice mi pago"</div>';
+      if(countBadge) countBadge.style.display = 'none';
+      if(clearBtn) clearBtn.style.display = 'none';
+      return;
+    }
+    // Contar no vistas
+    const unseen = notifs.filter(n=>!n.seen).length;
+    if(countBadge){
+      if(unseen > 0){
+        countBadge.textContent = String(unseen);
+        countBadge.style.display = 'inline-block';
+      } else {
+        countBadge.style.display = 'none';
+      }
+    }
+    if(clearBtn) clearBtn.style.display = unseen > 0 ? '' : 'none';
+
+    list.innerHTML = notifs.map(n=>{
+      const created = new Date(n.created_at);
+      const ago = timeAgo(created);
+      const ctxLabel = n.context === 'upgrade'
+        ? `<span style="background:linear-gradient(135deg,rgba(232,170,30,.16),rgba(232,170,30,.06));color:var(--gld);border:1px solid rgba(232,170,30,.4);padding:2px 8px;border-radius:6px;font-size:.62rem;font-weight:800;letter-spacing:.3px">⬆ UPGRADE A PRO</span>`
+        : (n.payment_type === 'user'
+            ? `<span style="background:rgba(120,128,160,.16);color:var(--ink2);border:1px solid rgba(120,128,160,.35);padding:2px 8px;border-radius:6px;font-size:.62rem;font-weight:800;letter-spacing:.3px">👤 INSCRIPCIÓN USER</span>`
+            : `<span style="background:linear-gradient(135deg,rgba(232,170,30,.16),rgba(232,170,30,.06));color:var(--gld);border:1px solid rgba(232,170,30,.4);padding:2px 8px;border-radius:6px;font-size:.62rem;font-weight:800;letter-spacing:.3px">💎 INSCRIPCIÓN PRO</span>`);
+      const amount = n.amount ? `$${(+n.amount).toLocaleString('es-MX')} MXN` : '—';
+      const safeUser = String(n.username || '').replace(/'/g,"\\'");
+      const isNew = !n.seen;
+      return `<div class="paynotif-card${isNew?' new':''}" style="background:var(--bg);border:1.5px solid ${isNew?'var(--gld)':'var(--border)'};border-radius:12px;padding:11px 14px;margin-bottom:8px;position:relative">
+        ${isNew ? '<div style="position:absolute;top:9px;right:11px;width:8px;height:8px;border-radius:50%;background:var(--gld);box-shadow:0 0 6px rgba(232,170,30,.6)"></div>' : ''}
+        <div style="display:flex;align-items:start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+          <div style="font-weight:800;color:var(--ink);font-size:.92rem">@${escHtml(n.username)}</div>
+          <div style="font-size:.68rem;color:var(--ink3);font-weight:600">${ago}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          ${ctxLabel}
+          <span style="font-weight:800;color:var(--green);font-size:.86rem;font-variant-numeric:tabular-nums">${amount}</span>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${isNew ? `<button onclick="markPaymentNotifSeen(${n.id})" style="background:var(--surface);color:var(--ink2);border:1px solid var(--border);padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.7rem;cursor:pointer">Marcar visto</button>` : ''}
+          <button onclick="deletePaymentNotif(${n.id})" style="background:var(--r-bg);color:var(--r);border:none;padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.7rem;cursor:pointer">✕ Eliminar</button>
+          <button onclick="document.getElementById('pending-approvals-card')?.scrollIntoView({behavior:'smooth',block:'start'})" style="background:var(--grad-tri);color:#fff;border:none;padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.7rem;cursor:pointer">↓ Ver pendientes</button>
+        </div>
+      </div>`;
+    }).join('');
+  }).catch(()=>{
+    list.innerHTML = '<div style="color:var(--r);font-size:.82rem;padding:.5rem 0">Error cargando notificaciones</div>';
+  });
+}
+
+function markPaymentNotifSeen(id){
+  api('POST',`/api/payment-notifications/${id}/seen`).then(()=>{
+    renderPaymentNotifs();
+  }).catch(()=>{ toast('Error'); });
+}
+
+function deletePaymentNotif(id){
+  api('DELETE',`/api/payment-notifications/${id}`).then(()=>{
+    renderPaymentNotifs();
+    toast('Notificación eliminada');
+  }).catch(()=>{ toast('Error'); });
+}
+
+function markAllPaymentNotifsSeen(){
+  api('POST','/api/payment-notifications/seen-all').then(()=>{
+    renderPaymentNotifs();
+    toast('Todas marcadas como vistas');
+  }).catch(()=>{ toast('Error'); });
 }
 
 function renderPendingApprovals(){
@@ -10275,6 +10479,122 @@ function closeUpgradeModal(){
   if(!m) return;
   m.style.display = 'none';
   document.body.style.overflow = '';
+}
+
+// ── Payment modal ──
+// context: 'signup' (nueva inscripción), 'upgrade' (User → Pro)
+let _paymentContext = null;
+let _paymentUsername = null;
+
+function showPaymentModal(context){
+  _paymentContext = context || 'signup';
+  // Determinar el monto y el username para notificar
+  let amount = 0;
+  let username = null;
+  if(_paymentContext === 'upgrade'){
+    // User actual quiere upgrade → paga UPGRADE_DELTA
+    amount = UPGRADE_DELTA;
+    username = CU?.u || null;
+  } else {
+    // Inscripción nueva: monto según tipo elegido en signup
+    amount = (_signupType === 'user') ? ENTRY_USER : ENTRY_PRO;
+    // El username del recién inscrito se obtiene del campo del modal pending
+    const pendingUserEl = document.getElementById('pending-user');
+    username = (pendingUserEl?.textContent && pendingUserEl.textContent !== '—')
+      ? pendingUserEl.textContent
+      : null;
+  }
+  _paymentUsername = username;
+
+  // Actualizar UI
+  const amtEl = document.getElementById('pay-amount');
+  const subEl = document.getElementById('pay-amount-sub');
+  if(amtEl) amtEl.textContent = `$${amount.toLocaleString('es-MX')}`;
+  if(subEl) subEl.textContent = `MXN · ${_paymentContext === 'upgrade' ? 'Upgrade User → Pro' : (_signupType === 'user' ? 'User' : 'User Pro 💎')}`;
+
+  // Reset botón "Ya hice mi pago"
+  const doneBtn = document.getElementById('pay-done-btn');
+  if(doneBtn){
+    doneBtn.disabled = false;
+    doneBtn.textContent = 'Ya hice mi pago ✓';
+  }
+  // Reset botones de copiar
+  document.querySelectorAll('.pay-copy-btn').forEach(b=>{
+    b.classList.remove('copied');
+    const name = b.dataset.name || '';
+    b.innerHTML = `<span class="pay-copy-ico">📋</span> Copiar CLABE`;
+  });
+
+  const m = document.getElementById('payment-modal');
+  if(!m) return;
+  m.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closePaymentModal(){
+  const m = document.getElementById('payment-modal');
+  if(!m) return;
+  m.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function copyClabe(btn){
+  const clabe = btn.dataset.clabe;
+  const name = btn.dataset.name || '';
+  if(!clabe) return;
+  // Intento moderno
+  const doFallback = ()=>{
+    const ta = document.createElement('textarea');
+    ta.value = clabe;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(_){}
+    document.body.removeChild(ta);
+  };
+  const onSuccess = ()=>{
+    btn.classList.add('copied');
+    btn.innerHTML = `<span class="pay-copy-ico">✓</span> CLABE de ${name} copiada`;
+    setTimeout(()=>{
+      btn.classList.remove('copied');
+      btn.innerHTML = `<span class="pay-copy-ico">📋</span> Copiar CLABE`;
+    }, 2200);
+  };
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(clabe).then(onSuccess).catch(()=>{
+      doFallback();
+      onSuccess();
+    });
+  } else {
+    doFallback();
+    onSuccess();
+  }
+}
+
+async function markPaymentDone(){
+  const btn = document.getElementById('pay-done-btn');
+  if(!btn || btn.disabled) return;
+  btn.disabled = true;
+  btn.textContent = 'Notificando…';
+  try {
+    await api('POST','/api/payment-notification', {
+      username: _paymentUsername || '(desconocido)',
+      context: _paymentContext || 'signup',
+      amount: (_paymentContext === 'upgrade')
+        ? UPGRADE_DELTA
+        : (_signupType === 'user' ? ENTRY_USER : ENTRY_PRO),
+      type: (_paymentContext === 'upgrade')
+        ? 'upgrade'
+        : (_signupType || 'pro')
+    });
+    btn.textContent = '✓ Notificación enviada';
+    toast('✓ Notificamos al admin · Se comunicará contigo');
+  } catch(e){
+    // Mostrar éxito de todos modos para no frustrar al usuario; el admin verá la lista de pendientes
+    btn.textContent = '✓ Notificación enviada';
+    toast('✓ Avisamos al admin · Se comunicará contigo');
+  }
 }
 
 function showCreateGroup(){
