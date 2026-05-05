@@ -1811,6 +1811,63 @@ body.dark .ref-badge.user{background:rgba(180,190,220,.16);color:var(--ink2)}
 .ref-disclaimer{background:rgba(0,82,204,.06);border-left:3px solid var(--blue2);border-radius:0 8px 8px 0;padding:9px 12px;margin-top:12px;font-size:.72rem;color:var(--blue);line-height:1.5;font-weight:600}
 body.dark .ref-disclaimer{background:rgba(0,82,204,.14);color:#80a8e0}
 
+/* ── ADMIN PAGE REDESIGN ── */
+.adm-hero{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--sh);position:relative;overflow:hidden}
+.adm-hero-orbs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.adm-hero-orb{position:absolute;border-radius:50%}
+.adm-hero-orb-r{top:-40px;right:-40px;width:140px;height:140px;background:radial-gradient(circle,rgba(192,0,26,.08),transparent 65%)}
+body.dark .adm-hero-orb-r{background:radial-gradient(circle,rgba(192,0,26,.14),transparent 65%)}
+.adm-hero-content{position:relative;z-index:1}
+.adm-hero-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--r);margin-bottom:4px}
+.adm-hero-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--r);box-shadow:0 0 8px rgba(192,0,26,.5);animation:suPulse 1.6s ease-in-out infinite}
+.adm-hero-title{font-weight:800;font-size:1.4rem;letter-spacing:-.4px;line-height:1.15;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:.05em 0;display:inline-block;margin-bottom:10px}
+.adm-hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:560px){.adm-hero-stats{grid-template-columns:repeat(2,1fr)}}
+.adm-hero-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:9px 10px}
+body.dark .adm-hero-stat{background:#0c0f1c}
+.adm-hero-stat-lbl{font-size:.55rem;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);margin-bottom:2px}
+.adm-hero-stat-num{font-weight:800;font-size:1.1rem;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
+.adm-hero-stat-sub{font-size:.6rem;color:var(--ink3);margin-top:2px;font-weight:600}
+
+/* Banner de pendientes */
+.adm-pending-card{background:linear-gradient(135deg,rgba(232,170,30,.10),rgba(232,170,30,.04));border:1.5px solid rgba(232,170,30,.4);border-radius:14px;padding:12px 14px;margin-bottom:12px}
+body.dark .adm-pending-card{background:linear-gradient(135deg,rgba(232,170,30,.14),rgba(232,170,30,.06))}
+.adm-pending-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.adm-pending-lbl{font-size:.62rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#b07b08}
+body.dark .adm-pending-lbl{color:var(--gld)}
+.adm-pending-count{font-size:.62rem;font-weight:800;color:#b07b08}
+body.dark .adm-pending-count{color:var(--gld)}
+.adm-pending-chips{display:flex;gap:8px;flex-wrap:wrap}
+.adm-pending-chip{background:var(--surface);border:1.5px solid rgba(232,170,30,.5);border-radius:9px;padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.72rem;color:#c8900a;transition:transform .15s, box-shadow .15s}
+body.dark .adm-pending-chip{background:#1a1f33;color:var(--gld)}
+.adm-pending-chip:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,170,30,.2)}
+.adm-pending-chip-num{background:#c8900a;color:#fff;padding:1px 6px;border-radius:5px;font-size:.6rem;font-weight:800}
+
+/* Índice sticky de navegación */
+.adm-nav-sticky{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:10px 12px;margin-bottom:12px;box-shadow:var(--sh);position:sticky;top:8px;z-index:50;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.adm-nav-lbl{font-size:.55rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
+.adm-nav-btns{display:flex;gap:4px;flex-wrap:wrap}
+.adm-nav-btn{background:var(--bg);color:var(--ink2);border:1px solid var(--border);border-radius:8px;padding:6px 11px;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.72rem;transition:background .15s, color .15s}
+body.dark .adm-nav-btn{background:#0c0f1c}
+.adm-nav-btn:hover{background:var(--green-bg);color:var(--green);border-color:var(--green2)}
+.adm-nav-btn.primary{background:var(--grad-tri);color:#fff;border:none}
+.adm-nav-btn.primary:hover{transform:translateY(-1px);background:var(--grad-tri)}
+
+/* Card section unificada */
+.adm-card-section{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh)}
+.adm-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.adm-card-head-l{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+.adm-card-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0;color:#fff}
+.adm-card-title{font-weight:800;font-size:.95rem;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.adm-card-sub{font-size:.7rem;color:var(--ink3);font-weight:600;margin-top:1px}
+.adm-count-badge{padding:1px 7px;border-radius:9px;font-size:.62rem;font-weight:800;color:#fff;letter-spacing:.3px}
+.adm-count-badge.gold{background:linear-gradient(135deg,#c8900a,#e8a020)}
+.adm-count-badge.red{background:var(--r)}
+.adm-count-badge.green{background:var(--green2)}
+.adm-icon-btn{background:var(--bg);border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:.7rem;padding:5px 10px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;transition:background .15s, color .15s}
+body.dark .adm-icon-btn{background:#0c0f1c}
+.adm-icon-btn:hover{background:var(--green-bg);color:var(--green);border-color:var(--green2)}
+
 /* ── UPGRADE MODAL & DRAWER BTN ── */
 .drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.1),rgba(232,170,30,.04));font-weight:800;color:var(--gld) !important;border:1px solid rgba(232,170,30,.4) !important;border-radius:10px !important;margin:0 0 4px 0}
 body.dark .drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.16),rgba(232,170,30,.06));color:#f0b030 !important}
@@ -6401,33 +6458,126 @@ function renderAdmin(){
   const w=document.getElementById('adm-wrap');
   let html='';
 
-  // ── NOTIFICACIONES DE PAGO ──
-  html+=`<div id="payment-notifs-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-      <div style="font-weight:800;font-size:.95rem;color:var(--ink)">🔔 Notificaciones de pago <span id="paynotif-count" style="background:linear-gradient(135deg,#c8900a,#e8a020);color:#fff;padding:2px 8px;border-radius:10px;font-size:.7rem;margin-left:6px;display:none">0</span></div>
-      <div style="display:flex;gap:6px">
-        <button onclick="markAllPaymentNotifsSeen()" id="paynotif-clear-btn" style="background:none;border:1px solid var(--border);color:var(--ink3);cursor:pointer;font-size:.7rem;padding:4px 8px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700" title="Marcar todas como vistas">✓ Vistas</button>
-        <button onclick="renderPaymentNotifs()" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.85rem" title="Recargar">↻</button>
+  // ── HERO DASHBOARD ──
+  // Calcular stats globales
+  const all = allUsers().filter(u => !u.admin);
+  const inscritos = all.length;
+  const pros = all.filter(u => isProUser(u.u)).length;
+  const usersOnly = inscritos - pros;
+  const bolsa = pros * POT_PER_PRO;
+  // Partidos cargados: contar en results.sc todos los IDs con marcador
+  const allMatchIds = [];
+  if(typeof GROUPS !== 'undefined'){
+    Object.keys(GROUPS).forEach(g => { (GM[g]||[]).forEach(m => allMatchIds.push(m.id)); });
+  }
+  // Bracket: 16 r32 + 8 r16 + 4 qf + 2 sf + 1 tp + 1 f = 32
+  ['r32','r16','qf','sf','tp','f'].forEach(rk=>{
+    const n = rk==='r32'?16:rk==='r16'?8:rk==='qf'?4:rk==='sf'?2:1;
+    for(let i=0;i<n;i++) allMatchIds.push(`${rk}_${i}`);
+  });
+  let cargados = 0;
+  allMatchIds.forEach(id => {
+    const r = results.sc?.[id];
+    if(r && r.h != null && r.a != null) cargados++;
+  });
+  const pctCargados = Math.round(100 * cargados / TOTAL_MATCHES);
+  // Cuenta regresiva al cierre
+  const msToCierre = TOURNAMENT_START_MS - Date.now();
+  const daysToCierre = Math.max(0, Math.floor(msToCierre / 86400000));
+  const cierreLabel = msToCierre <= 0 ? 'Cerrado' : (daysToCierre + 'd');
+
+  html += `<div class="adm-hero">
+    <div class="adm-hero-orbs"><div class="adm-hero-orb adm-hero-orb-r"></div></div>
+    <div class="adm-hero-content">
+      <div class="adm-hero-eyebrow"><span class="adm-hero-eyebrow-dot"></span>Panel de control</div>
+      <div class="adm-hero-title">Admin</div>
+      <div class="adm-hero-stats">
+        <div class="adm-hero-stat">
+          <div class="adm-hero-stat-lbl">Inscritos</div>
+          <div class="adm-hero-stat-num">${inscritos}</div>
+          <div class="adm-hero-stat-sub">${pros} Pro · ${usersOnly} User</div>
+        </div>
+        <div class="adm-hero-stat">
+          <div class="adm-hero-stat-lbl">Bolsa</div>
+          <div class="adm-hero-stat-num" style="color:var(--green)">$${bolsa.toLocaleString('es-MX')}</div>
+          <div class="adm-hero-stat-sub">$${POT_PER_PRO} × ${pros} Pro</div>
+        </div>
+        <div class="adm-hero-stat">
+          <div class="adm-hero-stat-lbl">Partidos cargados</div>
+          <div class="adm-hero-stat-num">${cargados}<span style="color:var(--ink3);font-size:.7em">/${TOTAL_MATCHES}</span></div>
+          <div class="adm-hero-stat-sub">${pctCargados}% del torneo</div>
+        </div>
+        <div class="adm-hero-stat">
+          <div class="adm-hero-stat-lbl">Hasta cierre</div>
+          <div class="adm-hero-stat-num" style="color:var(--blue2)">${cierreLabel}</div>
+          <div class="adm-hero-stat-sub">11 jun · 1pm</div>
+        </div>
       </div>
     </div>
-    <div style="font-size:.78rem;color:var(--ink3);margin-bottom:.85rem;line-height:1.5">Avisos cuando un usuario hace click en "Ya hice mi pago". Usa esto para verificar el depósito y aprobar.</div>
+  </div>`;
+
+  // ── BANNER DE PENDIENTES (se rellena dinámicamente con renderAdminPendingBar) ──
+  html += `<div id="adm-pending-bar" style="display:none"></div>`;
+
+  // ── ÍNDICE STICKY DE NAVEGACIÓN ──
+  html += `<div class="adm-nav-sticky" id="adm-nav-sticky">
+    <div class="adm-nav-lbl">Saltar a sección</div>
+    <div class="adm-nav-btns">
+      <button class="adm-nav-btn primary" onclick="scrollToAdmSec('payments')">🔔 Pagos</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('pending')">⏳ Inscripciones</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('users')">👥 Usuarios</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('sync')">🟢 Sync</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('groups')">⚽ Grupos</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('bracket')">🏆 Bracket</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('snapshots')">📸 Snapshots</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('changelog')">📜 Historial</button>
+    </div>
+  </div>`;
+
+  // ── NOTIFICACIONES DE PAGO ──
+  html+=`<div id="adm-sec-payments" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#c8900a,#e8a020)">🔔</div>
+        <div>
+          <div class="adm-card-title">Notificaciones de pago <span id="paynotif-count" class="adm-count-badge gold" style="display:none">0</span></div>
+          <div class="adm-card-sub">Avisos de "Ya hice mi pago" — verifica el depósito y aprueba</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button onclick="markAllPaymentNotifsSeen()" id="paynotif-clear-btn" class="adm-icon-btn" style="display:none" title="Marcar todas como vistas">✓ Vistas</button>
+        <button onclick="renderPaymentNotifs()" class="adm-icon-btn" title="Recargar">↻</button>
+      </div>
+    </div>
     <div id="paynotif-list"><div style="color:var(--ink3);font-size:.82rem;padding:.5rem 0">Cargando…</div></div>
   </div>`;
 
   // ── PENDIENTES DE APROBACIÓN ──
-  html+=`<div id="pending-approvals-card" style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.75rem">
-      <div style="font-weight:800;font-size:.95rem;color:var(--ink)">⏳ Inscripciones pendientes <span id="pending-count" style="background:var(--r-bg);color:var(--r);padding:2px 8px;border-radius:10px;font-size:.7rem;margin-left:6px;display:none">0</span></div>
-      <button onclick="renderPendingApprovals()" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:.85rem" title="Recargar">↻</button>
+  html+=`<div id="adm-sec-pending" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#c0001a,#e63946)">⏳</div>
+        <div>
+          <div class="adm-card-title">Inscripciones pendientes <span id="pending-count" class="adm-count-badge red" style="display:none">0</span></div>
+          <div class="adm-card-sub">Aprueba después de confirmar el pago</div>
+        </div>
+      </div>
+      <button onclick="renderPendingApprovals()" class="adm-icon-btn" title="Recargar">↻</button>
     </div>
-    <div style="font-size:.78rem;color:var(--ink3);margin-bottom:.85rem;line-height:1.5">Aprueba a los usuarios después de confirmar el pago. Mientras estén pendientes no podrán entrar a la app.</div>
     <div id="pending-list"><div style="color:var(--ink3);font-size:.82rem;padding:.5rem 0">Cargando…</div></div>
   </div>`;
 
   // ── SNAPSHOT DEL RANKING ──
-  html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:1rem 1.25rem;margin-bottom:1rem;box-shadow:var(--sh)">
-    <div style="font-weight:800;font-size:.9rem;color:var(--ink);margin-bottom:.5rem">📸 Guardar snapshot del ranking</div>
-    <div style="font-size:.78rem;color:var(--ink3);margin-bottom:.75rem">Guarda una foto del ranking actual para el historial. Úsalo al final de cada jornada.</div>
+  html+=`<div id="adm-sec-snapshots" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#003087,#0052cc)">📸</div>
+        <div>
+          <div class="adm-card-title">Guardar snapshot del ranking</div>
+          <div class="adm-card-sub">Foto del ranking actual para el historial — úsalo al final de cada jornada</div>
+        </div>
+      </div>
+    </div>
     <div style="display:flex;gap:.5rem">
       <input id="snapshot-label" type="text" placeholder="ej. Jornada 1, Octavos, etc." maxlength="40"
         style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;outline:none">
@@ -6436,30 +6586,40 @@ function renderAdmin(){
   </div>`;
 
   // ── LIVE SCORES BAR ──
-  html+=`<div class="live-bar">
-    <div>
-      <div class="live-status">
-        <div class="live-dot${liveEnabled?' on':''}" id="live-dot"></div>
-        <span id="live-status-txt">${liveEnabled?'Sincronización activa':'Sincronización pausada'}</span>
+  html+=`<div id="adm-sec-sync" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#006838,#00c46a)">🟢</div>
+        <div>
+          <div class="adm-card-title">Sincronización automática <span id="live-status-badge" class="adm-count-badge ${liveEnabled?'green':''}" style="${liveEnabled?'':'display:none'}">ACTIVA</span></div>
+          <div class="adm-card-sub" id="live-last-txt">${liveLastUpdate
+            ?`Última actualización: ${liveLastUpdate.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}`
+            :'Activa para importar resultados de football-data.org cada 60s'}</div>
+        </div>
       </div>
-      <div class="live-last" id="live-last-txt">${liveLastUpdate
-        ?`Última actualización: ${liveLastUpdate.toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'})}`
-        :'Activa la sincronización para importar resultados automáticamente'}</div>
+      <div class="live-btns">
+        <button class="live-btn" onclick="manualRefresh()">↻ Actualizar</button>
+        <button class="live-btn ${liveEnabled?'danger':'primary'}" onclick="toggleLive()">
+          ${liveEnabled?'⏸ Pausar':'▶ Activar'}
+        </button>
+      </div>
     </div>
-    <div class="live-btns">
-      <button class="live-btn" onclick="manualRefresh()">↻ Actualizar ahora</button>
-      <button class="live-btn ${liveEnabled?'danger':'primary'}" onclick="toggleLive()">
-        ${liveEnabled?'⏸ Pausar':'▶ Activar sincronización'}
-      </button>
+    <div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-size:.75rem;color:var(--b);line-height:1.5">
+      <b>ℹ️ Resultados:</b> Marcadores con <b>auto</b> se importaron solos — puedes editarlos manualmente.${!FDORG_KEY?' <b>Modo demo:</b> sin API key se simula una actualización aleatoria.':''}
     </div>
-  </div>
-  <div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-size:.76rem;color:var(--b);margin-bottom:1rem;line-height:1.5">
-    <b>ℹ️ Resultados automáticos:</b> Al activar la sincronización, la app consulta football-data.org cada 60 segundos y actualiza los marcadores terminados. Los resultados marcados con <b>auto</b> se importaron solos — puedes editarlos manualmente si hay algún error.${!FDORG_KEY?' <b>Modo demo activo:</b> sin API key configurada, se simula una actualización aleatoria para mostrar el funcionamiento.':''}
   </div>`;
 
-  // ── CREATE USER ──
-  html+=`<div class="adm-section">
-    <div class="adm-title">Agregar participante</div>
+  // ── CREATE USER + TABLA ──
+  html+=`<div id="adm-sec-users" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#003087,#c0001a)">👥</div>
+        <div>
+          <div class="adm-card-title">Participantes</div>
+          <div class="adm-card-sub">Agrega manualmente o gestiona los inscritos</div>
+        </div>
+      </div>
+    </div>
     <div class="cu-form">
       <div class="cu-grid">
         <div class="cu-field">
@@ -6491,9 +6651,16 @@ function renderAdmin(){
   </div>`;
 
   // ── RESULTS BY GROUP ──
-  html+=`<div class="adm-section">
-    <div class="adm-title">Resultados de Grupos</div>
-    <p style="font-size:.78rem;color:var(--ink3);margin-bottom:1rem">El sistema calcula las tablas con estos marcadores y actualiza el ranking automáticamente.</p>
+  html+=`<div id="adm-sec-groups" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#006838,#003087)">⚽</div>
+        <div>
+          <div class="adm-card-title">Resultados de Grupos</div>
+          <div class="adm-card-sub">El sistema calcula tablas y ranking automáticamente</div>
+        </div>
+      </div>
+    </div>
     <div class="adm-grid">`;
   Object.entries(GROUPS).forEach(([g,{teams}])=>{
     const ms=GM[g];
@@ -6519,10 +6686,15 @@ function renderAdmin(){
   html+=`</div></div>`;
 
   // ── BRACKET RESULTS ──
-  html+=`<div class="adm-section">
-    <div class="adm-title">Resultados Eliminatorios</div>
-    <div style="background:var(--b-bg);border:1px solid var(--b2);border-radius:8px;padding:10px 14px;font-size:.76rem;color:var(--b);margin-bottom:1rem;line-height:1.5">
-      ℹ️ Ingresa el nombre de los equipos, el marcador a 90 minutos y selecciona al ganador. Los usuarios verán sus puntos actualizados automáticamente.
+  html+=`<div id="adm-sec-bracket" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#c8900a,#003087)">🏆</div>
+        <div>
+          <div class="adm-card-title">Resultados eliminatorios</div>
+          <div class="adm-card-sub">Equipos, marcador a 90' y ganador de cada partido</div>
+        </div>
+      </div>
     </div>`;
 
   const elimRoundsAdmin=[
@@ -6578,15 +6750,101 @@ function renderAdmin(){
   });
   html+=`</div>`;
 
-  html+=`<div class="adm-section">
-    <div class="adm-title">Historial de cambios</div>
-    <p style="font-size:.78rem;color:var(--ink3);margin-bottom:.75rem">Registro de todos los resultados modificados — <span style="color:var(--b2);font-weight:600">AUTO</span> = importado en vivo, <span style="color:var(--gld);font-weight:600">MANUAL</span> = editado por admin.</p>
+  html+=`<div id="adm-sec-changelog" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#888,#555)">📜</div>
+        <div>
+          <div class="adm-card-title">Historial de cambios</div>
+          <div class="adm-card-sub">Registro de resultados — <b style="color:var(--b2)">AUTO</b> = en vivo · <b style="color:var(--gld)">MANUAL</b> = editado</div>
+        </div>
+      </div>
+    </div>
     <div id="changelog-wrap"></div>
   </div>`;
 
   w.innerHTML=html;
   renderUsersTable();
   renderChangelog();
+  // Pintar el banner de pendientes (depende de paynotif y pending list que cargan async)
+  setTimeout(renderAdminPendingBar, 600);
+}
+
+// ── ADMIN HELPERS ──
+function scrollToAdmSec(secKey){
+  const el = document.getElementById('adm-sec-' + secKey);
+  if(!el) return;
+  // Offset 70px para no quedar tapado por el sticky nav
+  const top = el.getBoundingClientRect().top + window.pageYOffset - 70;
+  window.scrollTo({top, behavior: 'smooth'});
+}
+
+// Calcular qué hay pendiente "hoy" (acciones admin)
+function getAdminPending(){
+  const result = { payments: 0, signups: 0, missingScores: 0 };
+  // Pagos sin ver: lo trae el backend en /api/payment-notifications con seen=false
+  // Aquí leemos del DOM si ya está cargado
+  const paynotifBadge = document.getElementById('paynotif-count');
+  if(paynotifBadge && paynotifBadge.style.display !== 'none'){
+    result.payments = parseInt(paynotifBadge.textContent) || 0;
+  }
+  // Inscripciones pendientes
+  const pendingBadge = document.getElementById('pending-count');
+  if(pendingBadge && pendingBadge.style.display !== 'none'){
+    result.signups = parseInt(pendingBadge.textContent) || 0;
+  }
+  // Marcadores faltantes: partidos cuya fecha ya pasó pero no tienen score
+  const now = Date.now();
+  if(typeof GROUPS !== 'undefined' && typeof GM !== 'undefined'){
+    Object.keys(GROUPS).forEach(g => {
+      (GM[g] || []).forEach(m => {
+        if(m.dateTs && m.dateTs < now){
+          const r = results.sc?.[m.id];
+          if(!r || r.h == null || r.a == null) result.missingScores++;
+        }
+      });
+    });
+  }
+  return result;
+}
+
+function renderAdminPendingBar(){
+  const bar = document.getElementById('adm-pending-bar');
+  if(!bar) return;
+  const p = getAdminPending();
+  const total = p.payments + p.signups + p.missingScores;
+  if(total === 0){
+    bar.style.display = 'none';
+    bar.innerHTML = '';
+    return;
+  }
+  let chips = '';
+  if(p.payments > 0){
+    chips += `<button class="adm-pending-chip" onclick="scrollToAdmSec('payments')">
+      <span class="adm-pending-chip-num">${p.payments}</span>
+      🔔 Pagos por revisar
+    </button>`;
+  }
+  if(p.signups > 0){
+    chips += `<button class="adm-pending-chip" onclick="scrollToAdmSec('pending')">
+      <span class="adm-pending-chip-num">${p.signups}</span>
+      ⏳ Aprobar inscripciones
+    </button>`;
+  }
+  if(p.missingScores > 0){
+    chips += `<button class="adm-pending-chip" onclick="scrollToAdmSec('groups')">
+      <span class="adm-pending-chip-num">${p.missingScores}</span>
+      ⚽ Marcadores faltantes
+    </button>`;
+  }
+  bar.innerHTML = `<div class="adm-pending-card">
+    <div class="adm-pending-head">
+      <div class="adm-pending-lbl">⚡ Pendientes hoy</div>
+      <div class="adm-pending-count">${total} acci${total!==1?'ones':'ón'}</div>
+    </div>
+    <div class="adm-pending-chips">${chips}</div>
+  </div>`;
+  bar.style.display = '';
 }
 
 // ── PAYMENT NOTIFICATIONS (admin) ──
@@ -6639,10 +6897,12 @@ function renderPaymentNotifs(){
         <div style="display:flex;gap:6px;flex-wrap:wrap">
           ${isNew ? `<button onclick="markPaymentNotifSeen(${n.id})" style="background:var(--surface);color:var(--ink2);border:1px solid var(--border);padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.7rem;cursor:pointer">Marcar visto</button>` : ''}
           <button onclick="deletePaymentNotif(${n.id})" style="background:var(--r-bg);color:var(--r);border:none;padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.7rem;cursor:pointer">✕ Eliminar</button>
-          <button onclick="document.getElementById('pending-approvals-card')?.scrollIntoView({behavior:'smooth',block:'start'})" style="background:var(--grad-tri);color:#fff;border:none;padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.7rem;cursor:pointer">↓ Ver pendientes</button>
+          <button onclick="scrollToAdmSec('pending')" style="background:var(--grad-tri);color:#fff;border:none;padding:5px 10px;border-radius:7px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:.7rem;cursor:pointer">↓ Ver pendientes</button>
         </div>
       </div>`;
     }).join('');
+    // Actualizar banner de pendientes
+    if(typeof renderAdminPendingBar === 'function') renderAdminPendingBar();
   }).catch(()=>{
     list.innerHTML = '<div style="color:var(--r);font-size:.82rem;padding:.5rem 0">Error cargando notificaciones</div>';
   });
@@ -6747,6 +7007,7 @@ function renderPendingApprovals(){
         </div>
       </div>`;
     }).join('');
+    if(typeof renderAdminPendingBar === 'function') renderAdminPendingBar();
   }).catch(e=>{
     list.innerHTML = `<div style="color:var(--r);font-size:.82rem;padding:.5rem 0">Error al cargar pendientes: ${e.message||''}</div>`;
   });
