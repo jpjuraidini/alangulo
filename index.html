@@ -1756,6 +1756,61 @@ body.dark .pay-done-btn:disabled{background:rgba(0,196,106,.18);color:var(--gree
 
 .pay-foot{text-align:center;margin-top:10px;font-size:.7rem;color:var(--ink3);font-weight:600}
 
+/* ── REFERIDOS PAGE ── */
+.ref-code-card{background:linear-gradient(135deg,rgba(0,104,56,.10),rgba(0,196,106,.04));border:1.5px solid rgba(0,196,106,.4);border-radius:14px;padding:14px 16px;margin-bottom:18px}
+body.dark .ref-code-card{background:linear-gradient(135deg,rgba(0,196,106,.14),rgba(0,196,106,.04));border-color:rgba(0,196,106,.45)}
+.ref-code-lbl{font-size:.62rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--green);margin-bottom:6px}
+.ref-code-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ref-code-val{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:2rem;color:var(--green);letter-spacing:4px;line-height:1}
+.ref-code-btns{display:flex;gap:6px;flex-wrap:wrap}
+.ref-btn{border:none;border-radius:9px;padding:8px 14px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;display:inline-flex;align-items:center;gap:5px;text-decoration:none;transition:all .15s}
+.ref-btn-copy{background:var(--surface);color:var(--green);border:1.5px solid rgba(0,104,56,.3)}
+body.dark .ref-btn-copy{background:#161a2e}
+.ref-btn-copy:hover{background:var(--green-bg);border-color:var(--green2)}
+.ref-btn-wa{background:#25D366;color:#fff}
+.ref-btn-wa:hover{background:#1da851;transform:translateY(-1px)}
+
+.ref-howto-section{margin-bottom:18px}
+.ref-howto-h{font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.ref-howto-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+@media(max-width:520px){.ref-howto-grid{grid-template-columns:1fr}}
+.ref-howto-step{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 11px}
+body.dark .ref-howto-step{background:#0c0f1c}
+.ref-howto-step.ref-howto-prize{background:linear-gradient(135deg,rgba(232,170,30,.10),rgba(232,170,30,.04));border-color:rgba(232,170,30,.4)}
+body.dark .ref-howto-step.ref-howto-prize{background:linear-gradient(135deg,rgba(232,170,30,.14),rgba(232,170,30,.06))}
+.ref-howto-head{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.ref-howto-num{width:22px;height:22px;border-radius:50%;color:#fff;font-weight:800;font-size:.72rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ref-howto-title{font-weight:800;font-size:.78rem;color:var(--ink)}
+.ref-howto-desc{font-size:.7rem;color:var(--ink3);line-height:1.4}
+
+.ref-empty{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:2.5rem 1.5rem;text-align:center;box-shadow:var(--sh)}
+.ref-empty-ico{font-size:2.4rem;margin-bottom:.8rem}
+.ref-empty-h{font-weight:800;font-size:1.05rem;color:var(--ink);margin-bottom:.5rem}
+.ref-empty-sub{font-size:.82rem;color:var(--ink3);line-height:1.6}
+
+.ref-list-section{margin-top:8px}
+.ref-list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.ref-list-title{font-size:.68rem;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--ink3)}
+.ref-list-sub{font-size:.68rem;color:var(--ink3)}
+.ref-list{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.ref-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border)}
+.ref-row.last{border-bottom:none}
+.ref-avatar{width:34px;height:34px;border-radius:50%;color:#fff;font-weight:800;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;letter-spacing:.3px}
+.ref-info{flex:1;min-width:0}
+.ref-uname{font-weight:700;font-size:.86rem;color:var(--ink);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.ref-meta{font-size:.72rem;color:var(--ink3);margin-top:1px}
+.ref-badge{padding:1px 6px;border-radius:5px;font-size:.55rem;font-weight:800;letter-spacing:.3px}
+.ref-badge.pro{background:rgba(232,170,30,.16);color:var(--gld)}
+.ref-badge.user{background:rgba(120,128,160,.18);color:var(--ink2)}
+body.dark .ref-badge.user{background:rgba(180,190,220,.16);color:var(--ink2)}
+.ref-rank-box{text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.ref-rank{font-weight:800;font-size:1rem;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+.ref-trend{font-size:.6rem;font-weight:800;letter-spacing:.3px;line-height:1}
+.ref-trend.up{color:var(--green)}
+.ref-trend.down{color:var(--r)}
+.ref-disclaimer{background:rgba(0,82,204,.06);border-left:3px solid var(--blue2);border-radius:0 8px 8px 0;padding:9px 12px;margin-top:12px;font-size:.72rem;color:var(--blue);line-height:1.5;font-weight:600}
+body.dark .ref-disclaimer{background:rgba(0,82,204,.14);color:#80a8e0}
+
 /* ── UPGRADE MODAL & DRAWER BTN ── */
 .drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.1),rgba(232,170,30,.04));font-weight:800;color:var(--gld) !important;border:1px solid rgba(232,170,30,.4) !important;border-radius:10px !important;margin:0 0 4px 0}
 body.dark .drawer-upgrade{background:linear-gradient(135deg,rgba(232,170,30,.16),rgba(232,170,30,.06));color:#f0b030 !important}
@@ -10777,6 +10832,7 @@ function renderReferidos(){
   const wrap=document.getElementById('referidos-wrap');
   if(!wrap) return;
   const myCode=CU.code||genCode(CU.u);
+  // Skeleton loader
   wrap.innerHTML=`<div class="sk-stack" style="padding:.5rem 0">
     <div class="sk row" style="display:block;padding:18px">
       <div class="sk" style="width:35%;height:14px;margin-bottom:10px"></div>
@@ -10793,65 +10849,153 @@ function renderReferidos(){
     refs[myCode]=myRefs||[];
     const board=buildBoard();
     const myRank=board.findIndex(r=>r.name===CU.u)+1;
+    const refCount = myRefs.length;
 
-    let html=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.75rem;margin-bottom:1.5rem">
-      <div class="mq-stat">
-        <div class="mq-stat-num" style="color:var(--green)">${myRefs.length}</div>
-        <div class="mq-stat-label">Referidos tuyos</div>
-      </div>
-      <div class="mq-stat">
-        <div class="mq-stat-num" style="color:var(--blue2)">${myRank||'—'}</div>
-        <div class="mq-stat-label">Tu posición actual</div>
-      </div>
-      <div class="mq-stat">
-        <div class="mq-stat-num" style="color:var(--gld)">$500</div>
-        <div class="mq-stat-label">Bono si tu ref gana</div>
+    // ── HERO con stats integrados (ph2 pattern) ──
+    let html = `<div class="ph2">
+      <div class="ph2-orbs"><div class="ph2-orb ph2-orb-g"></div><div class="ph2-orb ph2-orb-r"></div></div>
+      <div class="ph2-content">
+        <div class="ph2-eyebrow"><span class="ph2-eyebrow-dot"></span>Tus referidos</div>
+        <div class="ph2-h1">Trae a tu gente</div>
+        <div class="ph2-sub">Comparte tu código. Si tu invitado se lleva el 1er lugar, te embolsas <b style="color:var(--gld)">$500 MXN</b> extra (los pone la organización, no salen de la bolsa).</div>
+        <div class="ph2-stats">
+          <div class="ph2-stat">
+            <div class="ph2-stat-lbl">Invitados</div>
+            <div class="ph2-stat-num" style="color:var(--green)">${refCount}</div>
+          </div>
+          <div class="ph2-stat">
+            <div class="ph2-stat-lbl">Tu posición</div>
+            <div class="ph2-stat-num" style="color:var(--blue2)">${myRank?'#'+myRank:'—'}</div>
+          </div>
+          <div class="ph2-stat">
+            <div class="ph2-stat-lbl">Bono potencial</div>
+            <div class="ph2-stat-num" style="color:var(--gld)">$500</div>
+          </div>
+        </div>
       </div>
     </div>`;
 
-    html+=`<div class="my-ref-box" style="margin-bottom:1.25rem">
-      <div class="my-ref-left">
-        <div class="label">Tu código de referido</div>
-        <div class="code">${myCode}</div>
+    // ── Card del código de referido (prominente) ──
+    const waMessage = encodeURIComponent(`⚽ Te invito a Al Ángulo, la quiniela del Mundial 2026.\nMete mi código ${myCode} al inscribirte: https://alangulo.lat`);
+    html += `<div class="ref-code-card">
+      <div class="ref-code-lbl">Tu código de referido</div>
+      <div class="ref-code-row">
+        <div class="ref-code-val">${myCode}</div>
+        <div class="ref-code-btns">
+          <button class="ref-btn ref-btn-copy" onclick="copyMyCode()">
+            <span style="font-size:.95rem">📋</span> Copiar
+          </button>
+          <a class="ref-btn ref-btn-wa" href="https://wa.me/?text=${waMessage}" target="_blank" rel="noopener">
+            <span style="font-size:.95rem">💬</span> WhatsApp
+          </a>
+        </div>
       </div>
-      <button class="copy-code-btn" onclick="copyMyCode()">Copiar código</button>
     </div>`;
 
-    if(myRefs.length===0){
-      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:2.5rem;text-align:center;box-shadow:var(--sh)">
-        <div style="font-size:2rem;margin-bottom:.75rem">🔗</div>
-        <div style="font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:.5rem">Aún no tienes referidos</div>
-        <div style="font-size:.82rem;color:var(--ink3);line-height:1.6">Comparte tu código <b style="color:var(--green)">${myCode}</b> con amigos para que se unan.<br>Si tu referido gana el 1er lugar, te caen $500 MXN.</div>
+    // ── Sección educativa: cómo gana el bono ──
+    html += `<div class="ref-howto-section">
+      <div class="ref-howto-h">Cómo gana el bono $500</div>
+      <div class="ref-howto-grid">
+        <div class="ref-howto-step">
+          <div class="ref-howto-head">
+            <div class="ref-howto-num" style="background:var(--green)">1</div>
+            <div class="ref-howto-title">Comparte</div>
+          </div>
+          <div class="ref-howto-desc">Tu código a tus amigos por WhatsApp.</div>
+        </div>
+        <div class="ref-howto-step">
+          <div class="ref-howto-head">
+            <div class="ref-howto-num" style="background:var(--blue2)">2</div>
+            <div class="ref-howto-title">Se inscriben</div>
+          </div>
+          <div class="ref-howto-desc">Como User Pro y meten tu código.</div>
+        </div>
+        <div class="ref-howto-step ref-howto-prize">
+          <div class="ref-howto-head">
+            <div class="ref-howto-num" style="background:var(--gld)">3</div>
+            <div class="ref-howto-title" style="color:var(--gld)">Si gana 1er lugar</div>
+          </div>
+          <div class="ref-howto-desc" style="color:var(--gld);font-weight:700">Te caen $500 MXN.</div>
+        </div>
+      </div>
+    </div>`;
+
+    // ── Lista "Mi gente" — solo si tiene referidos ──
+    if(refCount === 0){
+      html += `<div class="ref-empty">
+        <div class="ref-empty-ico">🔗</div>
+        <div class="ref-empty-h">Aún no traes a nadie</div>
+        <div class="ref-empty-sub">Comparte tu código <b style="color:var(--green)">${myCode}</b> con tu gente. Cada quien se inscribe y mete tu código al unirse.</div>
       </div>`;
     } else {
-      html+=`<div style="background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh)">
-        <div style="padding:10px 16px;background:var(--grad-tri);color:#fff;font-weight:700;font-size:.8rem;letter-spacing:.5px">
-          TUS REFERIDOS · ${myRefs.length} persona${myRefs.length!==1?'s':''}
+      html += `<div class="ref-list-section">
+        <div class="ref-list-head">
+          <div class="ref-list-title">Mi gente · ${refCount} invitado${refCount!==1?'s':''}</div>
+          <div class="ref-list-sub">Posición actual</div>
         </div>
-        <table style="width:100%;border-collapse:collapse">
-          <thead>
-            <tr style="background:var(--bg)">
-              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">#</th>
-              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">Usuario</th>
-              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:left;border-bottom:1.5px solid var(--border)">Posición</th>
-              <th style="padding:9px 14px;font-size:.68rem;text-transform:uppercase;letter-spacing:.7px;color:var(--ink3);font-weight:600;text-align:right;border-bottom:1.5px solid var(--border)">Pts</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${myRefs.map((u,i)=>{
-              const rank=board.findIndex(r=>r.name===u)+1;
-              const pts=board.find(r=>r.name===u)?.total||0;
-              return `<tr style="${i%2===0?'background:var(--bg)':''}">
-                <td style="padding:10px 14px;font-size:.82rem;color:var(--ink3)">${i+1}</td>
-                <td style="padding:10px 14px;font-weight:600;color:var(--ink)">${u}</td>
-                <td style="padding:10px 14px;color:var(--ink2)">${rank?`#${rank}`:'—'}</td>
-                <td style="padding:10px 14px;text-align:right;font-weight:700;color:var(--ink)">${pts} pts</td>
-              </tr>`;
-            }).join('')}
-          </tbody>
-        </table>
+        <div class="ref-list">`;
+      // Snapshot del ranking previo (para flechitas de tendencia)
+      let prevSnapshot = {};
+      try {
+        prevSnapshot = JSON.parse(localStorage.getItem('q26_prev_ranks')||'{}');
+      } catch(_){ prevSnapshot = {}; }
+
+      myRefs.forEach((u, i)=>{
+        const rank = board.findIndex(r=>r.name===u)+1;
+        const pts = board.find(r=>r.name===u)?.total||0;
+        const userObj = allUsers().find(x=>x.u===u);
+        const isUserPro = userObj ? (userObj.is_pro !== false) : true;
+        const initials = u.slice(0,2).toUpperCase();
+        // Tendencia: comparar con snapshot previo
+        const prevRank = prevSnapshot[u];
+        let trendHtml = '';
+        if(rank && prevRank && prevRank !== rank){
+          const diff = prevRank - rank;
+          if(diff > 0){
+            trendHtml = `<div class="ref-trend up">↑ ${diff}</div>`;
+          } else if(diff < 0){
+            trendHtml = `<div class="ref-trend down">↓ ${Math.abs(diff)}</div>`;
+          }
+        }
+        const isLast = i === myRefs.length - 1;
+        // Color del avatar: rotar entre los 3 del brand
+        const gradients = [
+          'linear-gradient(135deg,#006838,#003087)',
+          'linear-gradient(135deg,#003087,#c0001a)',
+          'linear-gradient(135deg,#c0001a,#006838)'
+        ];
+        const grad = gradients[i % gradients.length];
+        const proBadge = isUserPro
+          ? `<span class="ref-badge pro">💎 Pro</span>`
+          : `<span class="ref-badge user">👤 User</span>`;
+        const ptsText = isUserPro
+          ? `${pts} pts`
+          : `<span style="color:var(--ink3);font-style:italic">Sin participar en bolsa global</span>`;
+        const rankCell = isUserPro
+          ? `<div class="ref-rank">${rank?'#'+rank:'—'}</div>${trendHtml}`
+          : `<div class="ref-rank" style="color:var(--ink3);font-size:.78rem">—</div>`;
+
+        html += `<div class="ref-row${isLast?' last':''}">
+          <div class="ref-avatar" style="background:${grad}">${initials}</div>
+          <div class="ref-info">
+            <div class="ref-uname">@${escHtml(u)} ${proBadge}</div>
+            <div class="ref-meta">${ptsText}</div>
+          </div>
+          <div class="ref-rank-box">${rankCell}</div>
+        </div>`;
+      });
+      // Guardar snapshot para próxima visita (tendencia)
+      const newSnapshot = {};
+      myRefs.forEach(u=>{
+        const r = board.findIndex(x=>x.name===u)+1;
+        if(r) newSnapshot[u] = r;
+      });
+      try { localStorage.setItem('q26_prev_ranks', JSON.stringify(newSnapshot)); } catch(_){}
+      html += `</div>
+        <div class="ref-disclaimer">💡 Solo los <b>User Pro</b> compiten por la bolsa y el bono $500. Los Users juegan en grupos privados.</div>
       </div>`;
     }
+
     wrap.innerHTML=html;
   }).catch(()=>{
     wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Error cargando referidos.</div>`;
