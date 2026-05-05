@@ -4100,7 +4100,7 @@ function doLogin(){
       const refSeen = sameUser ? (prev.refSeen || false) : false;
       CU={u:user.username, admin:user.is_admin, code:user.code, is_pro:user.is_pro!==false, refSeen};
       try { localStorage.setItem('q26u',JSON.stringify(CU)); } catch(_){}
-      boot();
+      boot({fromLogin: true});
     })
     .catch(e=>{
       // Si la cuenta está pendiente de aprobación, mostrar el modal correspondiente
@@ -5167,7 +5167,10 @@ function countUp(el, from, to, duration){
   requestAnimationFrame(tick);
 }
 
-function boot(){
+function boot(opts){
+  // opts.fromLogin = true → siempre va a 'inicio' (login/signup).
+  // Si no, intenta restaurar la última página (recarga estando logueado).
+  const fromLogin = opts && opts.fromLogin === true;
   // Cerrar el modal de login si está abierto
   closeLoginModal();
 
@@ -5234,9 +5237,10 @@ function boot(){
       if(CU.admin) document.querySelectorAll('.admin-only').forEach(e=>e.style.display='');
       renderGroups();renderBracket();renderRanking();renderPremios();
       if(CU.admin) renderAdmin();
-      // Restore last page
-      const lastPage = localStorage.getItem('q26page') || 'inicio';
-      go(lastPage);
+      // Al iniciar sesión, siempre llevar al usuario a "Inicio"
+      // Al recargar (sesión existente), respetar la última página
+      const dest = fromLogin ? 'inicio' : (localStorage.getItem('q26page') || 'inicio');
+      go(dest);
       setTimeout(()=>{
         const al=document.getElementById('auth-logo');
         if(al) drawStaticLogo(al,36);
