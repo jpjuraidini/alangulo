@@ -3236,15 +3236,15 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     </div>
 
     <div class="drawer-section">Navegación</div>
-    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('inicio')" style="display:none">Inicio</button>
-    <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
-    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('grupos')" style="display:none">Fase de Grupos</button>
-    <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
-    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('bracket')" style="display:none">Bracket</button>
-    <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
-    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('miquiniela')" style="display:none">Mi Quiniela</button>
-    <div class="drawer-item-sep drawer-mobile-nav" style="display:none"></div>
-    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('ranking')" style="display:none">Ranking</button>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('inicio')">Inicio</button>
+    <div class="drawer-item-sep drawer-mobile-nav"></div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('grupos')">Fase de Grupos</button>
+    <div class="drawer-item-sep drawer-mobile-nav"></div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('bracket')">Bracket</button>
+    <div class="drawer-item-sep drawer-mobile-nav"></div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('miquiniela')">Mi Quiniela</button>
+    <div class="drawer-item-sep drawer-mobile-nav"></div>
+    <button class="drawer-item drawer-mobile-nav" onclick="goDrawer('ranking')">Ranking</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('misgrupos')">Mis Grupos</button>
     <div class="drawer-item-sep"></div>
@@ -9358,6 +9358,7 @@ function buildBoard(){
 //  DRAWER
 // ══════════════════════════════════════════════════════
 function openDrawer(){
+  syncDrawer();
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer-overlay').classList.add('open');
   document.body.style.overflow='hidden';
@@ -9386,9 +9387,6 @@ function syncDrawer(){
   // show "Quiero ser Pro" item in drawer if user is NOT pro and NOT admin y antes del cutoff
   const upgradeAvail = CU && !CU.admin && !isProUser(CU.u) && !isTournamentLocked();
   if(upgradeAvail) document.querySelectorAll('.drawer-user-item').forEach(e=>e.style.display='');
-  // show main nav in drawer on mobile
-  const isMobile=window.innerWidth<=768;
-  document.querySelectorAll('.drawer-mobile-nav').forEach(e=>e.style.display=isMobile?'':'none');
 }
 
 // ══════════════════════════════════════════════════════
