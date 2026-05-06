@@ -7145,7 +7145,10 @@ function renderUsersTable(){
       <td style="color:var(--b2);font-weight:600">${refCount}</td>
       <td style="color:${partidosColor};font-size:.78rem;font-weight:${partidosFW}" title="Grupos: ${grpCount}/${GROUP_MATCHES} · Bracket: ${brCount}/32">${totalCount}/${TOTAL_MATCHES}${isComplete?' ✓':''}</td>
       <td style="font-family:'Plus Jakarta Sans';font-weight:800;color:var(--g)">${pts}</td>
-      <td>${canDelete?`<button class="del-btn" onclick="deleteUser('${u.u}')" title="Eliminar usuario">✕</button>`:'<span style="color:var(--border2);font-size:.7rem">—</span>'}</td>`;
+      <td>${canDelete?(u.approved===false
+        ?`<button class="del-btn" style="background:rgba(232,170,30,.18);color:#c8900a" onclick="deleteUser('${u.u}',true)" title="Pendiente — usa el botón Rechazar arriba">⚠</button>`
+        :`<button class="del-btn" onclick="deleteUser('${u.u}')" title="Eliminar usuario">✕</button>`)
+        :'<span style="color:var(--border2);font-size:.7rem">—</span>'}</td>`;
     tbody.appendChild(tr);
   });
 }
@@ -7205,8 +7208,30 @@ document.getElementById('adm-modal').addEventListener('click', e=>{
   if(e.target===document.getElementById('adm-modal')) closeAdmModal();
 });
 
-function deleteUser(u){
+function deleteUser(u, isPending){
   if(u===CU.u) return;
+  // Protección extra: si es pendiente, redirigir al flujo de Rechazar
+  if(isPending){
+    openAdmModal(
+      `⚠ "${u}" está pendiente`,
+      `Este usuario aún NO está aprobado. Si quieres rechazar su inscripción, usa el botón "Rechazar" en la sección de Inscripciones pendientes (arriba). Si insistes en eliminar desde aquí, perderás todo registro de su solicitud.`,
+      'Eliminar de todas formas','danger',false,'',
+      function(){
+        api('DELETE',`/api/users/${u}`)
+          .then(()=>api('GET','/api/users'))
+          .then(users=>{
+            dynUsers=users.filter(x=>!USERS.find(y=>y.u===x.username))
+              .map(x=>({u:x.username,p:'',admin:x.is_admin,code:x.code,is_pro:x.is_pro!==false,requested_type:x.requested_type||'pro',full_name:x.full_name,phone:x.phone,approved:x.approved!==false}));
+            delete picks[u];
+            renderUsersTable();renderPremios();renderRanking();
+            if(typeof renderPendingApprovals==='function') renderPendingApprovals();
+            toast(`Usuario pendiente "${u}" eliminado ✓`);
+          })
+          .catch(e=>toast('Error: '+e.message));
+      }
+    );
+    return;
+  }
   openAdmModal(
     `Eliminar a "${u}"`,
     `Se borrarán todas sus predicciones y no podrá volver a entrar. Esta acción no se puede deshacer.`,
