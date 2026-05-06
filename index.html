@@ -1931,6 +1931,10 @@ body.dark .adm-type-pill.user{color:#a0a8c0}
 .adm-upgrade-btn{margin-left:6px;background:linear-gradient(135deg,#c8900a,#e8a020);color:#fff;border:none;padding:3px 9px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.64rem;font-weight:800;cursor:pointer;letter-spacing:.3px;transition:all .15s;box-shadow:0 2px 8px rgba(232,170,30,.3)}
 .adm-upgrade-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,170,30,.45)}
 
+/* Botón revertir aprobación */
+.adm-revert-btn{margin-left:4px;background:transparent;color:var(--ink3);border:1px solid var(--border);padding:2px 7px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;line-height:1;transition:all .15s}
+.adm-revert-btn:hover{background:var(--r-bg);color:var(--r);border-color:var(--r)}
+
 .adm-title{font-weight:800;font-size:1rem;margin-bottom:.75rem;padding-bottom:6px;display:inline-block;letter-spacing:.3px;background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;border-bottom:2px solid transparent;border-image:var(--grad-tri) 1}
 .adm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem}
 .adm-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);padding:14px;box-shadow:var(--sh)}
@@ -7013,6 +7017,27 @@ function renderPendingApprovals(){
   });
 }
 
+// Revertir aprobación: poner a un usuario aprobado de vuelta como pendiente
+function unapproveUser(username, displayName){
+  if(!username) return;
+  const msg = `¿Revertir a "${displayName||username}" a estado pendiente?\n\nEl usuario perderá acceso a la app y volverá a aparecer en "Inscripciones pendientes". Sus predicciones NO se borran.`;
+  if(!confirm(msg)) return;
+  api('POST', `/api/users/${encodeURIComponent(username)}/unapprove`)
+    .then(()=>{
+      toast(`↶ ${displayName||username} revertido a pendiente`);
+      // Refrescar lista de usuarios y pendientes
+      api('GET','/api/users').then(users=>{
+        dynUsers = users.filter(x=>!USERS.find(y=>y.u===x.username))
+          .map(x=>({u:x.username, p:'', admin:x.is_admin, code:x.code, is_pro:x.is_pro!==false, requested_type:x.requested_type||'pro', full_name:x.full_name, phone:x.phone, approved:x.approved!==false}));
+        renderUsersTable();
+        if(typeof renderPendingApprovals==='function') renderPendingApprovals();
+        if(typeof renderPremios==='function') renderPremios();
+        if(typeof renderRanking==='function') renderRanking();
+      }).catch(()=>{});
+    })
+    .catch(e=>toast(`Error: ${e.message||'no se pudo revertir'}`));
+}
+
 function approveUser(username, displayName, isPro){
   if(!username) return;
   // Si no se especifica isPro, lee del backend (basado en requested_type)
@@ -7118,12 +7143,19 @@ function renderUsersTable(){
     if(isAdmin){
       typeCell = `<span class="adm-type-pill admin">⚙ admin</span>`;
     } else if(isPro){
-      typeCell = `<span class="adm-type-pill pro">💎 Pro</span>`;
+      // Pro aprobado: mostrar badge + botón "↶" para revertir
+      const revertBtn = (!isMe && u.approved !== false)
+        ? `<button class="adm-revert-btn" onclick="unapproveUser('${u.u.replace(/'/g,"\\'")}','${(u.full_name||u.u).replace(/'/g,"\\'")}')" title="Revertir a pendiente (deshacer aprobación)">↶</button>`
+        : '';
+      typeCell = `<span class="adm-type-pill pro">💎 Pro</span>${revertBtn}`;
     } else {
       const upgradeBtn = (upgradeAllowed && !isMe)
         ? `<button class="adm-upgrade-btn" onclick="upgradeToPro('${u.u.replace(/'/g,"\\'")}','${(u.full_name||u.u).replace(/'/g,"\\'")}')" title="Marcar como Pro (ya pagó upgrade)">↑ Pro</button>`
         : '';
-      typeCell = `<span class="adm-type-pill user">👤 User</span>${upgradeBtn}`;
+      const revertBtn = (!isMe && u.approved !== false)
+        ? `<button class="adm-revert-btn" onclick="unapproveUser('${u.u.replace(/'/g,"\\'")}','${(u.full_name||u.u).replace(/'/g,"\\'")}')" title="Revertir a pendiente (deshacer aprobación)">↶</button>`
+        : '';
+      typeCell = `<span class="adm-type-pill user">👤 User</span>${upgradeBtn}${revertBtn}`;
     }
 
     // Color verde si está completo, rojo si está vacío
