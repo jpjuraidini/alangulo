@@ -1811,6 +1811,31 @@ body.dark .ref-badge.user{background:rgba(180,190,220,.16);color:var(--ink2)}
 .ref-disclaimer{background:rgba(0,82,204,.06);border-left:3px solid var(--blue2);border-radius:0 8px 8px 0;padding:9px 12px;margin-top:12px;font-size:.72rem;color:var(--blue);line-height:1.5;font-weight:600}
 body.dark .ref-disclaimer{background:rgba(0,82,204,.14);color:#80a8e0}
 
+/* ── TU PASE PAGE ── */
+.tp-round-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--sh)}
+.tp-round-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.tp-round-title{display:flex;flex-direction:column;gap:1px}
+.tp-round-name{font-weight:800;font-size:.95rem;color:var(--ink);letter-spacing:-.2px}
+.tp-round-meta{font-size:.65rem;color:var(--ink3);font-weight:600}
+.tp-round-state{font-size:.78rem;font-weight:800;letter-spacing:.2px}
+.tp-teams-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:5px}
+.tp-team{display:flex;align-items:center;gap:5px;padding:6px 9px;border-radius:8px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.72rem;font-weight:700;border:1.5px solid var(--border);background:var(--bg)}
+body.dark .tp-team{background:#0c0f1c}
+.tp-team-flag{font-size:.95rem;line-height:1;flex-shrink:0}
+.tp-team-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink)}
+.tp-team-ico{font-size:.78rem;line-height:1;flex-shrink:0;font-weight:800}
+.tp-team.tp-hit{background:var(--green-bg);border-color:var(--green2);color:var(--green)}
+.tp-team.tp-hit .tp-team-name{color:var(--green)}
+.tp-team.tp-hit .tp-team-ico{color:var(--green)}
+body.dark .tp-team.tp-hit{background:rgba(0,196,106,.16)}
+.tp-team.tp-miss{background:var(--r-bg);border-color:rgba(192,0,26,.35);color:var(--r);opacity:.85}
+.tp-team.tp-miss .tp-team-name{color:var(--r)}
+.tp-team.tp-miss .tp-team-ico{color:var(--r)}
+body.dark .tp-team.tp-miss{background:rgba(192,0,26,.16)}
+.tp-team.tp-pending{opacity:.7}
+.tp-team.tp-pending .tp-team-ico{color:var(--ink3);font-size:.7rem}
+.tp-empty{grid-column:1/-1;font-size:.75rem;color:var(--ink3);font-style:italic;text-align:center;padding:.8rem}
+
 /* ── ADMIN PAGE REDESIGN ── */
 .adm-hero{background:var(--surface);border:1.5px solid var(--border);border-radius:18px;padding:18px 20px;margin-bottom:12px;box-shadow:var(--sh);position:relative;overflow:hidden}
 .adm-hero-orbs{position:absolute;inset:0;pointer-events:none;overflow:hidden}
@@ -2068,6 +2093,9 @@ body.dark .rules-note{background:#0c0f1c}
 .rules-note.warn{color:#8a5a00;border-left-color:#c8900a;background:rgba(255,200,80,.1);font-style:normal;font-weight:600}
 body.dark .rules-note.warn{color:#f0b030;background:rgba(232,170,30,.08)}
 .rules-note.warn b{color:inherit}
+.rules-note.info{color:var(--blue);border-left-color:var(--blue2);background:rgba(0,82,204,.06);font-style:normal;font-weight:600}
+body.dark .rules-note.info{color:#80a8e0;background:rgba(0,82,204,.14)}
+.rules-note.info b{color:inherit}
 
 /* Bonus box (referidos) */
 .rules-bonus{background:linear-gradient(135deg,#fff9e6,#fffef8);border:2px solid rgba(232,170,30,.4);border-radius:14px;padding:12px 16px;margin-bottom:10px;display:flex;gap:12px;align-items:flex-start}
@@ -3374,6 +3402,8 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('referidos')">Mis Referidos</button>
     <div class="drawer-item-sep"></div>
+    <button class="drawer-item" onclick="goDrawer('tupase')">Tu Pase 🎯</button>
+    <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('countdown')">Cuenta Regresiva</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="closeDrawer();openOnboard()">Ver tutorial 🎓</button>
@@ -3761,6 +3791,11 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div id="referidos-wrap"></div>
   </div>
 
+  <!-- TU PASE — Predichos por ronda vs clasificados oficiales -->
+  <div class="page" id="page-tupase">
+    <div id="tupase-wrap"></div>
+  </div>
+
   <!-- COUNTDOWN -->
   <div class="page" id="page-countdown">
     <div class="ph">
@@ -4069,6 +4104,18 @@ const PTS={
   sf:  [7,  14],  // Semis
   tp:  [10, 20],  // 3er lugar
   f:   [10, 20],  // Final
+};
+
+// ── BONUS DE CLASIFICACIÓN POR RONDA ──
+// Puntos extra por cada equipo que el usuario haya predicho que clasifica a una ronda,
+// y que efectivamente clasifique. Independiente de los puntos por partido del bracket.
+// Sirve para mantener el ranking en movimiento aunque alguien falle un partido individual.
+const PTS_CLASIFICADOS = {
+  r32: { pts: 1, label: '16avos',   total: 32 }, // 32 países pasan a 16avos
+  r16: { pts: 2, label: 'Octavos',  total: 16 }, // 16 ganadores de 16avos
+  qf:  { pts: 3, label: 'Cuartos',  total: 8  }, // 8 ganadores de octavos
+  sf:  { pts: 5, label: 'Semis',    total: 4  }, // 4 ganadores de cuartos
+  f:   { pts: 8, label: 'Final',    total: 2  }, // 2 finalistas
 };
 
 // ── SIMULATED USERS for ranking demo ──
@@ -5656,19 +5703,85 @@ function resolveSeed12(seed){ // '1A','2B', etc.
   return st[pos]?.team||null;
 }
 
+// ── CLASIFICADOS PREDICHOS POR USUARIO POR RONDA ──
+// Devuelve un Set con los códigos de los equipos que el usuario predice que pasan a esa ronda.
+// round = 'r32' | 'r16' | 'qf' | 'sf' | 'f'
+function getUserPredictedQualifiers(username, round){
+  const userPicks = picks[username];
+  if(!userPicks) return new Set();
+  const sc = userPicks.sc || {};
+  const br = userPicks.br || {};
+
+  if(round === 'r32'){
+    // 32 países que pasan a 16avos = 2 primeros de cada grupo (24) + 8 mejores terceros
+    const out = new Set();
+    Object.keys(GROUPS).forEach(g => {
+      const played = GM[g].filter(m => sc[m.id] != null).length;
+      if(played === 0) return;
+      const st = standings(g, sc);
+      if(st[0]) out.add(st[0].team);
+      if(st[1]) out.add(st[1].team);
+    });
+    // 8 mejores terceros usando la lógica FIFA con backtracking
+    const best3 = getBest3rds(sc);
+    const result = {};
+    assignThirds(THIRD_RULES, best3, new Set(), result);
+    Object.values(result).forEach(team => { if(team) out.add(team); });
+    return out;
+  }
+
+  // Para r16/qf/sf/f: leer los winners del bracket del usuario en la ronda ANTERIOR
+  // r16 = winners de r32_0..r32_15 (16 partidos)
+  // qf  = winners de r16_0..r16_7 (8 partidos)
+  // sf  = winners de qf_0..qf_3 (4 partidos)
+  // f   = winners de sf_0..sf_1 (2 partidos)
+  const sourceRound = round === 'r16' ? 'r32'
+                    : round === 'qf'  ? 'r16'
+                    : round === 'sf'  ? 'qf'
+                    : round === 'f'   ? 'sf'
+                    : null;
+  if(!sourceRound) return new Set();
+  const out = new Set();
+  Object.entries(br).forEach(([id, team]) => {
+    if(id.startsWith(sourceRound + '_') && team) out.add(team);
+  });
+  return out;
+}
+
+// Helper para calcular bonus de clasificación para un usuario
+// Recibe los "clasificados oficiales" (lista del admin) y devuelve el desglose
+function calcClasificadosBonus(username, oficiales){
+  // oficiales = { r32: ['MEX','FRA',...], r16: [...], qf: [...], sf: [...], f: [...] }
+  const breakdown = { r32:0, r16:0, qf:0, sf:0, f:0, total:0 };
+  if(!oficiales) return breakdown;
+  Object.keys(PTS_CLASIFICADOS).forEach(round => {
+    const realList = oficiales[round];
+    if(!Array.isArray(realList) || realList.length === 0) return;
+    const userPredicted = getUserPredictedQualifiers(username, round);
+    let hits = 0;
+    realList.forEach(team => {
+      if(userPredicted.has(team)) hits++;
+    });
+    const bonus = hits * PTS_CLASIFICADOS[round].pts;
+    breakdown[round] = bonus;
+    breakdown.total += bonus;
+  });
+  return breakdown;
+}
+
 // ── BEST 3RDS: returns { team, grp } sorted by pts→gd→gf ──
-function getBest3rds(){
+// Acepta sc opcional para calcular sobre cualquier set de scores (no solo picks del usuario actual)
+function getBest3rds(sc){
+  const scoreMap = sc || picks[CU.u].sc;
   const thirds=[];
   Object.keys(GROUPS).forEach(g=>{
-    const sm=picks[CU.u].sc;
-    const played=GM[g].filter(m=>sm[m.id]!=null).length;
+    const played=GM[g].filter(m=>scoreMap[m.id]!=null).length;
     if(played===0) return;
-    const st=standings(g,sm);
+    const st=standings(g,scoreMap);
     const t=st[2];
     if(t) thirds.push({team:t.team,pts:t.pts,gd:t.gd,gf:t.gf,grp:g});
   });
   thirds.sort((a,b)=>b.pts!==a.pts?b.pts-a.pts:b.gd!==a.gd?b.gd-a.gd:b.gf-a.gf);
-  // Return top 8 with their group of origin
   return thirds.slice(0,8);
 }
 
@@ -6533,6 +6646,7 @@ function renderAdmin(){
       <button class="adm-nav-btn" onclick="scrollToAdmSec('sync')">🟢 Sync</button>
       <button class="adm-nav-btn" onclick="scrollToAdmSec('groups')">⚽ Grupos</button>
       <button class="adm-nav-btn" onclick="scrollToAdmSec('bracket')">🏆 Bracket</button>
+      <button class="adm-nav-btn" onclick="scrollToAdmSec('qualifiers')">🎯 Clasificados</button>
       <button class="adm-nav-btn" onclick="scrollToAdmSec('snapshots')">📸 Snapshots</button>
       <button class="adm-nav-btn" onclick="scrollToAdmSec('changelog')">📜 Historial</button>
     </div>
@@ -6754,6 +6868,21 @@ function renderAdmin(){
   });
   html+=`</div>`;
 
+  // ── CLASIFICADOS POR RONDA ──
+  html+=`<div id="adm-sec-qualifiers" class="adm-card-section">
+    <div class="adm-card-head">
+      <div class="adm-card-head-l">
+        <div class="adm-card-icon" style="background:linear-gradient(135deg,#003087,#006838)">🎯</div>
+        <div>
+          <div class="adm-card-title">Clasificados por ronda</div>
+          <div class="adm-card-sub">Marca quién pasó a cada ronda para repartir puntos de bonus</div>
+        </div>
+      </div>
+    </div>
+    <div id="qualif-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;padding-bottom:12px;border-bottom:1.5px solid var(--border)"></div>
+    <div id="qualif-body"></div>
+  </div>`;
+
   html+=`<div id="adm-sec-changelog" class="adm-card-section">
     <div class="adm-card-head">
       <div class="adm-card-head-l">
@@ -6770,6 +6899,7 @@ function renderAdmin(){
   w.innerHTML=html;
   renderUsersTable();
   renderChangelog();
+  renderQualifiersPanel();
   // Pintar el banner de pendientes (depende de paynotif y pending list que cargan async)
   setTimeout(renderAdminPendingBar, 600);
 }
@@ -7724,6 +7854,18 @@ function renderReglas(){
           </tbody>
         </table>
         <div class="rules-note warn">⚠️ En eliminatoria, si no aciertas al que avanza no ganas ningún punto — ni por marcador ni por ganador.</div>
+        <p style="margin-top:1rem"><b>🎯 Bonus de clasificación por ronda:</b> Además de los puntos por partido, ganas puntos extra por cada equipo que predigas correctamente que avanza a cada ronda — aunque falles el partido específico.</p>
+        <table class="rules-pts-table" style="margin-top:.5rem">
+          <thead><tr><th>Ronda</th><th>Equipos que pasan</th><th>Pts por acierto</th><th>Máximo</th></tr></thead>
+          <tbody>
+            <tr><td class="pt-round">16avos</td><td>32</td><td><span class="pt-win">+1</span></td><td><span class="pt-max">+32</span></td></tr>
+            <tr><td class="pt-round">Octavos</td><td>16</td><td><span class="pt-win">+2</span></td><td><span class="pt-max">+32</span></td></tr>
+            <tr><td class="pt-round">Cuartos</td><td>8</td><td><span class="pt-win">+3</span></td><td><span class="pt-max">+24</span></td></tr>
+            <tr><td class="pt-round">Semis</td><td>4</td><td><span class="pt-win">+5</span></td><td><span class="pt-max">+20</span></td></tr>
+            <tr><td class="pt-round">Final</td><td>2</td><td><span class="pt-win">+8</span></td><td><span class="pt-max">+16</span></td></tr>
+          </tbody>
+        </table>
+        <div class="rules-note info" style="margin-top:.5rem">💡 Hasta <b>+124 puntos</b> extra si aciertas todos. Estos puntos son <b>adicionales</b> a los del bracket — aunque falles partidos individuales, si el equipo real estaba en tu predicción de "quién pasa", igual sumas. Puedes ver tu progreso en <b>Tu Pase 🎯</b>.</div>
       `
     },
     {
@@ -8897,6 +9039,7 @@ function openPublicRules(){
         </tbody>
       </table>
       <p style="font-size:.75rem;color:var(--ink3);margin-top:.5rem">⚠️ En eliminatoria, si no aciertas al que avanza no ganas ningún punto.</p>
+      <p style="font-size:.78rem;color:var(--blue);margin-top:.5rem;background:rgba(0,82,204,.06);border-left:3px solid var(--blue2);padding:8px 12px;border-radius:0 8px 8px 0;font-weight:600">🎯 <b>Bonus de clasificación:</b> Además, por cada equipo que predigas correctamente que avanza a una ronda (16avos +1, Octavos +2, Cuartos +3, Semis +5, Final +8 — máx <b>+124 puntos</b>). Puedes verlos en <b>Tu Pase</b>.</p>
     </div>
 
     <div>
@@ -9609,6 +9752,165 @@ function logChange(matchId, oldH, oldA, newH, newA, isAuto){
   changelog.unshift({ ts: Date.now(), user: CU.u, matchId, oldH, oldA, newH, newA, auto: isAuto||false });
   if (changelog.length > 200) changelog = changelog.slice(0,200);
   saveChangelog();
+}
+
+// ══════════════════════════════════════════════════════
+//  QUALIFIERS PANEL (admin) — Clasificados por ronda
+// ══════════════════════════════════════════════════════
+
+let _qualifActiveRound = 'r32';
+let _qualifData = { r32:[], r16:[], qf:[], sf:[], f:[] }; // copia local mientras editas
+
+function renderQualifiersPanel(){
+  const tabs = document.getElementById('qualif-tabs');
+  const body = document.getElementById('qualif-body');
+  if(!tabs || !body) return;
+
+  // Cargar oficiales actuales
+  api('GET','/api/qualifiers').then(data=>{
+    _qualifData = {
+      r32: Array.isArray(data?.r32) ? data.r32 : [],
+      r16: Array.isArray(data?.r16) ? data.r16 : [],
+      qf:  Array.isArray(data?.qf)  ? data.qf  : [],
+      sf:  Array.isArray(data?.sf)  ? data.sf  : [],
+      f:   Array.isArray(data?.f)   ? data.f   : [],
+    };
+    drawQualifTabs();
+    drawQualifBody();
+  }).catch(()=>{
+    _qualifData = { r32:[], r16:[], qf:[], sf:[], f:[] };
+    drawQualifTabs();
+    drawQualifBody();
+  });
+}
+
+function drawQualifTabs(){
+  const tabs = document.getElementById('qualif-tabs');
+  if(!tabs) return;
+  const order = ['r32','r16','qf','sf','f'];
+  tabs.innerHTML = order.map(rk=>{
+    const meta = PTS_CLASIFICADOS[rk];
+    const count = (_qualifData[rk]||[]).length;
+    const isActive = rk === _qualifActiveRound;
+    const isComplete = count === meta.total;
+    return `<button onclick="setQualifTab('${rk}')" style="
+      background:${isActive?'var(--grad-tri)':'var(--bg)'};
+      color:${isActive?'#fff':'var(--ink2)'};
+      border:1px solid ${isActive?'transparent':'var(--border)'};
+      padding:7px 12px;
+      border-radius:9px;
+      font-family:'Plus Jakarta Sans',sans-serif;
+      font-weight:700;
+      font-size:.74rem;
+      cursor:pointer;
+      transition:all .15s;
+      display:inline-flex;align-items:center;gap:6px">
+      ${meta.label} · ${meta.total} · ${meta.pts} pt${meta.pts!==1?'s':''}
+      <span style="
+        background:${isActive?'rgba(255,255,255,.25)':isComplete?'var(--green-bg)':'rgba(120,128,160,.16)'};
+        color:${isActive?'#fff':isComplete?'var(--green)':'var(--ink3)'};
+        padding:1px 7px;border-radius:8px;font-size:.6rem;font-weight:800">
+        ${count}/${meta.total}${isComplete?' ✓':''}
+      </span>
+    </button>`;
+  }).join('');
+}
+
+function setQualifTab(round){
+  _qualifActiveRound = round;
+  drawQualifTabs();
+  drawQualifBody();
+}
+
+function drawQualifBody(){
+  const body = document.getElementById('qualif-body');
+  if(!body) return;
+  const round = _qualifActiveRound;
+  const meta = PTS_CLASIFICADOS[round];
+  const selected = new Set(_qualifData[round]||[]);
+  const allTeams = Object.values(GROUPS).flatMap(g=>g.teams).sort((a,b)=>(NM[a]||a).localeCompare(NM[b]||b));
+
+  body.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:.78rem;color:var(--ink2)">
+        Países clasificados a <b style="color:var(--ink)">${meta.label}</b>
+        · <span style="color:var(--green);font-weight:700">${selected.size}/${meta.total} seleccionados</span>
+        ${selected.size>0?' · <span style="color:var(--ink3)">'+meta.pts+' pt'+(meta.pts!==1?'s':'')+' por cada coincidencia</span>':''}
+      </div>
+      ${selected.size>0?`<button onclick="clearQualifRound()" style="background:none;border:1px solid var(--border);color:var(--ink3);padding:4px 9px;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.68rem;cursor:pointer">Limpiar</button>`:''}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:6px;margin-bottom:14px;max-height:380px;overflow-y:auto;padding:2px">
+      ${allTeams.map(code=>{
+        const isSel = selected.has(code);
+        const disabled = !isSel && selected.size >= meta.total;
+        return `<button onclick="toggleQualifTeam('${code}')" ${disabled?'disabled':''} style="
+          background:${isSel?'var(--green-bg)':'var(--bg)'};
+          color:${isSel?'var(--green)':disabled?'var(--ink3)':'var(--ink)'};
+          border:1.5px solid ${isSel?'var(--green2)':'var(--border)'};
+          padding:7px 9px;border-radius:8px;cursor:${disabled?'not-allowed':'pointer'};
+          font-family:'Plus Jakarta Sans',sans-serif;font-weight:${isSel?'800':'600'};font-size:.74rem;
+          text-align:left;display:flex;align-items:center;gap:5px;
+          opacity:${disabled?'.4':'1'};transition:all .12s">
+          <span style="font-size:.95rem;line-height:1">${FL[code]||'🏳'}</span>
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${NM[code]||code}</span>
+          ${isSel?'<span style="font-size:.8rem">✓</span>':''}
+        </button>`;
+      }).join('')}
+    </div>
+    <button onclick="saveQualifRound()" style="
+      width:100%;background:var(--grad-tri);color:#fff;border:none;
+      padding:11px 16px;border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;
+      font-weight:800;font-size:.85rem;cursor:pointer;letter-spacing:.3px;
+      box-shadow:0 4px 14px rgba(0,48,135,.25)">
+      Guardar y distribuir puntos de ${meta.label}
+    </button>
+  `;
+}
+
+function toggleQualifTeam(code){
+  const round = _qualifActiveRound;
+  const meta = PTS_CLASIFICADOS[round];
+  const arr = _qualifData[round] || [];
+  const idx = arr.indexOf(code);
+  if(idx >= 0){
+    arr.splice(idx, 1);
+  } else {
+    if(arr.length >= meta.total){
+      toast(`Máximo ${meta.total} equipos en ${meta.label}`);
+      return;
+    }
+    arr.push(code);
+  }
+  _qualifData[round] = arr;
+  drawQualifTabs();
+  drawQualifBody();
+}
+
+function clearQualifRound(){
+  const round = _qualifActiveRound;
+  const meta = PTS_CLASIFICADOS[round];
+  if(!confirm(`¿Limpiar la lista de ${meta.label}? No se guardará hasta que des click en "Guardar".`)) return;
+  _qualifData[round] = [];
+  drawQualifTabs();
+  drawQualifBody();
+}
+
+function saveQualifRound(){
+  const round = _qualifActiveRound;
+  const meta = PTS_CLASIFICADOS[round];
+  const teams = _qualifData[round] || [];
+  if(teams.length === 0){
+    if(!confirm(`No hay países seleccionados para ${meta.label}. ¿Guardar lista vacía? (esto resetea el bonus de esta ronda)`)) return;
+  } else if(teams.length < meta.total){
+    if(!confirm(`Solo seleccionaste ${teams.length} de ${meta.total} países para ${meta.label}. ¿Guardar de todas formas?`)) return;
+  }
+  api('PUT', `/api/qualifiers/${round}`, { teams })
+    .then(()=>{
+      toast(`✓ ${meta.label} guardado · ${teams.length} países`);
+      // Refrescar ranking
+      if(typeof renderRanking === 'function') renderRanking();
+    })
+    .catch(e=>toast('Error: '+(e.message||'no se pudo guardar')));
 }
 
 function renderChangelog(){
@@ -10378,6 +10680,7 @@ function _doNavigate(name){
   if(name==='miquiniela')     { renderMiQuiniela(); setupMqSticky(); }
   if(name==='misgrupos')      { renderMisGrupos(); setupMisgruposSticky(); }
   if(name==='referidos')      renderReferidos();
+  if(name==='tupase')         renderTuPase();
   if(name==='countdown')      renderCountdown();
   if(name==='inicio')         renderInicio();
   if(name==='grupos')         { renderGroups(); setupGruposSticky(); }
@@ -11337,6 +11640,114 @@ function renderReferidos(){
     wrap.innerHTML=html;
   }).catch(()=>{
     wrap.innerHTML=`<div style="color:var(--ink3);font-style:italic;padding:1rem">Error cargando referidos.</div>`;
+  });
+}
+
+// ══════════════════════════════════════════════════════
+//  TU PASE — Predichos por ronda vs clasificados oficiales
+// ══════════════════════════════════════════════════════
+function renderTuPase(){
+  const wrap = document.getElementById('tupase-wrap');
+  if(!wrap) return;
+  wrap.innerHTML = `<div class="sk-stack" style="padding:.5rem 0">
+    <div class="sk row" style="display:block;padding:18px">
+      <div class="sk" style="width:35%;height:14px;margin-bottom:10px"></div>
+      <div class="sk" style="width:55%;height:32px"></div>
+    </div>
+  </div>`;
+
+  api('GET', `/api/qualifiers/breakdown/${encodeURIComponent(CU.u)}`).then(data=>{
+    const order = ['r32','r16','qf','sf','f'];
+    const totalBonus = data.totalBonus || 0;
+    // Calcular máximo posible
+    const maxBonus = order.reduce((s,r)=>s + PTS_CLASIFICADOS[r].pts * PTS_CLASIFICADOS[r].total, 0);
+
+    let html = `<div class="ph2">
+      <div class="ph2-orbs"><div class="ph2-orb ph2-orb-g"></div><div class="ph2-orb ph2-orb-r"></div></div>
+      <div class="ph2-content">
+        <div class="ph2-eyebrow"><span class="ph2-eyebrow-dot"></span>Tu pase por ronda</div>
+        <div class="ph2-h1">¿Quién pasa?</div>
+        <div class="ph2-sub">Cada equipo que predigas correctamente que pasa a la siguiente ronda te da puntos extra. <b style="color:var(--green)">Más rondas, más puntos por acierto.</b></div>
+        <div class="ph2-stats">
+          <div class="ph2-stat">
+            <div class="ph2-stat-lbl">Bono acumulado</div>
+            <div class="ph2-stat-num" style="color:var(--green)">+${totalBonus}</div>
+          </div>
+          <div class="ph2-stat">
+            <div class="ph2-stat-lbl">Máximo posible</div>
+            <div class="ph2-stat-num" style="color:var(--ink3)">+${maxBonus}</div>
+          </div>
+          <div class="ph2-stat">
+            <div class="ph2-stat-lbl">Aprovechado</div>
+            <div class="ph2-stat-num" style="color:var(--blue2)">${Math.round(100*totalBonus/maxBonus)}%</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+    order.forEach(rk=>{
+      const meta = PTS_CLASIFICADOS[rk];
+      const rd = data[rk] || { predicted:[], official:[], hits:[], bonus:0 };
+      const predicted = rd.predicted || [];
+      const official = new Set(rd.official || []);
+      const hits = new Set(rd.hits || []);
+      const officialKnown = (rd.official || []).length > 0;
+
+      // Estado de la ronda
+      const stateColor = officialKnown ? 'var(--green)' : 'var(--ink3)';
+      const stateText = officialKnown
+        ? `+${rd.bonus} pts · ${hits.size} aciertos de ${meta.total}`
+        : 'Pendiente';
+
+      html += `<div class="tp-round-card">
+        <div class="tp-round-head">
+          <div class="tp-round-title">
+            <span class="tp-round-name">${meta.label}</span>
+            <span class="tp-round-meta">${meta.pts} pt${meta.pts!==1?'s':''} × acierto · máx ${meta.pts * meta.total}</span>
+          </div>
+          <div class="tp-round-state" style="color:${stateColor}">${stateText}</div>
+        </div>
+        <div class="tp-teams-grid">`;
+
+      if(predicted.length === 0){
+        html += `<div class="tp-empty">Aún no tienes predicciones para esta ronda.</div>`;
+      } else {
+        // Orden: aciertos primero, luego fallos, luego pendientes
+        const sorted = predicted.slice().sort((a,b)=>{
+          const sa = hits.has(a) ? 0 : official.size > 0 ? (official.has(a) ? 0 : 1) : 2;
+          const sb = hits.has(b) ? 0 : official.size > 0 ? (official.has(b) ? 0 : 1) : 2;
+          return sa - sb;
+        });
+        sorted.forEach(code=>{
+          let cls, ico;
+          if(!officialKnown){
+            cls = 'pending';
+            ico = '⏳';
+          } else if(hits.has(code)){
+            cls = 'hit';
+            ico = '✓';
+          } else {
+            cls = 'miss';
+            ico = '✕';
+          }
+          html += `<div class="tp-team tp-${cls}">
+            <span class="tp-team-flag">${FL[code]||'🏳'}</span>
+            <span class="tp-team-name">${NM[code]||code}</span>
+            <span class="tp-team-ico">${ico}</span>
+          </div>`;
+        });
+      }
+      html += `</div></div>`;
+    });
+
+    // Disclaimer
+    html += `<div class="ref-disclaimer" style="margin-top:14px">
+      💡 Estos puntos son <b>adicionales</b> a los que ganas por acertar partidos del bracket. Aunque falles un partido, si el ganador real estaba en tu predicción de "quién pasa", igual sumas.
+    </div>`;
+
+    wrap.innerHTML = html;
+  }).catch(e=>{
+    wrap.innerHTML = `<div style="color:var(--ink3);font-style:italic;padding:1rem">Error: ${e.message||'no se pudo cargar'}</div>`;
   });
 }
 
