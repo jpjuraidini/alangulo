@@ -1811,7 +1811,27 @@ body.dark .ref-badge.user{background:rgba(180,190,220,.16);color:var(--ink2)}
 .ref-disclaimer{background:rgba(0,82,204,.06);border-left:3px solid var(--blue2);border-radius:0 8px 8px 0;padding:9px 12px;margin-top:12px;font-size:.72rem;color:var(--blue);line-height:1.5;font-weight:600}
 body.dark .ref-disclaimer{background:rgba(0,82,204,.14);color:#80a8e0}
 
-/* ── TU PASE PAGE ── */
+/* ── MI QUINIELA · TABS ── */
+.mq-tabs{display:flex;gap:6px;margin:0 0 14px 0;padding:4px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px}
+body.dark .mq-tabs{background:#0c0f1c}
+.mq-tab{flex:1;background:transparent;color:var(--ink3);border:none;padding:9px 12px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;font-size:.78rem;cursor:pointer;transition:all .15s;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mq-tab:hover{color:var(--ink2)}
+.mq-tab.active{background:var(--surface);color:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+body.dark .mq-tab.active{background:#1a1f33}
+@media(max-width:520px){
+  .mq-tab{font-size:.7rem;padding:8px 6px}
+}
+
+/* ── MI QUINIELA · QPASA (predicción de quién pasa) ── */
+.mq-qpasa-intro{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:12px;box-shadow:var(--sh)}
+.mq-qpasa-intro-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.mq-qpasa-stat{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 10px;text-align:center}
+body.dark .mq-qpasa-stat{background:#0c0f1c}
+.mq-qpasa-stat-lbl{font-size:.6rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--ink3);margin-bottom:2px}
+.mq-qpasa-stat-num{font-weight:800;font-size:1.1rem;line-height:1;font-variant-numeric:tabular-nums}
+.mq-qpasa-intro-txt{font-size:.74rem;color:var(--ink2);line-height:1.5;margin:0;font-weight:500}
+
+/* ── TU PASE / QPASA · cards de ronda ── */
 .tp-round-card{background:var(--surface);border:1.5px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:var(--sh)}
 .tp-round-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .tp-round-title{display:flex;flex-direction:column;gap:1px}
@@ -3402,8 +3422,6 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('referidos')">Mis Referidos</button>
     <div class="drawer-item-sep"></div>
-    <button class="drawer-item" onclick="goDrawer('tupase')">Tu Pase 🎯</button>
-    <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('countdown')">Cuenta Regresiva</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="closeDrawer();openOnboard()">Ver tutorial 🎓</button>
@@ -3674,7 +3692,12 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
       <div id="mq-summary" style="display:none"></div>
       <div class="mq-stats" id="mq-stats-wrap" style="display:none"></div>
     </div>
+    <div class="mq-tabs" id="mq-tabs">
+      <button class="mq-tab active" data-mqtab="picks" onclick="setMqTab('picks')">📋 Mis predicciones</button>
+      <button class="mq-tab" data-mqtab="qpasa" onclick="setMqTab('qpasa')">🎯 Mi predicción de quién pasa</button>
+    </div>
     <div id="mq-wrap"></div>
+    <div id="mq-qpasa-wrap" style="display:none"></div>
   </div>
 
   <!-- CHAT -->
@@ -3789,11 +3812,6 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <div class="page" id="page-referidos">
     <div class="ph"><div class="ph-left"><div class="ph-h">Mis Referidos</div><div class="ph-s">Personas que entraron a la quiniela con tu código</div></div></div>
     <div id="referidos-wrap"></div>
-  </div>
-
-  <!-- TU PASE — Predichos por ronda vs clasificados oficiales -->
-  <div class="page" id="page-tupase">
-    <div id="tupase-wrap"></div>
   </div>
 
   <!-- COUNTDOWN -->
@@ -4111,11 +4129,11 @@ const PTS={
 // y que efectivamente clasifique. Independiente de los puntos por partido del bracket.
 // Sirve para mantener el ranking en movimiento aunque alguien falle un partido individual.
 const PTS_CLASIFICADOS = {
-  r32: { pts: 1, label: '16avos',   total: 32 }, // 32 países pasan a 16avos
-  r16: { pts: 2, label: 'Octavos',  total: 16 }, // 16 ganadores de 16avos
-  qf:  { pts: 3, label: 'Cuartos',  total: 8  }, // 8 ganadores de octavos
-  sf:  { pts: 5, label: 'Semis',    total: 4  }, // 4 ganadores de cuartos
-  f:   { pts: 8, label: 'Final',    total: 2  }, // 2 finalistas
+  r32: { pts: 1,  label: '16avos',   total: 32 }, // máx +32
+  r16: { pts: 2,  label: 'Octavos',  total: 16 }, // máx +32
+  qf:  { pts: 4,  label: 'Cuartos',  total: 8  }, // máx +32
+  sf:  { pts: 8,  label: 'Semis',    total: 4  }, // máx +32
+  f:   { pts: 16, label: 'Final',    total: 2  }, // máx +32
 };
 
 // ── SIMULATED USERS for ranking demo ──
@@ -7854,18 +7872,18 @@ function renderReglas(){
           </tbody>
         </table>
         <div class="rules-note warn">⚠️ En eliminatoria, si no aciertas al que avanza no ganas ningún punto — ni por marcador ni por ganador.</div>
-        <p style="margin-top:1rem"><b>🎯 Bonus de clasificación por ronda:</b> Además de los puntos por partido, ganas puntos extra por cada equipo que predigas correctamente que avanza a cada ronda — aunque falles el partido específico.</p>
+        <p style="margin-top:1rem"><b>🎯 Bonus de clasificación por ronda:</b> Además de los puntos por partido, ganas puntos extra por cada equipo que predigas correctamente que avanza a cada ronda — aunque falles el partido específico. <b>Cada ronda vale máximo +32 pts</b>.</p>
         <table class="rules-pts-table" style="margin-top:.5rem">
           <thead><tr><th>Ronda</th><th>Equipos que pasan</th><th>Pts por acierto</th><th>Máximo</th></tr></thead>
           <tbody>
             <tr><td class="pt-round">16avos</td><td>32</td><td><span class="pt-win">+1</span></td><td><span class="pt-max">+32</span></td></tr>
             <tr><td class="pt-round">Octavos</td><td>16</td><td><span class="pt-win">+2</span></td><td><span class="pt-max">+32</span></td></tr>
-            <tr><td class="pt-round">Cuartos</td><td>8</td><td><span class="pt-win">+3</span></td><td><span class="pt-max">+24</span></td></tr>
-            <tr><td class="pt-round">Semis</td><td>4</td><td><span class="pt-win">+5</span></td><td><span class="pt-max">+20</span></td></tr>
-            <tr><td class="pt-round">Final</td><td>2</td><td><span class="pt-win">+8</span></td><td><span class="pt-max">+16</span></td></tr>
+            <tr><td class="pt-round">Cuartos</td><td>8</td><td><span class="pt-win">+4</span></td><td><span class="pt-max">+32</span></td></tr>
+            <tr><td class="pt-round">Semis</td><td>4</td><td><span class="pt-win">+8</span></td><td><span class="pt-max">+32</span></td></tr>
+            <tr><td class="pt-round">Final</td><td>2</td><td><span class="pt-win">+16</span></td><td><span class="pt-max">+32</span></td></tr>
           </tbody>
         </table>
-        <div class="rules-note info" style="margin-top:.5rem">💡 Hasta <b>+124 puntos</b> extra si aciertas todos. Estos puntos son <b>adicionales</b> a los del bracket — aunque falles partidos individuales, si el equipo real estaba en tu predicción de "quién pasa", igual sumas. Puedes ver tu progreso en <b>Tu Pase 🎯</b>.</div>
+        <div class="rules-note info" style="margin-top:.5rem">💡 Hasta <b>+160 puntos</b> extra si aciertas todos. Estos puntos son <b>adicionales</b> a los del bracket — aunque falles partidos individuales, si el equipo real estaba en tu predicción de "quién pasa", igual sumas. Puedes ver tu progreso dentro de <b>Mi Quiniela → "Mi predicción de quién pasa"</b>.</div>
       `
     },
     {
@@ -9039,7 +9057,7 @@ function openPublicRules(){
         </tbody>
       </table>
       <p style="font-size:.75rem;color:var(--ink3);margin-top:.5rem">⚠️ En eliminatoria, si no aciertas al que avanza no ganas ningún punto.</p>
-      <p style="font-size:.78rem;color:var(--blue);margin-top:.5rem;background:rgba(0,82,204,.06);border-left:3px solid var(--blue2);padding:8px 12px;border-radius:0 8px 8px 0;font-weight:600">🎯 <b>Bonus de clasificación:</b> Además, por cada equipo que predigas correctamente que avanza a una ronda (16avos +1, Octavos +2, Cuartos +3, Semis +5, Final +8 — máx <b>+124 puntos</b>). Puedes verlos en <b>Tu Pase</b>.</p>
+      <p style="font-size:.78rem;color:var(--blue);margin-top:.5rem;background:rgba(0,82,204,.06);border-left:3px solid var(--blue2);padding:8px 12px;border-radius:0 8px 8px 0;font-weight:600">🎯 <b>Bonus de clasificación:</b> Además, por cada equipo que predigas correctamente que avanza a una ronda ganas extras: 16avos +1, Octavos +2, Cuartos +4, Semis +8, Final +16. Cada ronda vale máximo +32 pts (<b>+160 totales posibles</b>).</p>
     </div>
 
     <div>
@@ -10680,7 +10698,6 @@ function _doNavigate(name){
   if(name==='miquiniela')     { renderMiQuiniela(); setupMqSticky(); }
   if(name==='misgrupos')      { renderMisGrupos(); setupMisgruposSticky(); }
   if(name==='referidos')      renderReferidos();
-  if(name==='tupase')         renderTuPase();
   if(name==='countdown')      renderCountdown();
   if(name==='inicio')         renderInicio();
   if(name==='grupos')         { renderGroups(); setupGruposSticky(); }
@@ -11644,45 +11661,56 @@ function renderReferidos(){
 }
 
 // ══════════════════════════════════════════════════════
-//  TU PASE — Predichos por ronda vs clasificados oficiales
+//  MI QUINIELA · TABS (Mis predicciones | Mi predicción de quién pasa)
 // ══════════════════════════════════════════════════════
-function renderTuPase(){
-  const wrap = document.getElementById('tupase-wrap');
+let _mqActiveTab = 'picks';
+
+function setMqTab(tab){
+  _mqActiveTab = tab;
+  // Toggle buttons
+  document.querySelectorAll('#mq-tabs .mq-tab').forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('data-mqtab') === tab);
+  });
+  // Toggle content
+  const mqWrap = document.getElementById('mq-wrap');
+  const qpasaWrap = document.getElementById('mq-qpasa-wrap');
+  if(!mqWrap || !qpasaWrap) return;
+  if(tab === 'picks'){
+    mqWrap.style.display = '';
+    qpasaWrap.style.display = 'none';
+  } else {
+    mqWrap.style.display = 'none';
+    qpasaWrap.style.display = '';
+    renderMqQpasa(qpasaWrap);
+  }
+}
+
+function renderMqQpasa(wrap){
+  if(!wrap) wrap = document.getElementById('mq-qpasa-wrap');
   if(!wrap) return;
-  wrap.innerHTML = `<div class="sk-stack" style="padding:.5rem 0">
-    <div class="sk row" style="display:block;padding:18px">
-      <div class="sk" style="width:35%;height:14px;margin-bottom:10px"></div>
-      <div class="sk" style="width:55%;height:32px"></div>
-    </div>
-  </div>`;
+  wrap.innerHTML = `<div style="padding:14px 16px;color:var(--ink3);font-size:.82rem">Cargando tu predicción de quién pasa…</div>`;
 
   api('GET', `/api/qualifiers/breakdown/${encodeURIComponent(CU.u)}`).then(data=>{
     const order = ['r32','r16','qf','sf','f'];
     const totalBonus = data.totalBonus || 0;
-    // Calcular máximo posible
     const maxBonus = order.reduce((s,r)=>s + PTS_CLASIFICADOS[r].pts * PTS_CLASIFICADOS[r].total, 0);
 
-    let html = `<div class="ph2">
-      <div class="ph2-orbs"><div class="ph2-orb ph2-orb-g"></div><div class="ph2-orb ph2-orb-r"></div></div>
-      <div class="ph2-content">
-        <div class="ph2-eyebrow"><span class="ph2-eyebrow-dot"></span>Tu pase por ronda</div>
-        <div class="ph2-h1">¿Quién pasa?</div>
-        <div class="ph2-sub">Cada equipo que predigas correctamente que pasa a la siguiente ronda te da puntos extra. <b style="color:var(--green)">Más rondas, más puntos por acierto.</b></div>
-        <div class="ph2-stats">
-          <div class="ph2-stat">
-            <div class="ph2-stat-lbl">Bono acumulado</div>
-            <div class="ph2-stat-num" style="color:var(--green)">+${totalBonus}</div>
-          </div>
-          <div class="ph2-stat">
-            <div class="ph2-stat-lbl">Máximo posible</div>
-            <div class="ph2-stat-num" style="color:var(--ink3)">+${maxBonus}</div>
-          </div>
-          <div class="ph2-stat">
-            <div class="ph2-stat-lbl">Aprovechado</div>
-            <div class="ph2-stat-num" style="color:var(--blue2)">${Math.round(100*totalBonus/maxBonus)}%</div>
-          </div>
+    let html = `<div class="mq-qpasa-intro">
+      <div class="mq-qpasa-intro-stats">
+        <div class="mq-qpasa-stat">
+          <div class="mq-qpasa-stat-lbl">Bono acumulado</div>
+          <div class="mq-qpasa-stat-num" style="color:var(--green)">+${totalBonus}</div>
+        </div>
+        <div class="mq-qpasa-stat">
+          <div class="mq-qpasa-stat-lbl">Máximo posible</div>
+          <div class="mq-qpasa-stat-num" style="color:var(--ink3)">+${maxBonus}</div>
+        </div>
+        <div class="mq-qpasa-stat">
+          <div class="mq-qpasa-stat-lbl">Aprovechado</div>
+          <div class="mq-qpasa-stat-num" style="color:var(--blue2)">${Math.round(100*totalBonus/maxBonus)}%</div>
         </div>
       </div>
+      <p class="mq-qpasa-intro-txt">Por cada equipo que predigas correctamente que avanza a la siguiente ronda, ganas puntos extra. <b>Cada ronda vale máximo +32 pts (160 totales)</b>.</p>
     </div>`;
 
     order.forEach(rk=>{
@@ -11693,7 +11721,6 @@ function renderTuPase(){
       const hits = new Set(rd.hits || []);
       const officialKnown = (rd.official || []).length > 0;
 
-      // Estado de la ronda
       const stateColor = officialKnown ? 'var(--green)' : 'var(--ink3)';
       const stateText = officialKnown
         ? `+${rd.bonus} pts · ${hits.size} aciertos de ${meta.total}`
@@ -11712,7 +11739,6 @@ function renderTuPase(){
       if(predicted.length === 0){
         html += `<div class="tp-empty">Aún no tienes predicciones para esta ronda.</div>`;
       } else {
-        // Orden: aciertos primero, luego fallos, luego pendientes
         const sorted = predicted.slice().sort((a,b)=>{
           const sa = hits.has(a) ? 0 : official.size > 0 ? (official.has(a) ? 0 : 1) : 2;
           const sb = hits.has(b) ? 0 : official.size > 0 ? (official.has(b) ? 0 : 1) : 2;
@@ -11740,7 +11766,6 @@ function renderTuPase(){
       html += `</div></div>`;
     });
 
-    // Disclaimer
     html += `<div class="ref-disclaimer" style="margin-top:14px">
       💡 Estos puntos son <b>adicionales</b> a los que ganas por acertar partidos del bracket. Aunque falles un partido, si el ganador real estaba en tu predicción de "quién pasa", igual sumas.
     </div>`;
