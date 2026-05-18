@@ -718,49 +718,137 @@ body.dark .su-chosen-pill.pro{background:linear-gradient(135deg,rgba(232,170,30,
 .lp-eyebrow-p{color:#7f4dd6}
 body.dark .lp-eyebrow-p{color:#a587f0}
 
-/* SHOWCASE — Así se ve por dentro */
+/* SHOWCASE — Mosaico Cómo se ve por dentro */
 .lp-showcase{background:var(--surface)}
 body.dark .lp-showcase{background:var(--bg)}
-.sw-tabs{display:flex;gap:8px;justify-content:center;margin-bottom:28px;flex-wrap:wrap}
-.sw-tab{background:var(--surface);border:1px solid var(--border);color:var(--ink3);padding:8px 16px;border-radius:24px;font-family:"Plus Jakarta Sans";font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s}
-body.dark .sw-tab{background:var(--bg)}
-.sw-tab:hover{border-color:var(--ink2);color:var(--ink)}
-.sw-tab.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
-body.dark .sw-tab.on{background:var(--surface);color:var(--ink);border-color:var(--surface)}
-.sw-wrap{display:flex;justify-content:center;perspective:1200px}
-.sw-phone{width:260px;background:#0a0e1a;border-radius:36px;padding:11px;box-shadow:0 32px 70px rgba(0,0,0,.22);transform:rotateX(2deg) rotateY(-2deg);animation:swTilt 7s ease-in-out infinite}
-@keyframes swTilt{0%,100%{transform:rotateX(2deg) rotateY(-2deg)}50%{transform:rotateX(-2deg) rotateY(2deg)}}
-.sw-screen{background:var(--bg);border-radius:26px;overflow:hidden;height:480px;display:flex;flex-direction:column}
-.sw-top{background:var(--surface);padding:10px 14px;font-size:.7rem;font-weight:800;color:var(--ink);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
-.sw-live{color:var(--r);font-weight:700;font-size:.6rem}
-.sw-body{flex:1;padding:11px;overflow:hidden;position:relative}
-.sw-view{position:absolute;inset:11px;display:flex;flex-direction:column;gap:8px;opacity:0;transition:opacity .5s ease;pointer-events:none;overflow:hidden}
-.sw-view.on{opacity:1}
+.lp-section-sub{text-align:center;color:var(--ink3);font-size:.95rem;max-width:520px;margin:.6rem auto 0;line-height:1.5;font-weight:500}
+.lp-grad-text{background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;padding:.05em 0;display:inline-block}
 
-.sw-mw-post{background:var(--surface);border-radius:12px;padding:10px;border:1px solid var(--border)}
-.sw-mw-head{display:flex;align-items:center;gap:7px;margin-bottom:6px;font-size:.7rem}
-.sw-mw-avatar{width:22px;height:22px;border-radius:50%;background:#003087;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center}
-.sw-mw-name{font-weight:800;color:var(--ink)}
-.sw-mw-time{color:var(--ink3);font-weight:600;margin-left:auto;font-size:.6rem}
-.sw-mw-text{font-size:.7rem;line-height:1.4;color:var(--ink2);margin-bottom:6px}
-.sw-mw-react{display:inline-block;background:var(--bg);padding:2px 7px;border-radius:10px;font-size:.7rem;font-weight:700;margin-right:4px;color:var(--ink)}
+.lm-grid{max-width:920px;margin:32px auto 0;display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+.lm-tile{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;box-shadow:0 4px 20px rgba(10,14,26,.06)}
+body.dark .lm-tile{background:var(--bg);box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.lm-bracket{grid-column:1/-1}
+.lm-pred{grid-column:1/2}
+.lm-wall{grid-column:2/3}
 
-.sw-rk-row{background:var(--surface);border-radius:10px;padding:7px 9px;font-size:.72rem;display:flex;align-items:center;gap:7px;border:1px solid var(--border)}
-.sw-rk-row.first{background:linear-gradient(90deg,rgba(255,180,0,.18),var(--surface))}
-.sw-rk-row.first .sw-rk-pos{color:#d18800}
-.sw-rk-row.me{border-color:var(--green2);background:rgba(0,196,106,.08)}
-.sw-rk-pos{font-weight:800;color:var(--ink3);width:16px}
-.sw-rk-av{width:22px;height:22px;border-radius:50%;background:#003087;color:#fff;font-size:.6rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sw-rk-n{flex:1;font-weight:700;color:var(--ink)}
-.sw-rk-pts{font-weight:800;color:var(--green2)}
+.lm-eyebrow{font-size:.65rem;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px}
+.lm-eyebrow-g{color:var(--green2)}
+.lm-eyebrow-b{color:var(--blue2)}
+.lm-eyebrow-r{color:var(--red)}
+body.dark .lm-eyebrow-g{color:var(--green3)}
+body.dark .lm-eyebrow-b{color:var(--blue3)}
+body.dark .lm-eyebrow-r{color:var(--red2)}
 
-.sw-pr-h{font-size:.65rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:4px;text-align:center}
-.sw-pr-card{background:var(--surface);border-radius:11px;padding:9px;border:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:6px}
-.sw-pr-team{flex:1;text-align:center;font-size:.65rem;font-weight:800;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:3px}
-.sw-pr-flag{font-size:1.2rem;line-height:1}
-.sw-pr-score{display:flex;align-items:center;gap:5px}
-.sw-pr-inp{width:22px;height:26px;background:var(--bg);border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--green2);font-weight:800;border:1px solid var(--border);font-size:.85rem}
-.sw-pr-dash{color:var(--ink3);font-weight:700}
+/* Ranking tile */
+.lm-rank-list{display:flex;flex-direction:column;gap:6px}
+.lm-rank-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;font-size:.82rem}
+.lm-rank-row.gold{background:linear-gradient(90deg,rgba(232,170,30,.14),transparent)}
+.lm-rank-row.me{background:rgba(0,196,106,.10);border:1px dashed rgba(0,196,106,.35)}
+.lm-rank-pos{width:26px;height:26px;border-radius:50%;background:var(--bg);color:var(--ink2);font-weight:800;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+body.dark .lm-rank-pos{background:var(--surface)}
+.lm-rank-pos.pos-gold{background:linear-gradient(135deg,#c8900a,#e8a020);color:#fff}
+.lm-rank-pos.pos-brz{background:#d4a574;color:#fff}
+.lm-rank-pos.pos-me{background:var(--green);color:#fff}
+body.dark .lm-rank-pos.pos-me{background:var(--green2)}
+.lm-rank-name{flex:1;font-weight:700;color:var(--ink);font-size:.82rem}
+.lm-rank-name.name-me{color:var(--green2);font-weight:800}
+body.dark .lm-rank-name.name-me{color:var(--green3)}
+.lm-rank-pts{font-family:"Plus Jakarta Sans";font-weight:800;color:var(--ink2);font-size:.92rem}
+.lm-rank-pts.pts-green{color:var(--green2)}
+body.dark .lm-rank-pts.pts-green{color:var(--green3)}
+
+/* Mi Quiniela tile */
+.lm-mq-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.lm-mq-stat{border-radius:10px;padding:8px 10px;text-align:center;border:1px solid}
+.lm-stat-green{background:linear-gradient(135deg,rgba(0,196,106,.12),transparent);border-color:rgba(0,196,106,.35)}
+.lm-stat-gold{background:linear-gradient(135deg,rgba(232,170,30,.12),transparent);border-color:rgba(232,170,30,.35)}
+.lm-mq-num{font-family:"Plus Jakarta Sans";font-size:1.25rem;font-weight:800;line-height:1}
+.lm-stat-green .lm-mq-num{color:var(--green2)}
+.lm-stat-gold .lm-mq-num{color:#c8900a}
+body.dark .lm-stat-green .lm-mq-num{color:var(--green3)}
+body.dark .lm-stat-gold .lm-mq-num{color:#e8a020}
+.lm-mq-lbl{font-size:.6rem;font-weight:800;letter-spacing:.8px;margin-top:3px}
+.lm-stat-green .lm-mq-lbl{color:var(--green2)}
+.lm-stat-gold .lm-mq-lbl{color:#c8900a}
+body.dark .lm-stat-green .lm-mq-lbl{color:var(--green3)}
+body.dark .lm-stat-gold .lm-mq-lbl{color:#e8a020}
+.lm-mq-rows{display:flex;flex-direction:column;gap:4px}
+.lm-mq-row{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;font-size:.72rem;font-weight:700}
+.lm-mq-row.exact{background:linear-gradient(90deg,rgba(232,170,30,.12),transparent)}
+.lm-mq-row.correct{background:linear-gradient(90deg,rgba(0,196,106,.10),transparent)}
+.lm-mq-row.wrong{background:linear-gradient(90deg,rgba(192,0,26,.08),transparent);opacity:.8}
+.lm-mq-flag{font-size:.95rem}
+.lm-mq-pred{color:var(--ink);font-family:"Plus Jakarta Sans";font-weight:800}
+.lm-mq-sep{color:var(--ink3)}
+.lm-mq-real{color:var(--ink3);flex:1}
+.lm-mq-ico{font-size:.92rem}
+
+/* Bracket tile */
+.lm-bracket-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.lm-bracket-head .lm-eyebrow{margin-bottom:0}
+.lm-bracket-stage{font-size:.65rem;color:var(--ink3);font-weight:800;letter-spacing:.8px}
+.lm-bracket-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.lm-br-card{border-radius:12px;padding:12px 8px;text-align:center;border:1.5px solid}
+.lm-br-g{background:linear-gradient(135deg,rgba(0,104,56,.10),rgba(0,104,56,.02));border-color:rgba(0,104,56,.35)}
+.lm-br-b{background:linear-gradient(135deg,rgba(0,48,135,.10),rgba(0,48,135,.02));border-color:rgba(0,48,135,.35)}
+.lm-br-r{background:linear-gradient(135deg,rgba(192,0,26,.10),rgba(192,0,26,.02));border-color:rgba(192,0,26,.35)}
+.lm-br-y{background:linear-gradient(135deg,rgba(232,170,30,.12),rgba(232,170,30,.02));border-color:rgba(232,170,30,.4)}
+body.dark .lm-br-g{background:linear-gradient(135deg,rgba(0,196,106,.12),rgba(0,196,106,.03))}
+body.dark .lm-br-b{background:linear-gradient(135deg,rgba(61,135,255,.12),rgba(61,135,255,.03))}
+body.dark .lm-br-r{background:linear-gradient(135deg,rgba(255,51,85,.12),rgba(255,51,85,.03))}
+body.dark .lm-br-y{background:linear-gradient(135deg,rgba(232,170,30,.14),rgba(232,170,30,.03))}
+.lm-br-flag{font-size:1.4rem;line-height:1}
+.lm-br-name{font-size:.72rem;font-weight:800;color:var(--ink2);margin-top:3px}
+.lm-br-name.g{color:var(--green2)}
+.lm-br-name.b{color:var(--blue2)}
+.lm-br-name.r{color:var(--red)}
+.lm-br-name.y{color:#c8900a}
+body.dark .lm-br-name.g{color:var(--green3)}
+body.dark .lm-br-name.b{color:var(--blue3)}
+body.dark .lm-br-name.r{color:var(--red2)}
+body.dark .lm-br-name.y{color:#e8a020}
+.lm-br-vs{font-size:.65rem;color:var(--ink3);margin:5px 0;font-weight:600}
+
+/* Predicciones tile */
+.lm-pred-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.lm-pred-head .lm-eyebrow{margin-bottom:0}
+.lm-pred-tag{font-size:.6rem;font-weight:800;background:rgba(0,196,106,.14);padding:3px 7px;border-radius:6px;color:var(--green2);letter-spacing:.6px}
+body.dark .lm-pred-tag{color:var(--green3)}
+.lm-pred-rows{display:flex;flex-direction:column;gap:7px}
+.lm-pred-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 10px;border-radius:10px;font-size:.72rem;font-weight:700}
+.lm-pred-row.filled{background:linear-gradient(90deg,rgba(0,196,106,.08),transparent);border:1px solid rgba(0,196,106,.25)}
+.lm-pred-row.empty{border:1px dashed var(--border2)}
+.lm-pred-team{display:flex;align-items:center;gap:5px;flex:1;min-width:0;color:var(--ink)}
+.lm-pred-team.r{justify-content:flex-end}
+.lm-pred-team.muted{color:var(--ink3);font-weight:600}
+.lm-pred-team>span:not(.lm-pred-flag){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lm-pred-flag{font-size:1.05rem}
+.lm-pred-score{display:flex;align-items:center;gap:3px}
+.lm-pred-inp{width:24px;height:26px;background:rgba(0,196,106,.14);border:1.5px solid var(--green2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--green2);font-family:"Plus Jakarta Sans";font-size:.85rem}
+body.dark .lm-pred-inp{color:var(--green3);border-color:var(--green3)}
+.lm-pred-dash{color:var(--ink3);font-weight:700}
+.lm-pred-vs{width:36px;height:26px;background:var(--bg);border:1.5px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--ink3);font-size:.7rem}
+body.dark .lm-pred-vs{background:var(--surface)}
+
+/* Muro tile */
+.lm-wall-posts{display:flex;flex-direction:column;gap:8px}
+.lm-wall-post{background:var(--bg);padding:9px 11px;border-radius:12px}
+body.dark .lm-wall-post{background:var(--surface)}
+.lm-wall-post.highlight{background:linear-gradient(135deg,rgba(0,104,56,.10),transparent)}
+body.dark .lm-wall-post.highlight{background:linear-gradient(135deg,rgba(0,196,106,.10),transparent)}
+.lm-wall-name{font-size:.72rem;font-weight:800;margin-bottom:3px;color:var(--ink)}
+.lm-wall-text{font-size:.78rem;color:var(--ink2);line-height:1.4}
+.lm-wall-reacts{display:flex;gap:4px;margin-top:5px}
+.lm-wall-react{background:var(--surface);padding:2px 6px;border-radius:8px;font-size:.65rem;font-weight:700;color:var(--ink2)}
+body.dark .lm-wall-react{background:var(--bg)}
+
+/* Mosaico responsive */
+@media (max-width:720px){
+  .lm-grid{grid-template-columns:1fr;gap:12px}
+  .lm-bracket,.lm-pred,.lm-wall{grid-column:auto}
+  .lm-bracket-grid{grid-template-columns:repeat(2,1fr)}
+  .lm-tile{padding:14px}
+}
 
 /* FAQ */
 .lp-faq{background:var(--bg)}
@@ -3131,85 +3219,160 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <!-- SHOWCASE -->
   <section class="lp-section lp-showcase">
     <div class="lp-section-head lp-reveal">
-      <div class="lp-eyebrow lp-eyebrow-p">Así se ve por dentro</div>
-      <h2 class="lp-section-title">Diseñado para apasionados</h2>
+      <div class="lp-eyebrow lp-eyebrow-r">Cómo se ve por dentro</div>
+      <h2 class="lp-section-title"><span class="lp-grad-text">Todo en un solo lugar</span></h2>
+      <p class="lp-section-sub">Predicciones, bracket interactivo, ranking en vivo, grupos privados, muro social y más.</p>
     </div>
-    <div class="sw-tabs lp-reveal">
-      <button class="sw-tab on" data-sw="muro">💬 Muro</button>
-      <button class="sw-tab" data-sw="ranking">🏆 Ranking</button>
-      <button class="sw-tab" data-sw="predicciones">⚽ Predicciones</button>
-    </div>
-    <div class="sw-wrap lp-reveal">
-      <div class="sw-phone">
-        <div class="sw-screen">
-          <div class="sw-top"><span id="sw-label">💬 Muro</span><span class="sw-live">Live</span></div>
-          <div class="sw-body">
 
-            <div class="sw-view on" data-sw-v="muro">
-              <div class="sw-mw-post">
-                <div class="sw-mw-head">
-                  <div class="sw-mw-avatar" style="background:#0f6e56">U1</div>
-                  <span class="sw-mw-name">usuario_01</span>
-                  <span class="sw-mw-time">2m</span>
-                </div>
-                <div class="sw-mw-text">¡Le metí 3 a 1 a Brasil vs Marruecos! Ya verás cuando suba en el ranking 🚀</div>
-                <div><span class="sw-mw-react">🔥 4</span><span class="sw-mw-react">😂 2</span><span class="sw-mw-react">⚽ 1</span></div>
-              </div>
-              <div class="sw-mw-post">
-                <div class="sw-mw-head">
-                  <div class="sw-mw-avatar" style="background:#c0001a">U2</div>
-                  <span class="sw-mw-name">usuario_02</span>
-                  <span class="sw-mw-time">14m</span>
-                </div>
-                <div class="sw-mw-text">Quiniela del año, esta vez sí gano 🐐</div>
-                <div><span class="sw-mw-react">😂 6</span><span class="sw-mw-react">💀 3</span></div>
-              </div>
-              <div class="sw-mw-post">
-                <div class="sw-mw-head">
-                  <div class="sw-mw-avatar" style="background:#5a2da3">U3</div>
-                  <span class="sw-mw-name">usuario_03</span>
-                  <span class="sw-mw-time">1h</span>
-                </div>
-                <div class="sw-mw-text">Pronósticos cerrados antes del kickoff ⚽</div>
-              </div>
-            </div>
+    <div class="lm-grid lp-reveal">
 
-            <div class="sw-view" data-sw-v="ranking">
-              <div class="sw-rk-row first"><span class="sw-rk-pos">1</span><div class="sw-rk-av" style="background:#d18800">U1</div><span class="sw-rk-n">usuario_01</span><span class="sw-rk-pts">42</span></div>
-              <div class="sw-rk-row"><span class="sw-rk-pos">2</span><div class="sw-rk-av" style="background:#0f6e56">U2</div><span class="sw-rk-n">usuario_02</span><span class="sw-rk-pts">38</span></div>
-              <div class="sw-rk-row me"><span class="sw-rk-pos">3</span><div class="sw-rk-av">TÚ</div><span class="sw-rk-n">tú</span><span class="sw-rk-pts">36</span></div>
-              <div class="sw-rk-row"><span class="sw-rk-pos">4</span><div class="sw-rk-av" style="background:#5a2da3">U4</div><span class="sw-rk-n">usuario_04</span><span class="sw-rk-pts">29</span></div>
-              <div class="sw-rk-row"><span class="sw-rk-pos">5</span><div class="sw-rk-av" style="background:#c0001a">U5</div><span class="sw-rk-n">usuario_05</span><span class="sw-rk-pts">24</span></div>
-              <div class="sw-rk-row"><span class="sw-rk-pos">6</span><div class="sw-rk-av" style="background:#003087">U6</div><span class="sw-rk-n">usuario_06</span><span class="sw-rk-pts">22</span></div>
-            </div>
-
-            <div class="sw-view" data-sw-v="predicciones">
-              <div class="sw-pr-h">Jornada 1 · Hoy</div>
-              <div class="sw-pr-card">
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇲🇽</span><span>México</span></div>
-                <div class="sw-pr-score"><div class="sw-pr-inp">2</div><span class="sw-pr-dash">−</span><div class="sw-pr-inp">1</div></div>
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇿🇦</span><span>Sudáfrica</span></div>
-              </div>
-              <div class="sw-pr-card">
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇧🇷</span><span>Brasil</span></div>
-                <div class="sw-pr-score"><div class="sw-pr-inp">3</div><span class="sw-pr-dash">−</span><div class="sw-pr-inp">1</div></div>
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇲🇦</span><span>Marruecos</span></div>
-              </div>
-              <div class="sw-pr-card">
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇫🇷</span><span>Francia</span></div>
-                <div class="sw-pr-score"><div class="sw-pr-inp">2</div><span class="sw-pr-dash">−</span><div class="sw-pr-inp">0</div></div>
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇸🇳</span><span>Senegal</span></div>
-              </div>
-              <div class="sw-pr-card">
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇪🇸</span><span>España</span></div>
-                <div class="sw-pr-score"><div class="sw-pr-inp">1</div><span class="sw-pr-dash">−</span><div class="sw-pr-inp">1</div></div>
-                <div class="sw-pr-team"><span class="sw-pr-flag">🇺🇾</span><span>Uruguay</span></div>
-              </div>
-            </div>
-
+      <!-- Ranking en vivo -->
+      <div class="lm-tile lm-rank">
+        <div class="lm-eyebrow lm-eyebrow-g">🏆 Ranking en vivo</div>
+        <div class="lm-rank-list">
+          <div class="lm-rank-row gold">
+            <span class="lm-rank-pos pos-gold">1</span>
+            <span class="lm-rank-name">@sofia_mx 💎</span>
+            <span class="lm-rank-pts pts-green">142</span>
+          </div>
+          <div class="lm-rank-row">
+            <span class="lm-rank-pos">2</span>
+            <span class="lm-rank-name">@rodrigo 💎</span>
+            <span class="lm-rank-pts">128</span>
+          </div>
+          <div class="lm-rank-row">
+            <span class="lm-rank-pos pos-brz">3</span>
+            <span class="lm-rank-name">@valeS 💎</span>
+            <span class="lm-rank-pts">115</span>
+          </div>
+          <div class="lm-rank-row me">
+            <span class="lm-rank-pos pos-me">7</span>
+            <span class="lm-rank-name name-me">tú 💎</span>
+            <span class="lm-rank-pts pts-green">87</span>
           </div>
         </div>
       </div>
+
+      <!-- Mi Quiniela -->
+      <div class="lm-tile lm-mq">
+        <div class="lm-eyebrow lm-eyebrow-b">📋 Mi Quiniela</div>
+        <div class="lm-mq-stats">
+          <div class="lm-mq-stat lm-stat-green">
+            <div class="lm-mq-num">87</div>
+            <div class="lm-mq-lbl">PUNTOS</div>
+          </div>
+          <div class="lm-mq-stat lm-stat-gold">
+            <div class="lm-mq-num">12</div>
+            <div class="lm-mq-lbl">EXACTOS</div>
+          </div>
+        </div>
+        <div class="lm-mq-rows">
+          <div class="lm-mq-row exact">
+            <span class="lm-mq-flag">🇲🇽</span>
+            <span class="lm-mq-pred">2-1</span>
+            <span class="lm-mq-sep">·</span>
+            <span class="lm-mq-real">2-1 ✓</span>
+            <span class="lm-mq-ico">🎯</span>
+          </div>
+          <div class="lm-mq-row correct">
+            <span class="lm-mq-flag">🇧🇷</span>
+            <span class="lm-mq-pred">3-1</span>
+            <span class="lm-mq-sep">·</span>
+            <span class="lm-mq-real">2-0</span>
+            <span class="lm-mq-ico">✅</span>
+          </div>
+          <div class="lm-mq-row wrong">
+            <span class="lm-mq-flag">🇪🇸</span>
+            <span class="lm-mq-pred">1-0</span>
+            <span class="lm-mq-sep">·</span>
+            <span class="lm-mq-real">0-2</span>
+            <span class="lm-mq-ico">❌</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bracket interactivo (full width) -->
+      <div class="lm-tile lm-bracket">
+        <div class="lm-bracket-head">
+          <div class="lm-eyebrow lm-eyebrow-b">🏆 Bracket interactivo</div>
+          <div class="lm-bracket-stage">CUARTOS DE FINAL</div>
+        </div>
+        <div class="lm-bracket-grid">
+          <div class="lm-br-card lm-br-g">
+            <div class="lm-br-flag">🇲🇽</div>
+            <div class="lm-br-name g">MEX</div>
+            <div class="lm-br-vs">vs</div>
+            <div class="lm-br-flag">🇧🇷</div>
+            <div class="lm-br-name">BRA</div>
+          </div>
+          <div class="lm-br-card lm-br-b">
+            <div class="lm-br-flag">🇫🇷</div>
+            <div class="lm-br-name b">FRA</div>
+            <div class="lm-br-vs">vs</div>
+            <div class="lm-br-flag">🇩🇪</div>
+            <div class="lm-br-name">GER</div>
+          </div>
+          <div class="lm-br-card lm-br-r">
+            <div class="lm-br-flag">🇪🇸</div>
+            <div class="lm-br-name r">ESP</div>
+            <div class="lm-br-vs">vs</div>
+            <div class="lm-br-flag">🇦🇷</div>
+            <div class="lm-br-name">ARG</div>
+          </div>
+          <div class="lm-br-card lm-br-y">
+            <div class="lm-br-flag">🇵🇹</div>
+            <div class="lm-br-name y">POR</div>
+            <div class="lm-br-vs">vs</div>
+            <div class="lm-br-flag">🇮🇹</div>
+            <div class="lm-br-name">ITA</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Predicciones -->
+      <div class="lm-tile lm-pred">
+        <div class="lm-pred-head">
+          <div class="lm-eyebrow lm-eyebrow-g">⚽ Predicciones</div>
+          <div class="lm-pred-tag">GRUPO A</div>
+        </div>
+        <div class="lm-pred-rows">
+          <div class="lm-pred-row filled">
+            <span class="lm-pred-team"><span class="lm-pred-flag">🇲🇽</span>México</span>
+            <span class="lm-pred-score"><span class="lm-pred-inp">2</span><span class="lm-pred-dash">-</span><span class="lm-pred-inp">1</span></span>
+            <span class="lm-pred-team r"><span>Sudáfrica</span><span class="lm-pred-flag">🇿🇦</span></span>
+          </div>
+          <div class="lm-pred-row filled">
+            <span class="lm-pred-team"><span class="lm-pred-flag">🇰🇷</span>Corea</span>
+            <span class="lm-pred-score"><span class="lm-pred-inp">1</span><span class="lm-pred-dash">-</span><span class="lm-pred-inp">1</span></span>
+            <span class="lm-pred-team r"><span>Chequia</span><span class="lm-pred-flag">🇨🇿</span></span>
+          </div>
+          <div class="lm-pred-row empty">
+            <span class="lm-pred-team muted"><span class="lm-pred-flag">🇲🇽</span>México</span>
+            <span class="lm-pred-vs">vs</span>
+            <span class="lm-pred-team r muted"><span>Corea</span><span class="lm-pred-flag">🇰🇷</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Muro social -->
+      <div class="lm-tile lm-wall">
+        <div class="lm-eyebrow lm-eyebrow-r">💬 Muro social</div>
+        <div class="lm-wall-posts">
+          <div class="lm-wall-post">
+            <div class="lm-wall-name">@diego_p 💎</div>
+            <div class="lm-wall-text">jajaja le aposté a México como campeón otra vez 😭</div>
+            <div class="lm-wall-reacts">
+              <span class="lm-wall-react">😂 5</span>
+              <span class="lm-wall-react">⚽ 3</span>
+            </div>
+          </div>
+          <div class="lm-wall-post highlight">
+            <div class="lm-wall-name">@valeS 💎</div>
+            <div class="lm-wall-text">esto se pone interesante 🔥</div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
