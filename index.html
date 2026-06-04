@@ -5799,11 +5799,13 @@ function closeM(){document.getElementById('modal').classList.remove('open');}
 function clearSc(){
   if(isTournamentLocked()){ tournamentLockedToast(); return; }
   delete picks[CU.u].sc[_m.id];
+  const _pruned = pruneAndNotifyBracket();
   persist(); // async
   closeM();
   renderGMatches(_m.g,GM[_m.g],picks[CU.u].sc);
   renderGTable(_m.g,getS(_m.g));
-  updateProg();renderBracket();toast('Marcador borrado');
+  updateProg();renderBracket();
+  toast(_pruned>0 ? `🔄 ${_pruned} partido${_pruned!==1?'s':''} del bracket se reabri${_pruned!==1?'eron':'ó'} por tu cambio` : 'Marcador borrado');
 }
 function saveSc(){
   if(isTournamentLocked()){ tournamentLockedToast(); return; }
@@ -5813,12 +5815,18 @@ function saveSc(){
   const savedId = _m.id;
   const savedG = _m.g;
   picks[CU.u].sc[savedId]={h:+hv,a:+av};
+  // Cambiar un grupo puede reacomodar los cruces de 16avos → reabrir picks del bracket inválidos
+  const _pruned = pruneAndNotifyBracket();
   persist(); // async — saves to backend
   closeM();
   renderGMatches(savedG,GM[savedG],picks[CU.u].sc);
   renderGTable(savedG,getS(savedG));
   updateProg();renderBracket();
-  toast(`✓ ${NM[_m.h]} ${hv}–${av} ${NM[_m.a]}`);
+  if(_pruned>0){
+    toast(`🔄 ${_pruned} partido${_pruned!==1?'s':''} del bracket se reabri${_pruned!==1?'eron':'ó'} por tu cambio`);
+  } else {
+    toast(`✓ ${NM[_m.h]} ${hv}–${av} ${NM[_m.a]}`);
+  }
   // Pulse animation en la fila recién guardada
   setTimeout(()=>{
     const rows = document.querySelectorAll(`#gm-${savedG} .mrow`);
@@ -6131,6 +6139,59 @@ function getBracketLoser(matchId, ub){
   return (winner === h) ? a : h;
 }
 
+// ── PRUNING DEL BRACKET ──
+// Recorre el bracket de 16avos hacia la final y borra el ganador + marcador de
+// cualquier partido cuyo ganador guardado ya NO sea uno de los dos equipos que
+// ahora juegan ahí. Esto pasa cuando el usuario cambia un resultado anterior
+// (de grupos o de una ronda previa) que reacomoda los cruces.
+// Una sola pasada hacia adelante cascadea: al limpiar un partido, el siguiente
+// queda con un alimentador vacío y también se invalida y limpia.
+// Devuelve cuántos partidos se reabrieron.
+function pruneBracket(u){
+  const up = picks[u]; if(!up) return 0;
+  const br = up.br || (up.br = {});
+  const sc = up.sc || (up.sc = {});
+  const mu = buildR32Matchups();
+  let cleared = 0;
+  const rounds = [
+    {key:'r32', n:16}, {key:'r16', n:8}, {key:'qf', n:4},
+    {key:'sf', n:2}, {key:'tp', n:1}, {key:'f', n:1},
+  ];
+  rounds.forEach(({key,n})=>{
+    for(let i=0;i<n;i++){
+      const id = `${key}_${i}`;
+      const w = br[id];
+      if(!w) continue; // nada que validar
+      // Participantes actuales del partido
+      let h=null, a=null;
+      if(key==='r32'){
+        const m = mu[id]; if(m){ h=m.home; a=m.away; }
+      } else if(id==='tp_0'){
+        // 3er lugar: perdedores de las semis
+        h = getBracketLoser('sf_0', br);
+        a = getBracketLoser('sf_1', br);
+      } else {
+        const feed = BRACKET_FEEDS[id];
+        if(feed){ h = br[feed[0]]||null; a = br[feed[1]]||null; }
+      }
+      // Si el ganador guardado ya no es uno de los dos que juegan, limpiar
+      if(w !== h && w !== a){
+        delete br[id];
+        delete sc[id];
+        cleared++;
+      }
+    }
+  });
+  return cleared;
+}
+
+// Corre el pruning para el usuario actual y avisa si reabrió partidos.
+// Devuelve el número de partidos reabiertos (0 si nada cambió).
+function pruneAndNotifyBracket(){
+  if(!CU || !picks[CU.u]) return 0;
+  return pruneBracket(CU.u);
+}
+
 function renderBracket(){
   const bk=document.getElementById('bk');bk.innerHTML='';
   const ub=picks[CU.u].br;
@@ -6437,11 +6498,17 @@ function saveBrScore(){
   if(!picks[CU.u].sc) picks[CU.u].sc={};
   picks[CU.u].sc[_brId]={h:+hv,a:+av};
   const savedId = _brId;
+  // Cambiar el ganador de esta ronda puede invalidar picks de rondas siguientes
+  const _pruned = pruneAndNotifyBracket();
   closeBrScoreModal();
   persist();
   renderBracket();
   const winner=picks[CU.u]?.br?.[savedId];
-  toast(`✓ ${winner?NM[winner]||winner:'Pick'} · ${hv}-${av}`);
+  if(_pruned>0){
+    toast(`🔄 ${_pruned} partido${_pruned!==1?'s':''} más adelante se reabri${_pruned!==1?'eron':'ó'} por tu cambio`);
+  } else {
+    toast(`✓ ${winner?NM[winner]||winner:'Pick'} · ${hv}-${av}`);
+  }
   // Pulse en la card recién guardada
   setTimeout(()=>{
     // Buscar la card del bracket que corresponde al matchId guardado
@@ -6463,10 +6530,11 @@ function clearBrScore(){
   if(isTournamentLocked()){ tournamentLockedToast(); return; }
   if(picks[CU.u].sc) delete picks[CU.u].sc[_brId];
   if(picks[CU.u].br) delete picks[CU.u].br[_brId];
+  const _pruned = pruneAndNotifyBracket();
   closeBrScoreModal();
   persist();
   renderBracket();
-  toast('Predicción borrada');
+  toast(_pruned>0 ? `🔄 ${_pruned} partido${_pruned!==1?'s':''} más adelante se reabri${_pruned!==1?'eron':'ó'} por tu cambio` : 'Predicción borrada');
 }
 
 function closeBrScoreModal(){
