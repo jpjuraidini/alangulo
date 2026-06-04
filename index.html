@@ -899,8 +899,6 @@ body.dark .lp-trail{mix-blend-mode:screen;opacity:.7}
   .crsl-icon{width:54px;height:54px;font-size:26px}
   .lp-phone{width:200px;height:360px}
   .lp-phone-tabs{max-width:260px}
-  .sw-phone{width:240px}
-  .sw-screen{height:440px}
   .lp-mq-flag{font-size:1.5rem}
 }
 @media (max-width:720px){
@@ -4265,15 +4263,16 @@ const USERS=[
   {u:'admin', p:'0000', admin:true,  code:'ADM'},
   // All other users come from the DB
 ];
-// ── SCORING SYSTEM: Opción D + Enfoque 2 ──
-// Grupos: +1 acertar W/E/L, +2 bonus marcador exacto
-// Eliminatoria (sin multiplicadores, cada ronda tiene valor fijo):
-//   D16: ganador +1, exacto +2 adicional
-//   Octavos: ganador +2, exacto +3 adicional
-//   Cuartos: ganador +3, exacto +5 adicional
-//   Semis:   ganador +5, exacto +8 adicional
-//   3er lugar: ganador +10, exacto +20 adicional (igual que Final)
-//   Final:   ganador +10, exacto +15 adicional
+// ── SCORING SYSTEM ──
+// Grupos: +1 acertar W/E/L, +2 bonus marcador exacto (máx +3 por partido)
+// Eliminatoria [ganador, bonus_exacto]:
+//   Dieciseisavos: +2 / +4    (máx +6)
+//   Octavos:       +3 / +6    (máx +9)
+//   Cuartos:       +5 / +10   (máx +15)
+//   Semis:         +7 / +14   (máx +21)
+//   3er lugar:     +10 / +20  (máx +30)
+//   Final:         +32 / +20  (máx +52) — pegarle al campeón vale 32
+// Además: bonus de clasificación por ronda (ver PTS_CLASIFICADOS, máx +160).
 const PTS={
   // Grupos
   grpResult: 1,   // acertar resultado (W/E/L)
@@ -4372,6 +4371,7 @@ function tournamentLockedToast(){
 let CU=null;
 let picks={};
 let results={};
+let oficiales={};   // clasificados oficiales por ronda {r32:[...],r16:[...],qf,sf,f} — para bonus de clasificación
 let refs={};
 let dynUsers=[];
 
@@ -4389,6 +4389,9 @@ async function loadAllData(){
     });
     if(CU && !picks[CU.u] && !CU.admin) picks[CU.u]={sc:{},br:{}};
     results = await api('GET','/api/results');
+    // Clasificados oficiales (para el bonus de clasificación en rankings locales).
+    // No es crítico: si falla, el bonus simplemente queda en 0 hasta el próximo refresh.
+    try { oficiales = await api('GET','/api/qualifiers') || {}; } catch(_) { oficiales = {}; }
   } catch(e){ console.error('Error cargando datos:',e); }
 }
 
@@ -4490,8 +4493,6 @@ function initLanding(){
   startPasosAnimation();
   // Phone rotator del hero
   startPhoneRotator();
-  // Showcase tabs
-  startShowcase();
   // FAQ accordion
   startFaq();
   // FAB sticky mobile
@@ -4777,27 +4778,6 @@ function startPhoneRotator(){
   }
 }
 
-// Showcase tabs (Así se ve por dentro)
-function startShowcase(){
-  const tabs = document.querySelectorAll('.sw-tab');
-  if(!tabs.length) return;
-  const labels = { muro:'💬 Muro', ranking:'🏆 Ranking', predicciones:'⚽ Predicciones' };
-  const labelEl = document.getElementById('sw-label');
-
-  function show(name){
-    document.querySelectorAll('.sw-view').forEach(v=>{
-      v.classList.toggle('on', v.dataset.swV === name);
-    });
-    tabs.forEach(t=>{
-      t.classList.toggle('on', t.dataset.sw === name);
-    });
-    if(labelEl) labelEl.textContent = labels[name] || '';
-  }
-  tabs.forEach(t=>{
-    t.onclick = ()=>show(t.dataset.sw);
-  });
-}
-
 // FAQ accordion
 function startFaq(){
   const items = document.querySelectorAll('.faq-item');
@@ -5036,7 +5016,7 @@ document.addEventListener('keydown', (e)=>{
 function logout(){
   CU=null;
   localStorage.removeItem('q26u');
-  picks={};results={};refs={};dynUsers=[];
+  picks={};results={};oficiales={};refs={};dynUsers=[];
   closeDrawer();
   // Cerrar panel de notifs y detener loop
   const bp = document.getElementById('bell-panel');
@@ -6538,7 +6518,13 @@ function calcScore(u){
     });
   }
 
-  return{grupos:gr, bracket:br, total:gr+br};
+  // ── BONUS DE CLASIFICACIÓN POR RONDA ──
+  // Mismo cálculo que el servidor (calcClasificadosBonusServer). Usa los oficiales
+  // cargados globalmente. Mantiene los rankings locales (grupos, referidos, premios,
+  // export de imagen, posición en Mi Quiniela) alineados con el ranking oficial del server.
+  const clasif = calcClasificadosBonus(u, oficiales).total;
+
+  return{grupos:gr, bracket:br+clasif, total:gr+br+clasif, clasificados:clasif};
 }
 
 function renderRanking(){
@@ -7740,7 +7726,7 @@ const PRIZE_PCT=[
   {pos:3, label:'3er lugar',  medal:'🥉', pct:15, cls:'p3', pctCls:'c3',  barColor:'#c8875a'},
   {pos:4, label:'4to lugar',  medal:'🏅', pct:10, cls:'p4', pctCls:'c45', barColor:'var(--b2)'},
   {pos:5, label:'5to lugar',  medal:'🏅', pct:5,  cls:'p5', pctCls:'c45', barColor:'var(--b2)'},
-  {pos:-1,label:'Último lugar',medal:'🪦', pct:5,  cls:'p6', pctCls:'c45', barColor:'var(--red)'},
+  {pos:-1,label:'Último lugar',medal:'🥄', pct:5,  cls:'p6', pctCls:'c45', barColor:'var(--red)'},
 ];
 // Bono referido campeón: $500 MXN financiados por los organizadores (fuera de la bolsa).
 
