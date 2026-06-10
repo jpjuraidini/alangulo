@@ -3812,7 +3812,6 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
             <span class="rk-online-dot"></span>
             <strong id="online-count">0</strong> en línea
           </span>
-          <button class="ph2-btn-secondary" onclick="exportRanking()">📸 Exportar imagen</button>
         </div>
       </div>
       <div class="rk-mypos" id="rk-mypos" style="display:none">
@@ -5952,43 +5951,6 @@ function getBest3rds(sc){
   });
   thirds.sort((a,b)=>b.pts!==a.pts?b.pts-a.pts:b.gd!==a.gd?b.gd-a.gd:b.gf-a.gf);
   return thirds.slice(0,8);
-}
-
-// ── THIRD PLACE SLOT ASSIGNMENT — OFFICIAL FIFA 2026 RULES (art. 12.6) ──
-// Each slot accepts 3rd-place teams from specific eligible groups only.
-// Uses backtracking to guarantee all 8 slots are filled (greedy fails in edge cases).
-const THIRD_RULES=[
-  ['r32_1',  ['A','B','C','D','F']],      // M74: 1E vs best 3rd of ABCDF
-  ['r32_4',  ['C','D','F','G','H']],      // M77: 1I vs best 3rd of CDFGH
-  ['r32_6',  ['C','E','F','H','I']],      // M79: 1A vs best 3rd of CEFHI
-  ['r32_7',  ['E','H','I','J','K']],      // M80: 1L vs best 3rd of EHIJK
-  ['r32_8',  ['B','E','F','I','J']],      // M81: 1D vs best 3rd of BEFIJ
-  ['r32_9',  ['A','E','H','I','J']],      // M82: 1G vs best 3rd of AEHIJ
-  ['r32_12', ['E','F','G','I','J']],      // M85: 1B vs best 3rd of EFGIJ
-  ['r32_14', ['D','E','I','J','L']],      // M87: 1K vs best 3rd of DEIJL
-];
-
-// Backtracking assignment: guarantees all slots filled, tries most-constrained slot first
-function assignThirds(rules, best3Sorted, usedGroups, result){
-  if(rules.length===0) return true;
-  // Sort remaining rules by fewest available candidates (most constrained first)
-  const sorted=[...rules].sort((a,b)=>{
-    const ca=a[1].filter(g=>!usedGroups.has(g)&&best3Sorted.some(x=>x.grp===g)).length;
-    const cb=b[1].filter(g=>!usedGroups.has(g)&&best3Sorted.some(x=>x.grp===g)).length;
-    return ca-cb;
-  });
-  const [slot, eligible]=sorted[0];
-  const rest=sorted.slice(1);
-  // Try each eligible candidate in ranking order (best first)
-  const candidates=best3Sorted.filter(x=>eligible.includes(x.grp)&&!usedGroups.has(x.grp));
-  for(const cand of candidates){
-    usedGroups.add(cand.grp);
-    result[slot]=cand.team;
-    if(assignThirds(rest,best3Sorted,usedGroups,result)) return true;
-    usedGroups.delete(cand.grp);
-    delete result[slot];
-  }
-  return false;
 }
 
 // ── TABLA OFICIAL FIFA ANEXO C (495 escenarios) ──
@@ -10201,82 +10163,6 @@ function renderChangelog(){
 
 // Patch saveGRes to log changes
 const _origSaveGRes = typeof saveGRes === 'function' ? saveGRes : null;
-
-// ══════════════════════════════════════════════════════
-//  EXPORT RANKING AS IMAGE (canvas)
-// ══════════════════════════════════════════════════════
-function exportRanking(){
-  const board = buildBoard();
-  const maxPts = board[0]?.total || 1;
-  const rows = board.slice(0, 10);
-  const W = 600, ROW = 44, PAD = 20;
-  const H = PAD*2 + 60 + rows.length * ROW + 20;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = W * 2; canvas.height = H * 2; // retina
-  const ctx = canvas.getContext('2d');
-  ctx.scale(2, 2);
-
-  // Background
-  ctx.fillStyle = '#f7f7f4';
-  ctx.fillRect(0, 0, W, H);
-
-  // Header band
-  ctx.fillStyle = '#005c2e';
-  ctx.fillRect(0, 0, W, 56);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = 'bold 18px sans-serif';
-  ctx.fillText('⚽ Al Ángulo · Ranking', PAD, 34);
-  const now = new Date().toLocaleDateString('es-MX',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-  ctx.font = '11px sans-serif';
-  ctx.fillStyle = 'rgba(255,255,255,.7)';
-  ctx.fillText(now, PAD, 48);
-
-  // Rows
-  rows.forEach((p, i) => {
-    const y = 56 + PAD/2 + i * ROW;
-    const isMe = p.name === CU.u;
-    ctx.fillStyle = isMe ? '#edf7f1' : i%2===0 ? '#fff' : '#fafaf8';
-    ctx.fillRect(0, y, W, ROW);
-
-    // Position
-    const medals = ['🥇','🥈','🥉'];
-    ctx.font = 'bold 15px sans-serif';
-    ctx.fillStyle = i===0?'#a86800':i===1?'#888':i===2?'#c8875a':'#7a7a7a';
-    ctx.fillText(medals[i]||`${i+1}`, PAD, y + ROW/2 + 5);
-
-    // Name + streak
-    ctx.font = isMe ? 'bold 13px sans-serif' : '13px sans-serif';
-    ctx.fillStyle = '#0d0d0d';
-    const streak = currentStreak(p.name);
-    const streakTxt = streak >= 3 ? ` 🔥${streak}` : '';
-    ctx.fillText(p.name + streakTxt, 50, y + ROW/2 + 5);
-
-    // Points
-    ctx.font = 'bold 16px sans-serif';
-    ctx.fillStyle = i===0 ? '#005c2e' : '#0d0d0d';
-    ctx.textAlign = 'right';
-    ctx.fillText(p.total, W - PAD, y + ROW/2 + 6);
-    ctx.textAlign = 'left';
-
-    // Bar
-    const barW = Math.round((W - PAD*2 - 160) * p.total / maxPts);
-    ctx.fillStyle = isMe ? '#005c2e' : '#d0d0cc';
-    ctx.fillRect(50, y + ROW - 5, barW, 3);
-  });
-
-  // Footer
-  ctx.fillStyle = '#7a7a7a';
-  ctx.font = '10px sans-serif';
-  ctx.fillText('alangulo.mx', PAD, H - 6);
-
-  // Download
-  const link = document.createElement('a');
-  link.download = `ranking_alangulo_${Date.now()}.png`;
-  link.href = canvas.toDataURL('image/png');
-  link.click();
-  toast('Imagen del ranking descargada ✓');
-}
 
 function isAdminUser(u){
   // Hardcoded admin usernames always excluded
