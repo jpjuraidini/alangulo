@@ -1388,7 +1388,7 @@ body.dark .podium-card.p3{background:linear-gradient(120deg,rgba(160,103,58,.1),
 .pod-sub{display:none}
 
 /* Reveal podium con stagger */
-.podium-card.rk-reveal{opacity:0;transform:translateY(16px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1)}
+.podium-card.rk-reveal{opacity:0;transform:translateY(12px);transition:opacity .36s cubic-bezier(.22,1,.36,1),transform .36s cubic-bezier(.22,1,.36,1)}
 .podium-card.rk-reveal.show{opacity:1;transform:translateY(0)}
 .rk-podium .podium-card.rk-reveal:nth-child(1){transition-delay:0s}
 .rk-podium .podium-card.rk-reveal:nth-child(2){transition-delay:.08s}
@@ -1404,7 +1404,7 @@ body.dark .podium-card.p3{background:linear-gradient(120deg,rgba(160,103,58,.1),
 .rk-row.me .rk-row-name{color:var(--green)}
 
 /* Reveal on-scroll para filas */
-.rk-row.rk-reveal{opacity:0;transform:translateY(14px);transition:opacity .5s cubic-bezier(.22,1,.36,1),transform .5s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--rkrow-i,0) * 50ms)}
+.rk-row.rk-reveal{opacity:0;transform:translateY(12px);transition:opacity .36s cubic-bezier(.22,1,.36,1),transform .36s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--rkrow-i,0) * 18ms)}
 .rk-row.rk-reveal.show{opacity:1;transform:translateY(0)}
 
 .rk-row-pos{font-weight:800;font-size:.85rem;color:var(--ink3);text-align:center;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--bg);font-variant-numeric:tabular-nums}
@@ -6738,24 +6738,10 @@ function updateRankingHero(board, meIsPro){
 
 // Animar entrada de podium y filas
 function observeRankingCards(){
-  const cards = document.querySelectorAll('#rk-wrap .rk-reveal');
-  if(!cards.length) return;
-  if(!('IntersectionObserver' in window)){
-    cards.forEach(c=>c.classList.add('show'));
-    return;
-  }
-  const obs = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        entry.target.classList.add('show');
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -5% 0px' });
-  cards.forEach(c=>{
-    const rect = c.getBoundingClientRect();
-    if(rect.top < window.innerHeight * 0.95) c.classList.add('show');
-    else obs.observe(c);
+  // Revelar TODAS las filas/podio de inmediato (sin gating por scroll): así
+  // están todos los usuarios al instante, sin ir apareciendo conforme bajas.
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('#rk-wrap .rk-reveal').forEach(c=>c.classList.add('show'));
   });
 }
 
@@ -6808,7 +6794,7 @@ function buildRankingHTML(board,isDemo){
       const barColor=p.isMe?'var(--green)':'var(--grad-tri)';
       const meTag = p.isMe ? ' <span class="pill pb" style="font-size:.55rem">tú</span>' : '';
       const streakIcon = currentStreak(p.name)>=3 ? ` 🔥` : '';
-      html+=`<div class="rk-row rk-reveal${p.isMe?' me':''}" style="--rkrow-i:${i}" onclick="openProfile('${p.name.replace(/'/g,"\\'")}')">
+      html+=`<div class="rk-row rk-reveal${p.isMe?' me':''}" style="--rkrow-i:${Math.min(i,8)}" onclick="openProfile('${p.name.replace(/'/g,"\\'")}')">
         <div class="rk-row-pos">${pos}</div>
         <div class="rk-row-info">
           <div class="rk-row-name">${escHtml(p.name)}${proBadge(p.name)}${meTag}${streakIcon}</div>
