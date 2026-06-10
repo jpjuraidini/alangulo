@@ -1023,7 +1023,7 @@ body.dark .ph2-sticky{background:rgba(8,11,20,.85)}
 .gcard:hover{border-color:var(--blue2);box-shadow:0 16px 36px rgba(10,14,26,.1);transform:translateY(-3px)}
 
 /* Reveal on-scroll con stagger */
-.gcard-reveal{opacity:0;transform:translateY(24px);transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--gcard-i,0) * 70ms)}
+.gcard-reveal{opacity:0;transform:translateY(14px);transition:opacity .38s cubic-bezier(.22,1,.36,1),transform .38s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--gcard-i,0) * 22ms)}
 .gcard-reveal.show{opacity:1;transform:translateY(0)}
 @media (prefers-reduced-motion:reduce){
   .gcard-reveal{opacity:1;transform:none;transition:none}
@@ -1170,7 +1170,7 @@ body.dark .br-m{background:#1a1f33}
 }
 
 /* Reveal on-scroll para bracket cards */
-.br-m.br-reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--brm-i,0) * 35ms)}
+.br-m.br-reveal{opacity:0;transform:translateY(12px);transition:opacity .36s cubic-bezier(.22,1,.36,1),transform .36s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--brm-i,0) * 18ms)}
 .br-m.br-reveal.show{opacity:1;transform:translateY(0)}
 @media (prefers-reduced-motion:reduce){
   .br-m.br-reveal{opacity:1;transform:none;transition:none}
@@ -1277,7 +1277,7 @@ body.dark .bsc{background:#13182a}
 .br-champ-flag{font-size:2.4rem;line-height:1;margin:6px 0;position:relative;z-index:1;display:inline-block;filter:drop-shadow(0 4px 10px rgba(0,0,0,.25))}
 .br-champ-name{font-weight:800;font-size:.92rem;letter-spacing:-.2px;position:relative;z-index:1}
 .br-champ-sub{font-size:.7rem;font-weight:600;opacity:.88;margin-top:3px;position:relative;z-index:1}
-.br-m-reveal{opacity:0;transform:translateY(16px);transition:opacity .55s cubic-bezier(.22,1,.36,1),transform .55s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--brm-i,0) * 35ms)}
+.br-m-reveal{opacity:0;transform:translateY(12px);transition:opacity .36s cubic-bezier(.22,1,.36,1),transform .36s cubic-bezier(.22,1,.36,1);transition-delay:calc(var(--brm-i,0) * 18ms)}
 .br-m-reveal.show{opacity:1;transform:translateY(0)}
 @media (prefers-reduced-motion:reduce){
   .br-m-reveal{opacity:1;transform:none;transition:none}
@@ -5673,7 +5673,7 @@ function renderGroups(){
     const done=ms.filter(m=>sm[m.id]!=null).length;
     const card=document.createElement('div');
     card.className='gcard gcard-reveal';
-    card.style.setProperty('--gcard-i', String(idx));
+    card.style.setProperty('--gcard-i', String(Math.min(idx,6)));
     card.innerHTML=`
       <div class="gcard-hd">
         <span class="gcard-hd-letter">${g}</span>
@@ -5700,26 +5700,12 @@ function renderGroups(){
 // Observer para animar las cards al entrar al viewport
 let _gcardObserver = null;
 function observeGroupCards(){
-  if(_gcardObserver) _gcardObserver.disconnect();
-  const cards = document.querySelectorAll('#gg .gcard-reveal');
-  if(!cards.length) return;
-  if(!('IntersectionObserver' in window)){
-    cards.forEach(c=>c.classList.add('show'));
-    return;
-  }
-  _gcardObserver = new IntersectionObserver((entries)=>{
-    entries.forEach((entry)=>{
-      if(entry.isIntersecting){
-        entry.target.classList.add('show');
-        _gcardObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' });
-  cards.forEach(c=>{
-    // Si ya está visible al cargar (above the fold), animar de inmediato
-    const rect = c.getBoundingClientRect();
-    if(rect.top < window.innerHeight * 0.95) c.classList.add('show');
-    else _gcardObserver.observe(c);
+  if(_gcardObserver){ _gcardObserver.disconnect(); _gcardObserver=null; }
+  // Revelar TODAS de inmediato (sin gating por scroll): así el grupo K no tarda
+  // en aparecer y cualquier captura/scroll-to tiene todas presentes al instante.
+  // El rAF deja que el fade corra una vez en el primer paint.
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('#gg .gcard-reveal').forEach(c=>c.classList.add('show'));
   });
 }
 function renderGMatches(g,ms,sm){
@@ -6258,7 +6244,7 @@ function renderBracket(){
         const otherCode = (champCode === h) ? a : h;
         const card = document.createElement('div');
         card.className = 'br-champ br-m-reveal';
-        card.style.setProperty('--brm-i', String(mIdx));
+        card.style.setProperty('--brm-i', String(Math.min(mIdx,8)));
         card.onclick = () => openBrModal(mid, h, a);
         card.style.cursor = 'pointer';
         card.title = 'Clic para editar tu campeón';
@@ -6279,7 +6265,7 @@ function renderBracket(){
         const m = mkBrMatch(mid,h,a,ub[mid]||null);
         m.classList.add('br-reveal');
         if(isThirdPlace) m.classList.add('br-thirdplace');
-        m.style.setProperty('--brm-i', String(mIdx));
+        m.style.setProperty('--brm-i', String(Math.min(mIdx,8)));
         slots.appendChild(m);
       }
       mIdx++;
@@ -6294,25 +6280,11 @@ function renderBracket(){
 
 let _brmObserver = null;
 function observeBracketCards(){
-  if(_brmObserver) _brmObserver.disconnect();
-  const cards = document.querySelectorAll('#bk .br-reveal, #bk .br-m-reveal');
-  if(!cards.length) return;
-  if(!('IntersectionObserver' in window)){
-    cards.forEach(c=>c.classList.add('show'));
-    return;
-  }
-  _brmObserver = new IntersectionObserver((entries)=>{
-    entries.forEach((entry)=>{
-      if(entry.isIntersecting){
-        entry.target.classList.add('show');
-        _brmObserver.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.05, rootMargin: '0px 0px -5% 0px' });
-  cards.forEach(c=>{
-    const rect = c.getBoundingClientRect();
-    if(rect.top < window.innerHeight * 0.95) c.classList.add('show');
-    else _brmObserver.observe(c);
+  if(_brmObserver){ _brmObserver.disconnect(); _brmObserver=null; }
+  // Revelar TODO el bracket de inmediato (incluidas rondas fuera de pantalla),
+  // para que aparezca sin lentitud y el PDF capture todos los partidos.
+  requestAnimationFrame(()=>{
+    document.querySelectorAll('#bk .br-reveal, #bk .br-m-reveal').forEach(c=>c.classList.add('show'));
   });
 }
 
@@ -10618,6 +10590,12 @@ function exportBracketPDF(){
       outer.style.overflow = 'visible';
     }
 
+    // Asegurar que TODO el bracket esté visible y sin animación pendiente
+    // antes de capturar (si no, html2canvas toma cards a medio fade / invisibles).
+    const revealCards = document.querySelectorAll('#bk .br-reveal, #bk .br-m-reveal');
+    revealCards.forEach(c=>{ c.classList.add('show'); c.style.transition='none'; });
+    const restoreReveal = ()=> revealCards.forEach(c=>{ c.style.transition=''; });
+
     html2canvas(target, {
       scale: 2,
       backgroundColor: getComputedStyle(document.body).getPropertyValue('--bg') || '#f2f4f8',
@@ -10632,6 +10610,7 @@ function exportBracketPDF(){
     }).then(canvas => {
       // Restaurar overflow
       if(outer) outer.style.overflow = originalOverflow;
+      restoreReveal();
 
       const { jsPDF } = window.jspdf;
       const imgData = canvas.toDataURL('image/png');
@@ -10651,6 +10630,7 @@ function exportBracketPDF(){
     }).catch((err)=>{
       console.error('Bracket PDF error:', err);
       if(outer) outer.style.overflow = originalOverflow;
+      restoreReveal();
       toast('Error al generar el PDF');
       btn.textContent = original;
       btn.disabled = false;
