@@ -3802,7 +3802,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
           <h1 class="ph2-h1">Bracket Eliminatorio</h1>
           <p class="ph2-sub">Selecciona al ganador de cada partido. Cada acierto en el bracket vale más que en grupos.</p>
           <div class="ph2-stats">
-            <div class="ph2-stat"><span class="ph2-stat-icon">🎯</span><strong>31</strong>partidos</div>
+            <div class="ph2-stat"><span class="ph2-stat-icon">🎯</span><strong>32</strong>partidos</div>
             <div class="ph2-stat"><span class="ph2-stat-icon">🏆</span><strong>5</strong>rondas</div>
           </div>
         </div>
@@ -3811,7 +3811,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
         </div>
       </div>
       <div class="ph2-prog">
-        <div class="ph2-prog-h"><span class="ph2-prog-t">⚡ Tu bracket</span><span class="ph2-prog-pct" id="br-prog-pct">0 / 31</span></div>
+        <div class="ph2-prog-h"><span class="ph2-prog-t">⚡ Tu bracket</span><span class="ph2-prog-pct" id="br-prog-pct">0 / 32</span></div>
         <div class="ph2-prog-track"><div class="ph2-prog-fill" id="br-prog-fill" style="width:0%"></div></div>
         <div class="ph2-prog-sub" id="br-prog-sub">Empieza eligiendo a los ganadores</div>
       </div>
@@ -7884,9 +7884,9 @@ function renderPremios(){
       <div class="pp-eyebrow"><span class="pp-eyebrow-dot"></span>Premios · Bolsa creciendo</div>
       <div class="pp-bolsa-label">💰 Bolsa total estimada</div>
       <div class="pp-bolsa-amt" id="pp-bolsa-amt"><span class="currency">$</span><span id="pp-bolsa-num">0</span></div>
-      <div class="pp-bolsa-sub">MXN en efectivo · ${totalUsers} Pro${totalUsers!==1?'s':''} 💎 × $${POT_PER_PRO} a la bolsa</div>
+      <div class="pp-bolsa-sub">MXN en efectivo · <span id="pp-pro-count-sub">${totalUsers} Pro${totalUsers!==1?'s':''}</span> 💎 × $${POT_PER_PRO} a la bolsa</div>
       <div class="pp-pills">
-        <div class="pp-pill">💎 ${totalUsers} Pro${totalUsers!==1?'s':''}</div>
+        <div class="pp-pill">💎 <span id="pp-pro-count-pill">${totalUsers} Pro${totalUsers!==1?'s':''}</span></div>
         <div class="pp-pill">📅 Finaliza 19 jul 2026</div>
         <div class="pp-pill">🏆 6 premiados</div>
       </div>
@@ -10780,10 +10780,36 @@ function exportBracketPDF(){
         format: [pdfW, pdfH]
       });
       pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
-      pdf.save(`bracket_alangulo_${CU.u}_${Date.now()}.pdf`);
+      const filename = `bracket_alangulo_${CU.u}_${Date.now()}.pdf`;
+      const myCode = CU.code || genCode(CU.u);
+      const link = 'https://alangulo.lat';
+      const msg = `Mira mi bracket del Mundial ⚽ Inscríbete a la quiniela y llena el tuyo. ¿Competimos? Usa mi código ${myCode} 👉 ${link}`;
+
       btn.textContent = original;
       btn.disabled = false;
-      toast('PDF descargado ✓');
+
+      // Intentar compartir el PDF + mensaje en un solo paso (móvil con Web Share).
+      let file = null;
+      try {
+        const blob = pdf.output('blob');
+        file = new File([blob], filename, { type: 'application/pdf' });
+      } catch(_){ file = null; }
+
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], text: msg, title: 'Mi bracket — Al Ángulo' })
+          .then(()=> toast('¡Compartido! 🎉'))
+          .catch(err=>{
+            if (err && err.name === 'AbortError') return; // el usuario canceló
+            // Fallback: descargar y abrir WhatsApp con el mensaje listo
+            pdf.save(filename);
+            window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+          });
+      } else {
+        // Escritorio / sin Web Share de archivos: descargar PDF y abrir WhatsApp con el mensaje
+        pdf.save(filename);
+        window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+        toast('PDF descargado ✓ · adjúntalo en WhatsApp con el mensaje');
+      }
     }).catch((err)=>{
       console.error('Bracket PDF error:', err);
       if(outer) outer.style.overflow = originalOverflow;
@@ -10943,7 +10969,65 @@ function startAutoRefresh(page){
       const cur = localStorage.getItem('q26page');
       if(cur === 'ranking') renderRanking();
     }, 2 * 60 * 1000); // cada 2 minutos
+  } else if(page === 'premios'){
+    // La bolsa sube sola conforme entran nuevos Pros, sin refrescar la página
+    _autoRefreshInterval = setInterval(()=>{
+      if(localStorage.getItem('q26page') === 'premios') refreshBolsa();
+    }, 15 * 1000); // cada 15s
   }
+}
+
+// Refresca solo la cifra de la bolsa (y el conteo de Pros) en su lugar, sin re-render.
+async function refreshBolsa(){
+  if(localStorage.getItem('q26page') !== 'premios') return;
+  if(document.hidden) return; // ahorra batería/red si la pestaña no está visible
+  try {
+    const [users, freshPicks] = await Promise.all([
+      api('GET','/api/users').catch(()=>null),
+      api('GET','/api/picks').catch(()=>null)
+    ]);
+    if(users){
+      dynUsers = users.filter(x=>!USERS.find(y=>y.u===x.username))
+        .map(x=>({u:x.username, p:'', admin:x.is_admin, code:x.code, is_pro:x.is_pro!==false, requested_type:x.requested_type||'pro', full_name:x.full_name, phone:x.phone, approved:x.approved!==false}));
+    }
+    if(freshPicks){
+      // Mutar el objeto picks en su lugar (preservar referencia y los picks locales del usuario)
+      const mine = picks[CU.u];
+      Object.keys(picks).forEach(u=>{ if(u!==CU.u) delete picks[u]; });
+      Object.keys(freshPicks).forEach(u=>{
+        if(USERS.find(x=>x.u===u&&x.admin===true)||u==='admin') return;
+        if(u!==CU.u) picks[u]=freshPicks[u];
+      });
+      if(mine) picks[CU.u]=mine;
+    }
+    const totalUsers = Object.keys(picks).filter(u=>!isAdminUser(u) && isProUser(u)).length;
+    const bolsa = Math.max(totalUsers,0) * POT_PER_PRO;
+    updateBolsaUI(bolsa, totalUsers);
+  } catch(_){}
+}
+
+// Actualiza la cifra (con count-up suave de valor actual → nuevo) y los textos de conteo.
+function updateBolsaUI(bolsa, totalUsers){
+  const numEl = document.getElementById('pp-bolsa-num');
+  if(!numEl) return;
+  const current = parseInt((numEl.textContent||'0').replace(/[^\d]/g,''),10) || 0;
+  if(current !== bolsa){
+    const start = performance.now(), dur = 800, from = current, to = bolsa;
+    function tick(now){
+      if(localStorage.getItem('q26page') !== 'premios') return;
+      const t = Math.min(1,(now-start)/dur);
+      const e = 1 - Math.pow(1-t,3);
+      numEl.textContent = Math.round(from + (to-from)*e).toLocaleString('es-MX');
+      if(t<1) requestAnimationFrame(tick);
+      else numEl.textContent = to.toLocaleString('es-MX');
+    }
+    requestAnimationFrame(tick);
+  }
+  const proTxt = `${totalUsers} Pro${totalUsers!==1?'s':''}`;
+  const subSpan = document.getElementById('pp-pro-count-sub');
+  if(subSpan) subSpan.textContent = proTxt;
+  const pillSpan = document.getElementById('pp-pro-count-pill');
+  if(pillSpan) pillSpan.textContent = proTxt;
 }
 
 function stopAutoRefresh(){
