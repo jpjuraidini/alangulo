@@ -4322,6 +4322,11 @@ const API='https://alangulo-backend-production.up.railway.app';
 
 async function api(method, path, body){
   const opts={ method, headers:{'Content-Type':'application/json'}, cache:'no-store' };
+  // Auth: firmar cada request con el token de sesión (emitido en login)
+  if(CU && CU.u && CU.tk){
+    opts.headers['X-Auth-User']=CU.u;
+    opts.headers['X-Auth-Token']=CU.tk;
+  }
   if(body) opts.body=JSON.stringify(body);
   // Anti-cache para GETs: agregar timestamp único como query param
   // (evita que el browser sirva respuestas viejas del cache HTTP)
@@ -4331,8 +4336,24 @@ async function api(method, path, body){
     url += sep + '_=' + Date.now();
   }
   const r=await fetch(url, opts);
-  if(!r.ok){ const e=await r.json().catch(()=>({error:'Error'})); throw new Error(e.error||'Error'); }
+  if(!r.ok){
+    const e=await r.json().catch(()=>({error:'Error'}));
+    const msg=String(e.error||'Error');
+    // Token inválido/ausente → cerrar sesión y pedir re-login
+    if(r.status===401 && msg.startsWith('auth:')) handleSessionExpired();
+    throw new Error(msg.replace(/^auth:\s*/,''));
+  }
   return r.json();
+}
+
+// Evita múltiples logouts en cascada si varios requests fallan a la vez
+let _sessExpiredAt=0;
+function handleSessionExpired(){
+  const now=Date.now();
+  if(now - _sessExpiredAt < 3000) return;
+  _sessExpiredAt=now;
+  try { logout(); } catch(_){}
+  try { toast('🔑 Tu sesión expiró · vuelve a iniciar sesión'); } catch(_){}
 }
 
 // ══════════════════════════════════════════════════════
@@ -4377,6 +4398,12 @@ let dynUsers=[];
 function load(){
   // Solo cargamos CU de localStorage (sesión local)
   CU=JSON.parse(localStorage.getItem('q26u')||'null');
+  // Migración de seguridad: sesiones guardadas antes del sistema de tokens
+  // no traen tk → deben volver a iniciar sesión (una sola vez)
+  if(CU && !CU.tk){
+    CU=null;
+    localStorage.removeItem('q26u');
+  }
 }
 
 async function loadAllData(){
@@ -4450,7 +4477,7 @@ function doLogin(){
       try { prev = JSON.parse(localStorage.getItem('q26u')||'null'); } catch(_){ prev = null; }
       const sameUser = prev && prev.u === user.username;
       const refSeen = sameUser ? (prev.refSeen || false) : false;
-      CU={u:user.username, admin:user.is_admin, code:user.code, is_pro:user.is_pro!==false, refSeen};
+      CU={u:user.username, admin:user.is_admin, code:user.code, is_pro:user.is_pro!==false, refSeen, tk:user.token};
       try { localStorage.setItem('q26u',JSON.stringify(CU)); } catch(_){}
       boot({fromLogin: true});
     })
