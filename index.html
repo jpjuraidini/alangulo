@@ -322,6 +322,45 @@ body.dark .prof-btn-bracket{background:#006838;color:#fff}
 .prof-btn-locked:hover{transform:none;opacity:1}
 .prof-lock-note{font-size:.72rem;color:var(--ink3);text-align:center;margin-top:9px;display:flex;align-items:center;justify-content:center;gap:5px;line-height:1.35}
 
+/* ── PANTALLA DE RESULTADOS (partido por partido + quién le pegó al exacto) ── */
+.res-hero{padding:22px 4px 4px}
+.res-h{font-weight:800;font-size:1.5rem;color:var(--ink);letter-spacing:-.5px;display:flex;align-items:center;gap:9px}
+.res-sub{font-size:.85rem;color:var(--ink3);margin-top:4px;line-height:1.5}
+.res-filters{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 6px;align-items:center}
+.res-chip{font-size:.78rem;font-weight:700;padding:7px 14px;border-radius:999px;border:1.5px solid var(--border);background:var(--card);color:var(--ink2);cursor:pointer;transition:all .15s;white-space:nowrap}
+.res-chip:hover{border-color:var(--blue2)}
+.res-chip.on{background:var(--grad-tri);color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(0,48,135,.22)}
+.res-toggle{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:.78rem;font-weight:700;color:var(--ink2);cursor:pointer;user-select:none}
+.res-toggle input{width:16px;height:16px;accent-color:var(--green);cursor:pointer}
+.res-stage-h{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;color:var(--ink3);margin:22px 2px 10px}
+.res-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;margin-bottom:11px;transition:box-shadow .2s}
+.res-card.played{border-color:rgba(0,104,56,.25);box-shadow:0 3px 14px rgba(0,104,56,.06)}
+.res-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.res-tag{font-size:.64rem;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--ink3);background:var(--bg);padding:4px 9px;border-radius:7px}
+.res-state{font-size:.64rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;padding:4px 9px;border-radius:7px}
+.res-state.j{background:rgba(0,104,56,.12);color:#006838}
+.res-state.p{background:var(--bg);color:var(--ink3)}
+.res-match{display:flex;align-items:center;gap:10px}
+.res-side{flex:1;display:flex;align-items:center;gap:8px;min-width:0}
+.res-side.away{justify-content:flex-end}
+.res-flag{font-size:1.45rem;flex-shrink:0;line-height:1}
+.res-team{font-weight:700;font-size:.92rem;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res-team.lose{color:var(--ink3);font-weight:600}
+.res-score{flex-shrink:0;display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.3rem;color:var(--ink);font-variant-numeric:tabular-nums;padding:0 4px}
+.res-score .vs{font-size:.7rem;color:var(--ink3);font-weight:700}
+.res-score .dash{color:var(--ink3)}
+.res-win-badge{font-size:.78rem}
+.res-exact{margin-top:13px;padding-top:12px;border-top:1px dashed var(--border)}
+.res-exact-h{font-size:.74rem;font-weight:800;color:#9a7b0a;display:flex;align-items:center;gap:6px;margin-bottom:9px}
+.res-exact-none{font-size:.78rem;color:var(--ink3);display:flex;align-items:center;gap:6px}
+.res-chips-people{display:flex;flex-wrap:wrap;gap:7px}
+.res-person{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(231,200,77,.18),rgba(200,150,31,.12));border:1px solid rgba(200,150,31,.35);border-radius:999px;padding:4px 11px 4px 5px;font-size:.78rem;font-weight:700;color:var(--ink);cursor:pointer;transition:transform .12s}
+.res-person:hover{transform:translateY(-1px)}
+.res-person .res-ava{width:21px;height:21px;border-radius:50%;background:var(--grad-tri);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0}
+.res-winners{margin-top:9px;font-size:.74rem;color:var(--ink3)}
+.res-winners b{color:#006838;font-weight:800}
+.res-empty{text-align:center;padding:3rem 2rem;color:var(--ink3)}
+
 /* ── Visor de bracket de otro usuario (solo lectura, con resultados) ── */
 .ubr-head{padding:20px 22px 14px;border-bottom:1px solid var(--border)}
 .ubr-title{font-weight:800;font-size:1.02rem;color:var(--ink);display:flex;align-items:center;gap:8px}
@@ -3607,6 +3646,8 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('premios')">Premios</button>
     <div class="drawer-item-sep"></div>
+    <button class="drawer-item" onclick="goDrawer('resultados')">Resultados</button>
+    <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('stats')">Estadísticas</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="goDrawer('reglas')">Reglas</button>
@@ -3943,6 +3984,11 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <!-- PREMIOS -->
   <div class="page" id="page-premios">
     <div id="premios-wrap"></div>
+  </div>
+
+  <!-- RESULTADOS -->
+  <div class="page" id="page-resultados">
+    <div id="resultados-wrap"></div>
   </div>
 
   <!-- REGLAS -->
@@ -8052,6 +8098,136 @@ function copyMyCode(){
 }
 
 // ══════════════════════════════════════════════════════
+//  RESULTADOS — partido por partido + quién le pegó al exacto
+// ══════════════════════════════════════════════════════
+let _resFilter = 'todos';     // 'todos' | 'grupos' | 'elim'
+let _resOnlyPlayed = false;
+
+function setResFilter(f){ _resFilter = f; renderResultados(); }
+function toggleResPlayed(){ _resOnlyPlayed = !_resOnlyPlayed; renderResultados(); }
+
+// Marcador oficial de cualquier partido (grupo 'A1' o bracket 'r32_0'). null si no jugado.
+function officialResult(matchId){
+  if(matchId.includes('_')){
+    const rr = results.bracket?.[matchId];
+    return (rr && rr.h != null && rr.a != null) ? rr : null;
+  }
+  const r = results.sc?.[matchId];
+  return (r && r.h != null && r.a != null) ? {h:r.h, a:r.a} : null;
+}
+// Usuarios que le pegaron al marcador EXACTO.
+function exactHittersOf(matchId, off){
+  return Object.keys(picks).filter(u=>{
+    if(isAdminUser(u)) return false;
+    const s = picks[u]?.sc?.[matchId];
+    return s && s.h != null && s.a != null && +s.h === +off.h && +s.a === +off.a;
+  });
+}
+// Usuarios que acertaron al GANADOR (solo bracket).
+function winnerHittersOf(matchId, off){
+  if(!off.winner) return [];
+  return Object.keys(picks).filter(u=>!isAdminUser(u) && picks[u]?.br?.[matchId] === off.winner);
+}
+
+function renderResultados(){
+  const wrap = document.getElementById('resultados-wrap');
+  if(!wrap) return;
+
+  // Lista de partidos en orden: grupos (por grupo, por jornada) + bracket
+  const groupMatches = [];
+  Object.keys(GROUPS).forEach(g=>{
+    (GM[g]||[]).forEach((m, idx)=>{
+      const jornada = idx < 2 ? 1 : idx < 4 ? 2 : 3;
+      groupMatches.push({ id:m.id, home:m.h, away:m.a, tag:`Grupo ${g} · J${jornada}`, stage:'grupos' });
+    });
+  });
+  const ROUND_NAME = {r32:'Dieciseisavos', r16:'Octavos', qf:'Cuartos', sf:'Semis', tp:'3er lugar', f:'Final'};
+  const bracketMatches = [];
+  ['r32','r16','qf','sf','tp','f'].forEach(rk=>{
+    const n = {r32:16,r16:8,qf:4,sf:2,tp:1,f:1}[rk];
+    for(let i=0;i<n;i++){
+      const id = `${rk}_${i}`;
+      const rr = results.bracket?.[id];
+      bracketMatches.push({ id, home: rr?.teamH||null, away: rr?.teamA||null, tag:`${MATCH_NUM[id]||id} · ${ROUND_NAME[rk]}`, stage:'elim' });
+    }
+  });
+
+  let list = [];
+  if(_resFilter==='todos' || _resFilter==='grupos') list = list.concat(groupMatches);
+  if(_resFilter==='todos' || _resFilter==='elim')   list = list.concat(bracketMatches);
+  list = list.map(m=>({ ...m, off: officialResult(m.id) }));
+  if(_resOnlyPlayed) list = list.filter(m=>m.off);
+
+  const nm = t => t ? (NM[t]||t) : 'Por definir';
+  const fl = t => t ? (FL[t]||'🏳') : '⚪';
+  const ava = u => `<span class="res-ava">${escHtml((u||'?').slice(0,2).toUpperCase())}</span>`;
+
+  let html = `<div class="res-hero">
+    <div class="res-h">📋 Resultados</div>
+    <div class="res-sub">Marcador oficial de cada partido y quién le pegó al exacto 🎯</div>
+    <div class="res-filters">
+      <div class="res-chip ${_resFilter==='todos'?'on':''}" onclick="setResFilter('todos')">Todos</div>
+      <div class="res-chip ${_resFilter==='grupos'?'on':''}" onclick="setResFilter('grupos')">Grupos</div>
+      <div class="res-chip ${_resFilter==='elim'?'on':''}" onclick="setResFilter('elim')">Eliminatoria</div>
+      <label class="res-toggle"><input type="checkbox" ${_resOnlyPlayed?'checked':''} onchange="toggleResPlayed()"> Solo jugados</label>
+    </div>
+  </div>`;
+
+  if(!list.length){
+    html += `<div class="res-empty">
+      <div style="font-size:2.6rem">⚽</div>
+      <div style="font-weight:800;color:var(--ink);margin-top:8px">${_resOnlyPlayed?'Aún no hay partidos jugados':'Sin partidos'}</div>
+      <div style="font-size:.84rem;margin-top:6px;max-width:300px;margin-inline:auto;line-height:1.6">Cuando el admin capture los marcadores oficiales, aquí verás quién le pegó al exacto.</div>
+    </div>`;
+    wrap.innerHTML = html;
+    return;
+  }
+
+  let lastStage = null;
+  list.forEach(m=>{
+    if(_resFilter==='todos' && m.stage!==lastStage){
+      html += `<div class="res-stage-h">${m.stage==='grupos'?'⚽ Fase de grupos':'🏆 Eliminatoria'}</div>`;
+      lastStage = m.stage;
+    }
+    const off = m.off, played = !!off, winner = off?.winner || null;
+    const hLose = winner && winner===m.away, aLose = winner && winner===m.home;
+    const scoreHtml = played
+      ? `<div class="res-score"><span>${off.h}</span><span class="dash">-</span><span>${off.a}</span></div>`
+      : `<div class="res-score"><span class="vs">vs</span></div>`;
+    html += `<div class="res-card ${played?'played':''}">
+      <div class="res-card-top">
+        <span class="res-tag">${m.tag}</span>
+        <span class="res-state ${played?'j':'p'}">${played?'Jugado':'Por jugarse'}</span>
+      </div>
+      <div class="res-match">
+        <div class="res-side"><span class="res-flag">${fl(m.home)}</span><span class="res-team ${hLose?'lose':''}">${escHtml(nm(m.home))}</span></div>
+        ${scoreHtml}
+        <div class="res-side away"><span class="res-team ${aLose?'lose':''}">${escHtml(nm(m.away))}</span><span class="res-flag">${fl(m.away)}</span></div>
+      </div>`;
+    if(played){
+      const hitters = exactHittersOf(m.id, off);
+      html += `<div class="res-exact">`;
+      if(hitters.length){
+        html += `<div class="res-exact-h">🎯 Le pegaron al exacto · ${hitters.length}</div>
+          <div class="res-chips-people">` +
+          hitters.map(u=>`<span class="res-person" onclick="openProfile('${u.replace(/'/g,"\\'")}')">${ava(u)}${escHtml(u)}</span>`).join('') +
+          `</div>`;
+      } else {
+        html += `<div class="res-exact-none">😬 Nadie le atinó al marcador exacto</div>`;
+      }
+      if(m.stage==='elim' && winner){
+        const wHit = winnerHittersOf(m.id, off);
+        html += `<div class="res-winners">✅ Acertaron al ganador (<b>${escHtml(nm(winner))}</b>): <b>${wHit.length}</b></div>`;
+      }
+      html += `</div>`;
+    }
+    html += `</div>`;
+  });
+
+  wrap.innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════════
 //  REGLAS
 // ══════════════════════════════════════════════════════
 function renderReglas(){
@@ -11057,6 +11233,7 @@ function _doNavigate(name){
   if(name==='bracket')        { renderBracket(); setupBracketSticky(); }
   if(name==='admin')          renderAdmin();
   if(name==='premios')        renderPremios();
+  if(name==='resultados')     renderResultados();
   if(name==='reglas')         { renderReglas(); setupRulesSticky(); }
   if(name==='chat')           { renderChat(); startWallPolling(); setupWallSticky(); }
   if(name==='miquiniela')     { renderMiQuiniela(); setupMqSticky(); }
