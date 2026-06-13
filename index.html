@@ -369,6 +369,13 @@ body.dark .prof-btn-bracket{background:#006838;color:#fff}
 
 /* ── Visor de bracket de otro usuario (solo lectura, con resultados) ── */
 .ubr-head{padding:20px 22px 14px;border-bottom:1px solid var(--border)}
+.ubr-filters{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px;align-items:center}
+.ubr-fchip{font-size:.72rem;font-weight:700;padding:5px 13px;border-radius:999px;border:1.5px solid var(--border);background:var(--surface);color:var(--ink2);cursor:pointer;transition:all .15s}
+.ubr-fchip:hover{border-color:var(--blue2)}
+.ubr-fchip.on{background:var(--grad-tri);color:#fff;border-color:transparent}
+.ubr-sel{font-size:.72rem;font-weight:700;color:var(--ink2);background:var(--surface);border:1.5px solid var(--border);border-radius:999px;padding:5px 11px;cursor:pointer;outline:none}
+.ubr-sel:disabled{opacity:.4;cursor:not-allowed}
+.ubr-empty{text-align:center;color:var(--ink3);padding:2.4rem 1rem;font-size:.86rem}
 .ubr-title{font-weight:800;font-size:1.02rem;color:var(--ink);display:flex;align-items:center;gap:8px}
 .ubr-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
 .ubr-lg{display:flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;color:var(--ink3)}
@@ -9780,26 +9787,34 @@ function brPickStatus(id, br, sc){
   if(ms && rr.h != null && +ms.h === rr.h && +ms.a === rr.a) return 'exacto';
   return 'acierto';
 }
+let _ubrUser=null, _ubrFase='todos', _ubrGrupo='todos', _ubrDia='todos';
+
 function openUserBracket(username){
   if(!username) return;
   if(!isTournamentLocked()){ toast('🔒 Se desbloquea cuando arranque el Mundial'); return; }
+  if(!picks[username]){ toast('Ese usuario aún no tiene bracket'); return; }
+  _ubrUser=username; _ubrFase='todos'; _ubrGrupo='todos'; _ubrDia='todos';
+  renderUserPredictions();
+  document.getElementById('userbracket-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function setUbrFase(f){ _ubrFase=f; if(f==='elim') _ubrGrupo='todos'; renderUserPredictions(); }
+function setUbrGrupo(g){ _ubrGrupo=g; if(g!=='todos') _ubrFase='grupos'; renderUserPredictions(); }
+function setUbrDia(d){ _ubrDia=d; renderUserPredictions(); }
+
+function renderUserPredictions(){
+  const username = _ubrUser;
   const up = picks[username];
-  if(!up){ toast('Ese usuario aún no tiene bracket'); return; }
+  if(!up){ return; }
   const br = up.br || {}, sc = up.sc || {};
   const mu = buildR32MatchupsFor(sc);
   const nm = t => t ? (NM[t] || t) : '—';
   const fl = t => t ? (FL[t] || '🏳') : '';
-  const rounds = [
-    {key:'r32', name:'Dieciseisavos', n:16},
-    {key:'r16', name:'Octavos',       n:8},
-    {key:'qf',  name:'Cuartos',       n:4},
-    {key:'sf',  name:'Semis',         n:2},
-    {key:'tp',  name:'Tercer lugar',  n:1},
-    {key:'f',   name:'Final',         n:1},
-  ];
   const chipLbl = {acierto:'Acierto', fallo:'Fallo', exacto:'Exacto', pendiente:'Pendiente'};
+  const dayKey = id => { const f=FIXTURE[id]; return f ? f[0]+'-'+f[1] : ''; };
+  const passDia = id => _ubrDia==='todos' || dayKey(id)===_ubrDia;
 
-  // Estado de una predicción de grupo (mismo criterio que el scoring: exacto / acierto de resultado / fallo)
+  // Estado de una predicción de grupo (mismo criterio que el scoring)
   function grStatus(gid){
     const ms = sc[gid], rr = results.sc?.[gid];
     if(!ms || ms.h==null || ms.a==null) return 'pendiente';
@@ -9809,56 +9824,98 @@ function openUserBracket(username){
     return sign(+ms.h,+ms.a)===sign(+rr.h,+rr.a) ? 'acierto' : 'fallo';
   }
 
-  // ── Fase de grupos ──
-  let groupsBody = '';
-  Object.keys(GROUPS).forEach(g=>{
-    let rows = '';
-    (GM[g]||[]).forEach(m=>{
-      const id = m.id;
-      const ms = sc[id], rr = results.sc?.[id];
-      const status = grStatus(id);
-      const scTxt = (ms && ms.h != null && ms.a != null) ? `${ms.h}-${ms.a}` : '—';
-      const offTxt = (rr && rr.h != null) ? ` · of. ${rr.h}-${rr.a}` : '';
-      rows += `<div class="ubr-m ${status}">
-        <div class="ubr-teams">
-          <span class="ubr-team">${fl(m.h)} ${escHtml(nm(m.h))}</span>
-          <span class="ubr-vs">vs</span>
-          <span class="ubr-team r">${escHtml(nm(m.a))} ${fl(m.a)}</span>
-        </div>
-        <span class="ubr-sc">${scTxt}${offTxt}</span>
-        <span class="ubr-chip">${chipLbl[status]}</span>
-      </div>`;
-    });
-    groupsBody += `<div class="ubr-round">Grupo ${g}</div>${rows}`;
-  });
+  // Opciones de día (todas las fechas del calendario, en orden)
+  const dayMap = {};
+  Object.keys(FIXTURE).forEach(id=>{ const f=FIXTURE[id]; const k=f[0]+'-'+f[1]; if(!dayMap[k]) dayMap[k]={ord:f[0]*100+f[1], label:fxDayLabel(id)}; });
+  const dayOpts = Object.entries(dayMap).sort((a,b)=>a[1].ord-b[1].ord);
 
-  let body = '';
-  rounds.forEach(rd=>{
-    let rows = '';
-    for(let i=0;i<rd.n;i++){
-      const id = `${rd.key}_${i}`;
-      let h=null, a=null;
-      if(rd.key==='r32'){ const m=mu[id]; if(m){ h=m.home; a=m.away; } }
-      else if(id==='tp_0'){ h=getBracketLoser('sf_0', br); a=getBracketLoser('sf_1', br); }
-      else { const feed=BRACKET_FEEDS[id]; if(feed){ h=br[feed[0]]||null; a=br[feed[1]]||null; } }
-      const pick = br[id] || null;
-      const status = brPickStatus(id, br, sc);
-      const ms = sc[id], rr = results.bracket?.[id];
-      const scTxt = (ms && ms.h != null && ms.a != null) ? `${ms.h}-${ms.a}` : '';
-      const offTxt = (rr && rr.h != null) ? ` · of. ${rr.h}-${rr.a}` : '';
-      const hWin = pick && pick === h, aWin = pick && pick === a;
-      rows += `<div class="ubr-m ${status}">
-        <div class="ubr-teams">
-          <span class="ubr-team ${hWin?'win':''}">${fl(h)} ${escHtml(nm(h))}</span>
-          <span class="ubr-vs">vs</span>
-          <span class="ubr-team r ${aWin?'win':''}">${escHtml(nm(a))} ${fl(a)}</span>
-        </div>
-        ${scTxt ? `<span class="ubr-sc">${scTxt}${offTxt}</span>` : ''}
-        <span class="ubr-chip">${chipLbl[status]}</span>
-      </div>`;
-    }
-    body += `<div class="ubr-round">${rd.name}</div>${rows}`;
-  });
+  const showGroups  = (_ubrFase==='todos' || _ubrFase==='grupos');
+  const showBracket = (_ubrFase==='todos' || _ubrFase==='elim') && _ubrGrupo==='todos';
+
+  // ── Fase de grupos (filtrada) ──
+  let groupsBody = '', groupsCount = 0;
+  if(showGroups){
+    Object.keys(GROUPS).forEach(g=>{
+      if(_ubrGrupo!=='todos' && g!==_ubrGrupo) return;
+      let rows = '';
+      (GM[g]||[]).forEach(m=>{
+        if(!passDia(m.id)) return;
+        const ms = sc[m.id], rr = results.sc?.[m.id];
+        const status = grStatus(m.id);
+        const scTxt = (ms && ms.h != null && ms.a != null) ? `${ms.h}-${ms.a}` : '—';
+        const offTxt = (rr && rr.h != null) ? ` · of. ${rr.h}-${rr.a}` : '';
+        rows += `<div class="ubr-m ${status}">
+          <div class="ubr-teams">
+            <span class="ubr-team">${fl(m.h)} ${escHtml(nm(m.h))}</span>
+            <span class="ubr-vs">vs</span>
+            <span class="ubr-team r">${escHtml(nm(m.a))} ${fl(m.a)}</span>
+          </div>
+          <span class="ubr-sc">${scTxt}${offTxt}</span>
+          <span class="ubr-chip">${chipLbl[status]}</span>
+        </div>`;
+        groupsCount++;
+      });
+      if(rows) groupsBody += `<div class="ubr-round">Grupo ${g}</div>${rows}`;
+    });
+  }
+
+  // ── Bracket (filtrado) ──
+  const rounds = [
+    {key:'r32', name:'Dieciseisavos', n:16},
+    {key:'r16', name:'Octavos',       n:8},
+    {key:'qf',  name:'Cuartos',       n:4},
+    {key:'sf',  name:'Semis',         n:2},
+    {key:'tp',  name:'Tercer lugar',  n:1},
+    {key:'f',   name:'Final',         n:1},
+  ];
+  let body = '', brCount = 0;
+  if(showBracket){
+    rounds.forEach(rd=>{
+      let rows = '';
+      for(let i=0;i<rd.n;i++){
+        const id = `${rd.key}_${i}`;
+        if(!passDia(id)) continue;
+        let h=null, a=null;
+        if(rd.key==='r32'){ const m=mu[id]; if(m){ h=m.home; a=m.away; } }
+        else if(id==='tp_0'){ h=getBracketLoser('sf_0', br); a=getBracketLoser('sf_1', br); }
+        else { const feed=BRACKET_FEEDS[id]; if(feed){ h=br[feed[0]]||null; a=br[feed[1]]||null; } }
+        const pick = br[id] || null;
+        const status = brPickStatus(id, br, sc);
+        const ms = sc[id], rr = results.bracket?.[id];
+        const scTxt = (ms && ms.h != null && ms.a != null) ? `${ms.h}-${ms.a}` : '';
+        const offTxt = (rr && rr.h != null) ? ` · of. ${rr.h}-${rr.a}` : '';
+        const hWin = pick && pick === h, aWin = pick && pick === a;
+        rows += `<div class="ubr-m ${status}">
+          <div class="ubr-teams">
+            <span class="ubr-team ${hWin?'win':''}">${fl(h)} ${escHtml(nm(h))}</span>
+            <span class="ubr-vs">vs</span>
+            <span class="ubr-team r ${aWin?'win':''}">${escHtml(nm(a))} ${fl(a)}</span>
+          </div>
+          ${scTxt ? `<span class="ubr-sc">${scTxt}${offTxt}</span>` : ''}
+          <span class="ubr-chip">${chipLbl[status]}</span>
+        </div>`;
+        brCount++;
+      }
+      if(rows) body += `<div class="ubr-round">${rd.name}</div>${rows}`;
+    });
+  }
+
+  // ── Controles de filtro ──
+  const fchip = (v,l)=>`<button class="ubr-fchip ${_ubrFase===v?'on':''}" onclick="setUbrFase('${v}')">${l}</button>`;
+  const grupoSel = `<select class="ubr-sel" onchange="setUbrGrupo(this.value)" ${_ubrFase==='elim'?'disabled':''}>
+      <option value="todos" ${_ubrGrupo==='todos'?'selected':''}>Todos los grupos</option>
+      ${Object.keys(GROUPS).map(g=>`<option value="${g}" ${_ubrGrupo===g?'selected':''}>Grupo ${g}</option>`).join('')}
+    </select>`;
+  const diaSel = `<select class="ubr-sel" onchange="setUbrDia(this.value)">
+      <option value="todos" ${_ubrDia==='todos'?'selected':''}>Todos los días</option>
+      ${dayOpts.map(([k,o])=>`<option value="${k}" ${_ubrDia===k?'selected':''}>${escHtml(o.label)}</option>`).join('')}
+    </select>`;
+
+  let inner = '';
+  if(showGroups && groupsBody)  inner += `<div class="ubr-section">⚽ Fase de grupos</div>${groupsBody}`;
+  if(showBracket && body)       inner += `<div class="ubr-section">🏆 Bracket</div>${body}`;
+  if(!(groupsCount + brCount))  inner = `<div class="ubr-empty">No hay partidos con estos filtros 🤷</div>`;
+
   const html = `
     <div class="ubr-head">
       <div class="ubr-title">📋 Predicciones de ${escHtml(username)}</div>
@@ -9868,16 +9925,13 @@ function openUserBracket(username){
         <span class="ubr-lg"><span class="ubr-dot" style="background:#c0001a"></span>Fallo</span>
         <span class="ubr-lg"><span class="ubr-dot" style="background:var(--border)"></span>Pendiente</span>
       </div>
+      <div class="ubr-filters">
+        ${fchip('todos','Todos')}${fchip('grupos','Grupos')}${fchip('elim','Eliminatoria')}
+        ${grupoSel}${diaSel}
+      </div>
     </div>
-    <div class="ubr-body">
-      <div class="ubr-section">⚽ Fase de grupos</div>
-      ${groupsBody}
-      <div class="ubr-section">🏆 Bracket</div>
-      ${body}
-    </div>`;
+    <div class="ubr-body">${inner}</div>`;
   document.getElementById('ubr-content').innerHTML = html;
-  document.getElementById('userbracket-modal').style.display = 'flex';
-  document.body.style.overflow = 'hidden';
 }
 function closeUserBracket(){
   const m = document.getElementById('userbracket-modal');
