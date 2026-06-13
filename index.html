@@ -12485,7 +12485,20 @@ function renderStats(){
   if(disclaimerEl) disclaimerEl.style.display = 'none';
 
   api('GET','/api/stats').then(d=>{
-    function matchLabel(id){ return `Partido ${id.replace(/\D/g,'')}`; }
+    function matchLabel(id){
+      if(!id) return 'Partido';
+      // Partido de grupo ('A1'..'L6') → equipos desde GM
+      const gm = String(id).match(/^([A-L])(\d)$/);
+      if(gm){
+        const m = (GM[gm[1]]||[]).find(x=>x.id===id);
+        if(m) return `${FL[m.h]||''} ${NM[m.h]||m.h} vs ${NM[m.a]||m.a} ${FL[m.a]||''}`.trim();
+      }
+      // Partido de bracket → equipos oficiales si ya se jugó
+      const rr = (typeof results!=='undefined') ? results.bracket?.[id] : null;
+      if(rr && rr.teamH && rr.teamA) return `${FL[rr.teamH]||''} ${NM[rr.teamH]||rr.teamH} vs ${NM[rr.teamA]||rr.teamA} ${FL[rr.teamA]||''}`.trim();
+      // Fallback: número oficial de partido si lo hay
+      return MATCH_NUM[id] || `Partido ${String(id).replace(/\D/g,'')}`;
+    }
     const safe = (u) => (u || '').replace(/'/g,"\\'");
 
     // Disclaimer si NO todos los registrados tienen bracket completo
