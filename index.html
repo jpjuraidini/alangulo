@@ -355,6 +355,10 @@ body.dark .prof-btn-bracket{background:#006838;color:#fff}
 .res-exact{margin-top:13px;padding-top:12px;border-top:1px dashed var(--border)}
 .res-exact-h{font-size:.74rem;font-weight:800;color:#9a7b0a;display:flex;align-items:center;gap:6px;margin-bottom:9px}
 .res-exact-none{font-size:.78rem;color:var(--ink3);display:flex;align-items:center;gap:6px}
+.res-exact-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.76rem;font-weight:800;color:#9a7b0a;background:linear-gradient(135deg,rgba(231,200,77,.14),rgba(200,150,31,.09));border:1px solid rgba(200,150,31,.3);border-radius:9px;padding:8px 12px;cursor:pointer;transition:background .15s}
+.res-exact-toggle:hover{background:linear-gradient(135deg,rgba(231,200,77,.22),rgba(200,150,31,.15))}
+.res-exact-caret{font-size:.7rem;opacity:.8;transition:transform .15s}
+.res-chips-people.open{margin-top:9px}
 .res-chips-people{display:flex;flex-wrap:wrap;gap:7px}
 .res-person{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(231,200,77,.18),rgba(200,150,31,.12));border:1px solid rgba(200,150,31,.35);border-radius:999px;padding:4px 11px 4px 5px;font-size:.78rem;font-weight:700;color:var(--ink);cursor:pointer;transition:transform .12s}
 .res-person:hover{transform:translateY(-1px)}
@@ -371,6 +375,8 @@ body.dark .prof-btn-bracket{background:#006838;color:#fff}
 .ubr-dot{width:11px;height:11px;border-radius:3px;display:inline-block;flex-shrink:0}
 .ubr-body{padding:14px 18px 20px;max-height:62vh;overflow-y:auto}
 .ubr-round{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:1.1px;color:var(--ink3);margin:16px 0 7px;padding-left:2px}
+.ubr-section{font-size:.92rem;font-weight:800;color:var(--ink);margin:20px 0 6px;padding:9px 12px;border-radius:10px;background:var(--bg);display:flex;align-items:center;gap:8px}
+.ubr-section:first-child{margin-top:4px}
 .ubr-round:first-child{margin-top:0}
 .ubr-m{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:10px;margin-bottom:6px;border-left:3px solid var(--border);background:rgba(0,0,0,.025)}
 body.dark .ubr-m{background:rgba(255,255,255,.04)}
@@ -8125,6 +8131,18 @@ let _resOnlyPlayed = false;
 function setResFilter(f){ _resFilter = f; renderResultados(); }
 function toggleResPlayed(){ _resOnlyPlayed = !_resOnlyPlayed; renderResultados(); }
 
+// Mostrar/ocultar la lista de quienes le pegaron al exacto (colapsada por defecto)
+function toggleResExact(eid){
+  const el = document.getElementById(eid);
+  const btn = document.getElementById(eid+'_btn');
+  if(!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'flex';
+  el.classList.toggle('open', !open);
+  const caret = btn && btn.querySelector('.res-exact-caret');
+  if(caret) caret.textContent = open ? '▾' : '▴';
+}
+
 // Marcador oficial de cualquier partido (grupo 'A1' o bracket 'r32_0'). null si no jugado.
 function officialResult(matchId){
   if(matchId.includes('_')){
@@ -8231,8 +8249,12 @@ function renderResultados(){
       const hitters = exactHittersOf(m.id, off);
       html += `<div class="res-exact">`;
       if(hitters.length){
-        html += `<div class="res-exact-h">🎯 Le pegaron al exacto · ${hitters.length}</div>
-          <div class="res-chips-people">` +
+        const eid = 'rex_'+m.id;
+        html += `<button class="res-exact-toggle" id="${eid}_btn" onclick="toggleResExact('${eid}')">
+            <span>🎯 ¿Quiénes le pegaron exacto? · ${hitters.length}</span>
+            <span class="res-exact-caret">▾</span>
+          </button>
+          <div class="res-chips-people" id="${eid}" style="display:none">` +
           hitters.map(u=>`<span class="res-person" onclick="openProfile('${u.replace(/'/g,"\\'")}')">${ava(u)}${escHtml(u)}</span>`).join('') +
           `</div>`;
       } else {
@@ -9695,12 +9717,12 @@ function openProfile(username){
       </div>
       ${isTournamentLocked()
         ? `<div class="prof-cta" style="margin-top:8px">
-             <button class="prof-btn prof-btn-bracket" onclick="openUserBracket('${s.username.replace(/'/g,"\\'")}')">👁️ Ver bracket</button>
+             <button class="prof-btn prof-btn-bracket" onclick="openUserBracket('${s.username.replace(/'/g,"\\'")}')">👁️ Ver predicciones</button>
            </div>`
         : `<div class="prof-cta" style="margin-top:8px">
-             <button class="prof-btn prof-btn-locked" disabled>🔒 Ver bracket</button>
+             <button class="prof-btn prof-btn-locked" disabled>🔒 Ver predicciones</button>
            </div>
-           <div class="prof-lock-note">🕐 Se desbloquea cuando arranque el Mundial · 11 jun, 1:00 pm</div>`
+           <div class="prof-lock-note">🕐 Se desbloquean cuando arranque el Mundial · 11 jun, 1:00 pm</div>`
       }
     </div>`;
 
@@ -9776,6 +9798,40 @@ function openUserBracket(username){
     {key:'f',   name:'Final',         n:1},
   ];
   const chipLbl = {acierto:'Acierto', fallo:'Fallo', exacto:'Exacto', pendiente:'Pendiente'};
+
+  // Estado de una predicción de grupo (mismo criterio que el scoring: exacto / acierto de resultado / fallo)
+  function grStatus(gid){
+    const ms = sc[gid], rr = results.sc?.[gid];
+    if(!ms || ms.h==null || ms.a==null) return 'pendiente';
+    if(!rr || rr.h==null || rr.a==null) return 'pendiente';
+    if(+ms.h===+rr.h && +ms.a===+rr.a) return 'exacto';
+    const sign = (h,a)=> h>a?1 : (h<a?-1:0);
+    return sign(+ms.h,+ms.a)===sign(+rr.h,+rr.a) ? 'acierto' : 'fallo';
+  }
+
+  // ── Fase de grupos ──
+  let groupsBody = '';
+  Object.keys(GROUPS).forEach(g=>{
+    let rows = '';
+    (GM[g]||[]).forEach(m=>{
+      const id = m.id;
+      const ms = sc[id], rr = results.sc?.[id];
+      const status = grStatus(id);
+      const scTxt = (ms && ms.h != null && ms.a != null) ? `${ms.h}-${ms.a}` : '—';
+      const offTxt = (rr && rr.h != null) ? ` · of. ${rr.h}-${rr.a}` : '';
+      rows += `<div class="ubr-m ${status}">
+        <div class="ubr-teams">
+          <span class="ubr-team">${fl(m.h)} ${escHtml(nm(m.h))}</span>
+          <span class="ubr-vs">vs</span>
+          <span class="ubr-team r">${escHtml(nm(m.a))} ${fl(m.a)}</span>
+        </div>
+        <span class="ubr-sc">${scTxt}${offTxt}</span>
+        <span class="ubr-chip">${chipLbl[status]}</span>
+      </div>`;
+    });
+    groupsBody += `<div class="ubr-round">Grupo ${g}</div>${rows}`;
+  });
+
   let body = '';
   rounds.forEach(rd=>{
     let rows = '';
@@ -9805,7 +9861,7 @@ function openUserBracket(username){
   });
   const html = `
     <div class="ubr-head">
-      <div class="ubr-title">📋 Bracket de ${escHtml(username)}</div>
+      <div class="ubr-title">📋 Predicciones de ${escHtml(username)}</div>
       <div class="ubr-legend">
         <span class="ubr-lg"><span class="ubr-dot" style="background:#006838"></span>Acierto</span>
         <span class="ubr-lg"><span class="ubr-dot gold"></span>Exacto</span>
@@ -9813,7 +9869,12 @@ function openUserBracket(username){
         <span class="ubr-lg"><span class="ubr-dot" style="background:var(--border)"></span>Pendiente</span>
       </div>
     </div>
-    <div class="ubr-body">${body}</div>`;
+    <div class="ubr-body">
+      <div class="ubr-section">⚽ Fase de grupos</div>
+      ${groupsBody}
+      <div class="ubr-section">🏆 Bracket</div>
+      ${body}
+    </div>`;
   document.getElementById('ubr-content').innerHTML = html;
   document.getElementById('userbracket-modal').style.display = 'flex';
   document.body.style.overflow = 'hidden';
