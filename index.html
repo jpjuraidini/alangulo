@@ -1469,6 +1469,10 @@ body.dark .podium-card.p3{background:linear-gradient(120deg,rgba(160,103,58,.1),
 .rk-row-bar-w{height:4px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:6px;width:140px;max-width:100%}
 .rk-row-bar{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.22,1,.36,1)}
 .rk-row-pts{font-weight:800;font-size:1rem;color:var(--ink);letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+.rk-trend{font-size:.62rem;font-weight:800;line-height:1;white-space:nowrap;letter-spacing:0}
+.rk-trend.up{color:var(--green)}
+.rk-trend.down{color:var(--r)}
+.pod-sub .rk-trend{margin-left:3px}
 .rk-row-pts span{font-size:.55em;font-weight:700;color:var(--ink3);margin-left:2px}
 
 @media (max-width:520px){
@@ -6716,12 +6720,23 @@ function renderRanking(){
 
   // Si soy User (no Pro), también pedimos el ranking simulado para mostrar dónde iría
   const meIsPro = isProUser(CU.u);
-  const calls = [api('GET','/api/ranking')];
+  const calls = [api('GET','/api/ranking'), api('GET','/api/ranking/history').catch(()=>null)];
   if(!meIsPro && !isAdminUser(CU.u)){
     calls.push(api('GET','/api/ranking/simulated').catch(()=>null));
   }
 
-  Promise.all(calls).then(([board, simulated])=>{
+  Promise.all(calls).then(([board, history, simulated])=>{
+    // Posiciones del último snapshot guardado → flechas de tendencia (subió/bajó)
+    _prevRankMap = {};
+    if(Array.isArray(history) && history.length){
+      let snap = history[history.length-1].snapshot;
+      if(typeof snap === 'string'){ try { snap = JSON.parse(snap); } catch(_){ snap = null; } }
+      if(Array.isArray(snap)){
+        snap.slice()
+          .sort((a,b)=> (b.total!==a.total) ? b.total-a.total : String(a.name).localeCompare(String(b.name),'es'))
+          .forEach((p,idx)=>{ if(p && p.name) _prevRankMap[p.name] = idx+1; });
+      }
+    }
     const enriched=(board||[])
       .map(p=>({...p, isMe:p.name===CU.u}))
       .sort((a,b)=>{
@@ -6825,12 +6840,22 @@ function observeRankingCards(){
   });
 }
 
+let _prevRankMap = {};
 function buildRankingHTML(board,isDemo){
   if(!board.length) return `<div style="text-align:center;padding:3rem 2rem;display:flex;flex-direction:column;align-items:center;gap:.75rem">
     <div style="font-size:3rem">🏆</div>
     <div style="font-weight:800;font-size:1rem;color:var(--ink)">Sin datos aún</div>
     <div style="font-size:.82rem;color:var(--ink3);max-width:280px;line-height:1.6">El ranking aparecerá cuando el admin ingrese los primeros resultados.</div>
   </div>`;
+  // Flecha de tendencia vs. último snapshot (verde subió, roja bajó)
+  function trendArrow(name, pos){
+    const prev = _prevRankMap[name];
+    if(!prev || prev === pos) return '';
+    const diff = prev - pos; // >0 subió
+    return diff > 0
+      ? `<span class="rk-trend up" title="Subió ${diff} ${diff===1?'lugar':'lugares'}">▲${diff}</span>`
+      : `<span class="rk-trend down" title="Bajó ${Math.abs(diff)} ${Math.abs(diff)===1?'lugar':'lugares'}">▼${Math.abs(diff)}</span>`;
+  }
   const maxPts=board[0].total||1;
   const top3=board.slice(0,3);
   const rest=board.slice(3);
@@ -6859,7 +6884,7 @@ function buildRankingHTML(board,isDemo){
       <div class="pod-medal">${podMedal[i]}</div>
       <div class="pod-name">${escHtml(p.name)}${proBadge(p.name)}${meTag}</div>
       <div class="pod-pts ${podPts[i]}">${p.total}<span>pts</span></div>
-      <div class="pod-sub">${p.grupos}g · ${p.bracket}e</div>
+      <div class="pod-sub">${p.grupos}g · ${p.bracket}e ${trendArrow(p.name, i+1)}</div>
     </div>`;
   });
   html+=`</div>`;
@@ -6881,7 +6906,7 @@ function buildRankingHTML(board,isDemo){
           <div class="rk-row-sub">${p.grupos} grupos · ${p.bracket} elim.</div>
           <div class="rk-row-bar-w"><div class="rk-row-bar" style="width:${barW}%;background:${barColor}"></div></div>
         </div>
-        <div class="rk-row-pts">${p.total} <span>pts</span></div>
+        <div class="rk-row-pts">${p.total} <span>pts</span> ${trendArrow(p.name, pos)}</div>
       </div>`;
     });
     html+=`</div>`;
