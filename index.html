@@ -2474,6 +2474,8 @@ body.dark .mq-section-pts.zero{background:#0c0f1c}
 /* HEADER ROW */
 .mq-row-h{display:grid;grid-template-columns:1fr 80px 80px 48px;gap:10px;padding:8px 18px;font-size:.6rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;background:var(--bg);border-bottom:1px solid var(--border)}
 .mq-day-h{font-size:.72rem;font-weight:800;color:var(--ink2);background:var(--bg);padding:7px 18px;margin:0;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+.mq-day-h.today{background:linear-gradient(135deg,rgba(0,104,56,.12),rgba(0,48,135,.10));color:var(--green);font-size:.8rem;border-bottom:2px solid rgba(0,104,56,.25)}
+.mq-day-h.today .mq-today-sub{color:var(--ink3);font-weight:700;font-size:.66rem;margin-left:auto;text-transform:none;letter-spacing:0}
 .mq-row-time{font-size:.62rem;font-weight:700;color:var(--ink3);white-space:nowrap}
 .mq-order{align-items:center}
 .mq-order-lbl{font-size:.7rem;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-right:2px}
@@ -10989,10 +10991,25 @@ function renderMiQuiniela(){
     }
 
     if(chron.length){
+      // Partidos de HOY (en hora CDMX) — siempre arriba
+      const nowC = new Date(new Date().toLocaleString('en-US',{timeZone:'America/Mexico_City'}));
+      const todayKey = (nowC.getMonth()+1)+'-'+nowC.getDate();
+      const dayKeyOf = id => { const f=FIXTURE[id]; return f ? f[0]+'-'+f[1] : ''; };
+      const todayMatches = chron.filter(m=> dayKeyOf(m.id)===todayKey);
+      const restMatches  = chron.filter(m=> dayKeyOf(m.id)!==todayKey);
+
       html += `<div class="mq-section mq-reveal" style="--mqs-i:0">
         <div class="mq-row-h"><div>Partido</div><div class="h-c">Tu pred.</div><div class="h-c">Real</div><div class="h-c"></div></div>`;
+
+      // Sección fija: Mis predicciones de hoy
+      if(todayMatches.length){
+        html += `<div class="mq-day-h today">⚡ Mis predicciones de hoy<span class="mq-today-sub">${todayMatches.length} partido${todayMatches.length!==1?'s':''}</span></div>`;
+        todayMatches.forEach(m=> html += mqRow(m));
+      }
+
+      // Resto, agrupado por día
       let lastDay = null;
-      chron.forEach(m=>{
+      restMatches.forEach(m=>{
         const day = fxDayLabel(m.id);
         if(day !== lastDay){ html += `<div class="mq-day-h">📅 ${escHtml(day)}</div>`; lastDay = day; }
         html += mqRow(m);
