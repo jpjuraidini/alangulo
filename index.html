@@ -2176,6 +2176,11 @@ body.dark .adm-type-pill.user{color:#a0a8c0}
 .cu-err{font-size:.75rem;color:var(--red);margin-top:6px}
 .cu-hint{font-size:.72rem;color:var(--ink3);margin-top:8px;line-height:1.5}
 .users-tbl-wrap{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh)}
+.adm-users-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rad);box-shadow:var(--sh);padding:13px 16px;cursor:pointer;font-size:.92rem;font-weight:800;color:var(--ink);transition:background .15s}
+.adm-users-toggle:hover{background:var(--bg)}
+.adm-users-toggle.open{border-bottom-left-radius:0;border-bottom-right-radius:0;margin-bottom:-1px}
+.adm-users-count{color:var(--ink3);font-weight:700;font-size:.82rem}
+.adm-users-caret{font-size:.8rem;color:var(--ink3)}
 .del-btn{background:none;border:none;color:var(--red);cursor:pointer;font-size:.78rem;padding:3px 6px;border-radius:4px;transition:background .15s}
 .del-btn:hover{background:var(--r-bg)}
 
@@ -2464,6 +2469,10 @@ body.dark .mq-section-pts.zero{background:#0c0f1c}
 
 /* HEADER ROW */
 .mq-row-h{display:grid;grid-template-columns:1fr 80px 80px 48px;gap:10px;padding:8px 18px;font-size:.6rem;font-weight:800;color:var(--ink3);letter-spacing:1.2px;text-transform:uppercase;background:var(--bg);border-bottom:1px solid var(--border)}
+.mq-day-h{font-size:.72rem;font-weight:800;color:var(--ink2);background:var(--bg);padding:7px 18px;margin:0;display:flex;align-items:center;gap:7px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:1}
+.mq-row-time{font-size:.62rem;font-weight:700;color:var(--ink3);white-space:nowrap}
+.mq-order{align-items:center}
+.mq-order-lbl{font-size:.7rem;font-weight:800;color:var(--ink3);text-transform:uppercase;letter-spacing:.6px;margin-right:2px}
 body.dark .mq-row-h{background:#0c0f1c}
 .mq-row-h .h-c{text-align:center}
 
@@ -7080,7 +7089,11 @@ function renderAdmin(){
       <div class="cu-hint">El código se genera automáticamente desde el usuario, pero puedes editarlo. El PIN se lo das tú al participante para que entre a la app.</div>
     </div>
 
-    <div class="users-tbl-wrap">
+    <button class="adm-users-toggle" id="adm-users-toggle" onclick="toggleAdminUsers()">
+      <span>👥 Ver todos los usuarios <span id="adm-users-count" class="adm-users-count"></span></span>
+      <span class="adm-users-caret">▾</span>
+    </button>
+    <div class="users-tbl-wrap" id="adm-users-wrap" style="display:none">
       <table class="rk-table">
         <thead><tr><th>Usuario</th><th>Tipo</th><th>PIN</th><th>Código</th><th>Referidos</th><th title="Total de partidos predichos (grupos + bracket) sobre 104">Predicciones</th><th>Puntos</th><th></th></tr></thead>
         <tbody id="users-tbody"></tbody>
@@ -7548,10 +7561,23 @@ function timeAgo(date){
   return date.toLocaleDateString('es-MX',{day:'numeric',month:'short'});
 }
 
+function toggleAdminUsers(){
+  const wrap=document.getElementById('adm-users-wrap');
+  const btn=document.getElementById('adm-users-toggle');
+  if(!wrap) return;
+  const open = wrap.style.display !== 'none';
+  wrap.style.display = open ? 'none' : 'block';
+  if(btn) btn.classList.toggle('open', !open);
+  const caret = btn && btn.querySelector('.adm-users-caret');
+  if(caret) caret.textContent = open ? '▾' : '▴';
+}
+
 function renderUsersTable(){
   const tbody=document.getElementById('users-tbody');
   if(!tbody) return;
   const all=allUsers();
+  const cnt=document.getElementById('adm-users-count');
+  if(cnt) cnt.textContent=`(${all.length})`;
   tbody.innerHTML='';
   // Cutoff para deshabilitar upgrade post-cierre del torneo
   const upgradeAllowed = !isTournamentLocked();
@@ -10752,6 +10778,7 @@ function initDark(){
 let mqFilter = 'all'; // all | correct | exact | wrong | pending
 let mqStage  = 'all'; // all | grupos | r32 | r16 | qf | sf | f
 let mqGroup  = 'all'; // all | A | B | C | D | E | F | G | H | I | J | K | L
+let mqOrder  = 'fecha'; // fecha (orden de suceso, default) | etapa
 
 function renderMiQuiniela(){
   const wrap = document.getElementById('mq-wrap');
@@ -10885,7 +10912,79 @@ function renderMiQuiniela(){
         <button class="mq-f-btn ${mqGroup==='all'?'active':''}" onclick="setMqGroup('all')">Todos</button>
         ${'ABCDEFGHIJKL'.split('').map(g=>`<button class="mq-f-btn ${mqGroup===g?'active':''}" onclick="setMqGroup('${g}')">Grupo ${g}</button>`).join('')}
       </div>`:''}
+      <div class="mq-filter mq-order">
+        <span class="mq-order-lbl">Orden:</span>
+        <button class="mq-f-btn ${mqOrder==='fecha'?'active':''}" onclick="setMqOrder('fecha')">📅 Por fecha</button>
+        <button class="mq-f-btn ${mqOrder==='etapa'?'active':''}" onclick="setMqOrder('etapa')">🗂️ Por etapa</button>
+      </div>
     </div>`;
+
+  // ══ MODO POR FECHA (default): todos los partidos en orden de suceso, agrupados por día ══
+  if(mqOrder==='fecha'){
+    const passF = m => (mqFilter==='all'||m.status===mqFilter||(mqFilter==='correct'&&(m.status==='correct'||m.status==='exact')));
+    let chron = allMatches.filter(m=>{
+      if(!passF(m)) return false;
+      if(mqStage!=='all'){ if(mqStage==='grupos'){ if(m.phase!=='grupos') return false; } else if(m.round!==mqStage) return false; }
+      if(mqGroup!=='all'){ if(!(m.phase==='grupos' && m.group===mqGroup)) return false; }
+      return true;
+    });
+    chron.sort((a,b)=> fxOrder(a.id) - fxOrder(b.id));
+
+    function mqRow(m){
+      const icon = m.status==='exact'?'🎯':m.status==='correct'?'✅':m.status==='wrong'?'❌':'⏳';
+      const ptsBadge = m.pts>0 ? `<span class="mq-pts-badge">+${m.pts}</span>` : '';
+      const t = fxTime(m.id);
+      const timeTag = t ? `<span class="mq-row-time">🕐 ${t}</span>` : '';
+      if(m.phase==='grupos'){
+        const myTxt = m.myScore ? `${m.myScore.h}-${m.myScore.a}` : '—';
+        const realTxt = m.realScore ? `${m.realScore.h}-${m.realScore.a}` : '?';
+        const realCls = m.realScore ? '' : 'mq-score-pending';
+        return `<div class="mq-row ${m.status}">
+          <div class="mq-match-name">
+            <span class="mq-match-flags">${m.flags}</span>
+            <span class="mq-match-text">${escHtml(m.label)} ${timeTag}</span>
+          </div>
+          <div class="mq-score mq-score-mine">${myTxt}</div>
+          <div class="mq-score mq-score-real ${realCls}">${realTxt}</div>
+          <div class="mq-result-icon">${icon}${ptsBadge}</div>
+        </div>`;
+      } else {
+        const myTxt = m.myWinner ? `${FL[m.myWinner]||'🏳'}${m.myBrScore!=null&&m.myBrScore.h!=null?` ${m.myBrScore.h}-${m.myBrScore.a}`:''}` : '—';
+        const realTxt = m.realWinner ? `${FL[m.realWinner]||'🏳'}${m.realScore?.h!=null?` ${m.realScore.h}-${m.realScore.a}`:''}` : '?';
+        const realCls = m.realWinner ? '' : 'mq-score-pending';
+        return `<div class="mq-row ${m.status}">
+          <div class="mq-match-name">
+            <span class="mq-match-text">${m.id} <span class="mq-elim-rnd ${m.roundCls}">${m.roundName}</span> ${timeTag}</span>
+          </div>
+          <div class="mq-score mq-score-mine" style="font-size:.78rem">${myTxt}</div>
+          <div class="mq-score mq-score-real ${realCls}" style="font-size:.78rem">${realTxt}</div>
+          <div class="mq-result-icon">${icon}${ptsBadge}</div>
+        </div>`;
+      }
+    }
+
+    if(chron.length){
+      html += `<div class="mq-section mq-reveal" style="--mqs-i:0">
+        <div class="mq-row-h"><div>Partido</div><div class="h-c">Tu pred.</div><div class="h-c">Real</div><div class="h-c"></div></div>`;
+      let lastDay = null;
+      chron.forEach(m=>{
+        const day = fxDayLabel(m.id);
+        if(day !== lastDay){ html += `<div class="mq-day-h">📅 ${escHtml(day)}</div>`; lastDay = day; }
+        html += mqRow(m);
+      });
+      html += `</div>`;
+    } else {
+      html += `<div style="text-align:center;padding:2.5rem 1rem;display:flex;flex-direction:column;align-items:center;gap:.5rem">
+        <div style="font-size:2.5rem">🔍</div>
+        <div style="font-weight:700;font-size:.9rem;color:var(--ink)">Sin partidos con ese filtro</div>
+        <div style="font-size:.78rem;color:var(--ink3)">Prueba cambiando los filtros</div>
+      </div>`;
+    }
+
+    wrap.innerHTML = html;
+    observeMqSections();
+    return;
+  }
 
   // ── Group sections ──
   let sectionIdx = 0;
@@ -11008,6 +11107,7 @@ function observeMqSections(){
 function setMqFilter(f){ mqFilter=f; renderMiQuiniela(); }
 function setMqStage(s){ mqStage=s; mqGroup='all'; renderMiQuiniela(); }
 function setMqGroup(g){ mqGroup=g; renderMiQuiniela(); }
+function setMqOrder(o){ mqOrder=o; renderMiQuiniela(); }
 
 // ══════════════════════════════════════════════════════
 //  NAV
