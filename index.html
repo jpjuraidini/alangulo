@@ -10981,7 +10981,7 @@ function renderMiQuiniela(){
         const realCls = m.realWinner ? '' : 'mq-score-pending';
         return `<div class="mq-row ${m.status}">
           <div class="mq-match-name">
-            <span class="mq-match-text">${m.id} <span class="mq-elim-rnd ${m.roundCls}">${m.roundName}</span> ${timeTag}</span>
+            <span class="mq-match-text">${MATCH_NUM[m.id]||m.id} <span class="mq-elim-rnd ${m.roundCls}">${m.roundName}</span> ${timeTag}</span>
           </div>
           <div class="mq-score mq-score-mine" style="font-size:.78rem">${myTxt}</div>
           <div class="mq-score mq-score-real ${realCls}" style="font-size:.78rem">${realTxt}</div>
@@ -11100,7 +11100,7 @@ function renderMiQuiniela(){
       const ptsBadge = m.pts>0 ? `<span class="mq-pts-badge">+${m.pts}</span>` : '';
       html+=`<div class="mq-row ${m.status}">
         <div class="mq-match-name">
-          <span class="mq-match-text">${m.id} <span class="mq-elim-rnd ${cls}">${name}</span></span>
+          <span class="mq-match-text">${MATCH_NUM[m.id]||m.id} <span class="mq-elim-rnd ${cls}">${name}</span></span>
         </div>
         <div class="mq-score mq-score-mine" style="font-size:.78rem">${myTxt}</div>
         <div class="mq-score mq-score-real ${realCls}" style="font-size:.78rem">${realTxt}</div>
