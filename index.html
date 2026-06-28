@@ -7862,13 +7862,15 @@ function saveBrRes(roundKey){
     const wv=document.getElementById(`br_${mid}_w`)?.value;
     const th=document.getElementById(`br_${mid}_th`)?.value; // team code
     const ta=document.getElementById(`br_${mid}_ta`)?.value; // team code
-    if(wv && th && ta){
-      const winner = wv==='__h' ? th : wv==='__a' ? ta : wv;
+    if(th && ta){
+      // Permitir cargar el partido solo con equipos (sin ganador ni marcador aún).
+      // El ganador queda null hasta que se juegue; el marcador también.
+      const winner = wv ? (wv==='__h' ? th : wv==='__a' ? ta : wv) : null;
       results.bracket[mid]={
         teamH: th,
         teamA: ta,
-        h: hv!==''?+hv:null,
-        a: av!==''?+av:null,
+        h: (hv!==''&&hv!=null) ? +hv : null,
+        a: (av!==''&&av!=null) ? +av : null,
         winner
       };
     }
