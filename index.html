@@ -6706,6 +6706,20 @@ function brExact(ms, rr){
   if(!ms || !rr || rr.h==null || rr.a==null || ms.h==null || ms.a==null) return false;
   return (+ms.h===+rr.h && +ms.a===+rr.a) || (+ms.h===+rr.a && +ms.a===+rr.h);
 }
+// Resultado del bracket A LOS 90 MINUTOS. El marcador del usuario representa el resultado regular.
+// Da el punto si acierta el resultado de los 90 (empate, o el equipo que gana en regular).
+// Lo de "quién avanza" (prórroga/penales) NO da este punto; eso lo cubre el bono de clasificados.
+function brResult(ms, mw, rr){
+  if(!ms || !rr || rr.h==null || rr.a==null || ms.h==null || ms.a==null || !rr.winner) return {win:false, exact:false};
+  const offDraw  = (+rr.h === +rr.a);
+  const userDraw = (+ms.h === +ms.a);
+  // Hay que (1) atinar al tipo de resultado a los 90 y (2) atinar a quién avanza.
+  // En empate a los 90, además del empate hay que acertar quién pasa (penales/prórroga).
+  const advancerOk = !!mw && (mw === rr.winner);
+  const resultTypeOk = offDraw ? userDraw : !userDraw;
+  const win = advancerOk && resultTypeOk;
+  return { win, exact: win && brExact(ms, rr) };
+}
 function calcScore(u){
   let gr=0, br=0;
   const up=picks[u]; if(!up) return{grupos:0,bracket:0,total:0};
@@ -6734,12 +6748,10 @@ function calcScore(u){
       if(!rr?.winner) return;
       const rk=id.split('_')[0];
       const [winPts, exactBonus]=PTS[rk]||[0,0];
-      const mw=up.br?.[id];
-      if(!mw) return;
-      if(mw===rr.winner){
+      const r = brResult(up.sc?.[id], up.br?.[id], rr);
+      if(r.win){
         br+=winPts;
-        const ms=up.sc?.[id];
-        if(brExact(ms,rr)) br+=exactBonus;
+        if(r.exact) br+=exactBonus;
       }
     });
   }
@@ -8261,8 +8273,7 @@ function exactHittersOf(matchId, off){
     if(!off || !off.winner) return [];
     return Object.keys(picks).filter(u=>{
       if(isAdminUser(u)) return false;
-      if(picks[u]?.br?.[matchId] !== off.winner) return false;
-      return brExact(picks[u]?.sc?.[matchId], off);
+      return brResult(picks[u]?.sc?.[matchId], picks[u]?.br?.[matchId], off).exact;
     });
   }
   // Grupos: marcador posicional (la orientación es fija para todos).
@@ -8275,7 +8286,7 @@ function exactHittersOf(matchId, off){
 // Usuarios que acertaron al GANADOR (solo bracket).
 function winnerHittersOf(matchId, off){
   if(!off.winner) return [];
-  return Object.keys(picks).filter(u=>!isAdminUser(u) && picks[u]?.br?.[matchId] === off.winner);
+  return Object.keys(picks).filter(u=>!isAdminUser(u) && brResult(picks[u]?.sc?.[matchId], picks[u]?.br?.[matchId], off).win);
 }
 
 function renderResultados(){
@@ -8376,7 +8387,7 @@ function renderResultados(){
       }
       if(m.stage==='elim' && winner){
         const wHit = winnerHittersOf(m.id, off);
-        html += `<div class="res-winners">✅ Acertaron al ganador (<b>${escHtml(nm(winner))}</b>): <b>${wHit.length}</b></div>`;
+        html += `<div class="res-winners">✅ Acertaron el resultado de los 90: <b>${wHit.length}</b></div>`;
       }
       html += `</div>`;
     }
@@ -9705,12 +9716,10 @@ function getProfileStats(username){
   if(results?.bracket){
     Object.entries(results.bracket).forEach(([id,rr])=>{
       if(!rr?.winner) return;
-      const mw = up.br?.[id];
-      if(!mw) return;
-      if(mw === rr.winner){
+      const r = brResult(up.sc?.[id], up.br?.[id], rr);
+      if(r.win){
         brHits++;
-        const ms = up.sc?.[id];
-        if(brExact(ms,rr)) brExacts++;
+        if(r.exact) brExacts++;
       }
     });
   }
@@ -9907,12 +9916,9 @@ function buildR32MatchupsFor(sc){
 function brPickStatus(id, br, sc){
   const rr = results.bracket?.[id];
   if(!rr || !rr.winner) return 'pendiente';
-  const mw = br?.[id];
-  if(!mw) return 'pendiente';
-  if(mw !== rr.winner) return 'fallo';
-  const ms = sc?.[id];
-  if(brExact(ms,rr)) return 'exacto';
-  return 'acierto';
+  if(!sc?.[id] && !br?.[id]) return 'pendiente';
+  const r = brResult(sc?.[id], br?.[id], rr);
+  return r.win ? (r.exact ? 'exacto' : 'acierto') : 'fallo';
 }
 let _ubrUser=null, _ubrFase='todos', _ubrGrupo='todos', _ubrDia='todos';
 
@@ -10638,8 +10644,8 @@ function calcStreak(u){
   order.forEach(id => {
     const rr = results.bracket?.[id];
     const mw = up.br?.[id];
-    if (!rr?.winner || !mw) return; // not played yet
-    if (mw === rr.winner){ streak++; best = Math.max(best, streak); }
+    if (!rr?.winner) return; // not resolved yet
+    if (brResult(up.sc?.[id], mw, rr).win){ streak++; best = Math.max(best, streak); }
     else streak = 0;
   });
   return best; // return best streak
@@ -10660,8 +10666,8 @@ function currentStreak(u){
     const id = order[i];
     const rr = results.bracket?.[id];
     const mw = up.br?.[id];
-    if (!rr?.winner || !mw) continue;
-    if (mw === rr.winner) streak++;
+    if (!rr?.winner) continue;
+    if (brResult(up.sc?.[id], mw, rr).win) streak++;
     else break;
   }
   return streak;
@@ -11061,11 +11067,11 @@ function renderMiQuiniela(){
       const myWinner = up.br?.[id];
       let status = 'pending', pts = 0;
       const [winPts, exactBonus] = PTS[key]||[0,0];
-      if (myWinner && rr?.winner){
-        if (myWinner === rr.winner){
+      if (rr?.winner){
+        const r = brResult(up.sc?.[id], myWinner, rr);
+        if (r.win){
           pts = winPts;
-          const ms = up.sc?.[id];
-          if (brExact(ms,rr)){ status='exact'; pts+=exactBonus; }
+          if (r.exact){ status='exact'; pts+=exactBonus; }
           else status='correct';
         } else status='wrong';
       }
