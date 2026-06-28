@@ -309,6 +309,12 @@ body.dark .prof-bd-item{background:#161a2e}
 .prof-bd-icon{font-size:1.4rem;margin-bottom:4px}
 .prof-bd-pts{font-weight:800;font-size:1.3rem;color:var(--ink);line-height:1}
 .prof-bd-lbl{font-size:.7rem;color:var(--ink3);font-weight:700;margin-top:3px}
+.prof-bd-tap{cursor:pointer;transition:transform .12s,box-shadow .12s}
+.prof-bd-tap:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.08);border-color:var(--green)}
+.clasif-modal-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-right:30px}
+.clasif-modal-av{width:46px;height:46px;border-radius:50%;background:var(--grad-tri);color:#fff;font-weight:800;font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.clasif-modal-name{font-weight:800;font-size:1.05rem;color:var(--ink);display:flex;align-items:center;gap:5px}
+.clasif-modal-sub{font-size:.72rem;color:var(--ink3);font-weight:700;margin-top:2px}
 
 .prof-cta{display:flex;gap:8px;margin-top:8px}
 .prof-btn{flex:1;background:var(--ink);color:var(--surface);border:none;padding:13px;border-radius:12px;font-family:"Plus Jakarta Sans";font-weight:800;font-size:.88rem;cursor:pointer;letter-spacing:.2px;transition:transform .15s,opacity .2s}
@@ -4165,6 +4171,15 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <div class="prof-card prof-card-wide" id="cmp-card">
     <button class="prof-close" onclick="closeCompare()" aria-label="Cerrar">✕</button>
     <div id="cmp-content"></div>
+  </div>
+</div>
+
+<!-- MODAL: CLASIFICADOS DE UN USUARIO (transparencia) -->
+<div id="clasif-modal" class="prof-modal" style="display:none">
+  <div class="prof-bg" onclick="closeClasif()"></div>
+  <div class="prof-card prof-card-wide" id="clasif-card">
+    <button class="prof-close" onclick="closeClasif()" aria-label="Cerrar">✕</button>
+    <div id="clasif-content"></div>
   </div>
 </div>
 
@@ -9711,11 +9726,21 @@ function profileInitials(u){
   return (u || '?').slice(0,2).toUpperCase();
 }
 
-async function openProfile(username){
+let _profileUser = null;
+function openProfile(username){
   if(!username) return;
-  // Refrescar clasificados oficiales para que el total cuadre con el ranking del server
-  // (evita que un cache viejo deje el bonus en 0 y muestre 71 en vez de 99).
-  try { const q = await api('GET','/api/qualifiers'); if(q) oficiales = q; } catch(_){}
+  _profileUser = username;
+  _paintProfile(username);                 // abre instantáneo con datos actuales
+  // Refresca clasificados oficiales en segundo plano; si cambian, repinta sin trabar la apertura
+  api('GET','/api/qualifiers').then(q=>{
+    if(!q) return;
+    const changed = JSON.stringify(q) !== JSON.stringify(oficiales);
+    oficiales = q;
+    const modal = document.getElementById('profile-modal');
+    if(changed && modal && modal.style.display !== 'none' && _profileUser === username) _paintProfile(username);
+  }).catch(()=>{});
+}
+function _paintProfile(username){
   const s = getProfileStats(username);
   const isMe = username === CU?.u;
 
@@ -9773,10 +9798,10 @@ async function openProfile(username){
           <div class="prof-bd-pts">${s.bracketWins}</div>
           <div class="prof-bd-lbl">Bracket · ${s.brHits}/${s.brJudged||'?'}</div>
         </div>
-        <div class="prof-bd-item">
+        <div class="prof-bd-item prof-bd-tap" onclick="openUserClasificados('${s.username.replace(/'/g,"\\'")}')" title="Ver clasificados">
           <div class="prof-bd-icon">🎫</div>
           <div class="prof-bd-pts">${s.clasificados}</div>
-          <div class="prof-bd-lbl">Clasificados</div>
+          <div class="prof-bd-lbl">Clasificados ›</div>
         </div>
       </div>
 
@@ -10027,13 +10052,13 @@ function openCompare(userA, userB){
   const totalCmp    = cmp(a.total, b.total);
   const accCmp      = cmp(a.accuracyPct ?? -1, b.accuracyPct ?? -1);
   const exactsCmp   = cmp(a.totalExacts, b.totalExacts);
-  const streakCmp   = cmp(a.streak, b.streak);
+  const clasifCmp   = cmp(a.clasificados, b.clasificados);
   const grpCmp      = cmp(a.grupos, b.grupos);
-  const brCmp       = cmp(a.bracket, b.bracket);
+  const brCmp       = cmp(a.bracketWins, b.bracketWins);
 
   // Cuenta wins
   let wA = 0, wB = 0;
-  [posCmp, totalCmp, accCmp, exactsCmp, streakCmp, grpCmp, brCmp].forEach(c=>{
+  [posCmp, totalCmp, accCmp, exactsCmp, clasifCmp, grpCmp, brCmp].forEach(c=>{
     if(c[0] === 'win') wA++;
     if(c[1] === 'win') wB++;
   });
@@ -10076,9 +10101,9 @@ function openCompare(userA, userB){
       ${row('⚡', 'Puntos', a.total, b.total, totalCmp)}
       ${row('🎯', '% aciertos', fmtAcc(a), fmtAcc(b), accCmp)}
       ${row('🎰', 'Marcadores exactos', a.totalExacts, b.totalExacts, exactsCmp)}
-      ${row('🔥', 'Racha bracket', a.streak, b.streak, streakCmp)}
+      ${row('🎫', 'Clasificados', a.clasificados, b.clasificados, clasifCmp)}
       ${row('📊', 'Puntos grupos', a.grupos, b.grupos, grpCmp)}
-      ${row('📈', 'Puntos bracket', a.bracket, b.bracket, brCmp)}
+      ${row('📈', 'Puntos bracket', a.bracketWins, b.bracketWins, brCmp)}
       <div class="cmp-summary">${summary}</div>
     </div>`;
 
@@ -12400,12 +12425,45 @@ function setMqTab(tab){
 function renderMqQpasa(wrap){
   if(!wrap) wrap = document.getElementById('mq-qpasa-wrap');
   if(!wrap) return;
-  wrap.innerHTML = `<div style="padding:14px 16px;color:var(--ink3);font-size:.82rem">Cargando tu predicción de quién pasa…</div>`;
+  renderQpasaInto(wrap, CU.u, true);
+}
 
-  api('GET', `/api/qualifiers/breakdown/${encodeURIComponent(CU.u)}`).then(data=>{
+// Abre el desglose de clasificados de CUALQUIER usuario (transparencia)
+function openUserClasificados(username){
+  if(!username) return;
+  const wrap = document.getElementById('clasif-content');
+  if(!wrap) return;
+  const isMe = username === CU?.u;
+  wrap.innerHTML = `<div class="clasif-modal-head">
+      <div class="clasif-modal-av">${profileInitials(username)}</div>
+      <div class="clasif-modal-meta">
+        <div class="clasif-modal-name">${escHtml(username)}${proBadge(username)}${isMe?' <span style="font-size:.6rem;color:var(--green);font-weight:800">tú</span>':''}</div>
+        <div class="clasif-modal-sub">🎫 Clasificados · quién predijo que avanza</div>
+      </div>
+    </div>
+    <div id="clasif-body" style="padding:0 2px"></div>`;
+  document.getElementById('clasif-modal').style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  renderQpasaInto(document.getElementById('clasif-body'), username, isMe);
+}
+function closeClasif(){
+  const m = document.getElementById('clasif-modal');
+  if(m) m.style.display = 'none';
+  const prof = document.getElementById('profile-modal');
+  if(!prof || prof.style.display === 'none') document.body.style.overflow = '';
+}
+
+function renderQpasaInto(wrap, username, isMe){
+  if(!wrap) return;
+  username = username || CU.u;
+  if(isMe === undefined) isMe = (username === CU.u);
+  wrap.innerHTML = `<div style="padding:14px 16px;color:var(--ink3);font-size:.82rem">Cargando predicción de quién pasa…</div>`;
+
+  api('GET', `/api/qualifiers/breakdown/${encodeURIComponent(username)}`).then(data=>{
     const order = ['r32','r16','qf','sf','f'];
     const totalBonus = data.totalBonus || 0;
     const maxBonus = order.reduce((s,r)=>s + PTS_CLASIFICADOS[r].pts * PTS_CLASIFICADOS[r].total, 0);
+    const poss = username===CU.u ? 'tu' : 'su';
 
     let html = `<div class="mq-qpasa-intro">
       <div class="mq-qpasa-intro-stats">
@@ -12419,10 +12477,10 @@ function renderMqQpasa(wrap){
         </div>
         <div class="mq-qpasa-stat">
           <div class="mq-qpasa-stat-lbl">Aprovechado</div>
-          <div class="mq-qpasa-stat-num" style="color:var(--blue2)">${Math.round(100*totalBonus/maxBonus)}%</div>
+          <div class="mq-qpasa-stat-num" style="color:var(--blue2)">${maxBonus?Math.round(100*totalBonus/maxBonus):0}%</div>
         </div>
       </div>
-      <p class="mq-qpasa-intro-txt">Por cada equipo que predigas correctamente que avanza a la siguiente ronda, ganas puntos extra. <b>Cada ronda vale máximo +32 pts (160 totales)</b>.</p>
+      <p class="mq-qpasa-intro-txt">Por cada equipo correctamente predicho que avanza a la siguiente ronda, ${poss==='tu'?'ganas':'gana'} puntos extra. <b>Cada ronda vale máximo +32 pts (160 totales)</b>.</p>
     </div>`;
 
     order.forEach(rk=>{
@@ -12449,7 +12507,7 @@ function renderMqQpasa(wrap){
         <div class="tp-teams-grid">`;
 
       if(predicted.length === 0){
-        html += `<div class="tp-empty">Aún no tienes predicciones para esta ronda.</div>`;
+        html += `<div class="tp-empty">Sin predicciones para esta ronda.</div>`;
       } else {
         const sorted = predicted.slice().sort((a,b)=>{
           const sa = hits.has(a) ? 0 : official.size > 0 ? (official.has(a) ? 0 : 1) : 2;
@@ -12458,16 +12516,9 @@ function renderMqQpasa(wrap){
         });
         sorted.forEach(code=>{
           let cls, ico;
-          if(!officialKnown){
-            cls = 'pending';
-            ico = '⏳';
-          } else if(hits.has(code)){
-            cls = 'hit';
-            ico = '✓';
-          } else {
-            cls = 'miss';
-            ico = '✕';
-          }
+          if(!officialKnown){ cls='pending'; ico='⏳'; }
+          else if(hits.has(code)){ cls='hit'; ico='✓'; }
+          else { cls='miss'; ico='✕'; }
           html += `<div class="tp-team tp-${cls}">
             <span class="tp-team-flag">${FL[code]||'🏳'}</span>
             <span class="tp-team-name">${NM[code]||code}</span>
@@ -12479,7 +12530,7 @@ function renderMqQpasa(wrap){
     });
 
     html += `<div class="ref-disclaimer" style="margin-top:14px">
-      💡 Estos puntos son <b>adicionales</b> a los que ganas por acertar partidos del bracket. Aunque falles un partido, si el ganador real estaba en tu predicción de "quién pasa", igual sumas.
+      💡 Estos puntos son <b>adicionales</b> a los del bracket. Aunque falle un partido, si el ganador real estaba en la predicción de "quién pasa", igual suma.
     </div>`;
 
     wrap.innerHTML = html;
@@ -12776,6 +12827,32 @@ function renderStats(){
       });
       html += `</div>`;
     }
+
+    // ── REYES DE CLASIFICADOS ──
+    try {
+      const hayOficiales = oficiales && Object.keys(oficiales).some(k=>Array.isArray(oficiales[k]) && oficiales[k].length);
+      if(hayOficiales){
+        const clasifBoard = Object.keys(picks)
+          .filter(u=>!isAdminUser(u) && isProUser(u))
+          .map(u=>({name:u, pts: calcClasificadosBonus(u, oficiales).total}))
+          .filter(x=>x.pts>0)
+          .sort((a,b)=> b.pts!==a.pts ? b.pts-a.pts : a.name.localeCompare(b.name,'es'))
+          .slice(0,5);
+        if(clasifBoard.length){
+          html += `<div class="st-section-h">Reyes de clasificados 🎫</div>`;
+          html += `<div class="st-list st-reveal" style="--st-i:${sIdx++}">`;
+          clasifBoard.forEach((u,i)=>{
+            const isMe = u.name===CU.u;
+            html += `<div class="st-list-row${isMe?' me':''}" onclick="openUserClasificados('${safe(u.name)}')">
+              <div class="st-list-pos">${i+1}</div>
+              <div class="st-list-name">${escHtml(u.name)}${proBadge(u.name)}${isMe?' <span style="font-size:.6rem;font-weight:800;background:rgba(0,196,106,.16);color:var(--green);padding:1px 6px;border-radius:5px;letter-spacing:.5px;text-transform:uppercase;margin-left:2px">tú</span>':''}</div>
+              <div class="st-list-val"><strong>+${u.pts}</strong> pts</div>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+      }
+    } catch(_){}
 
     // ── CURIOSIDADES ──
     const curios = [];
