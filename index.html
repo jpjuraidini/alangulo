@@ -2634,6 +2634,14 @@ body.dark #drawer{background:#111525;box-shadow:4px 0 32px rgba(0,0,0,.5)}
 }
 #adm-modal.open{display:flex}
 #welcome-modal.open{display:flex}
+.elimg-table{width:100%;margin-top:6px;display:flex;flex-direction:column;gap:5px}
+.elimg-row{display:flex;justify-content:space-between;align-items:center;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 13px;font-size:.82rem}
+body.dark .elimg-row{background:#161a2e}
+.elimg-row .elimg-ph{font-weight:700;color:var(--ink)}
+.elimg-row .elimg-pts{font-weight:800;color:var(--green);font-variant-numeric:tabular-nums}
+.elimg-row .elimg-pts small{font-weight:600;color:var(--ink3);font-size:.72em}
+.elimg-row.hot{background:linear-gradient(135deg,rgba(0,104,56,.12),rgba(0,48,135,.10));border-color:rgba(0,104,56,.3)}
+.elimg-row.hot .elimg-ph{color:var(--green)}
 #ref-modal.open{display:flex}
 #ref-screen.open{display:flex}
 #br-score-modal.open{display:flex}
@@ -3693,6 +3701,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <button class="drawer-item" onclick="goDrawer('referidos')">Mis Referidos</button>
     <div class="drawer-item-sep"></div>
     <button class="drawer-item" onclick="closeDrawer();openOnboard()">Ver tutorial 🎓</button>
+    <button class="drawer-item" onclick="closeDrawer();openElimGuide()">Guía de puntos 🧮</button>
     <div class="drawer-item-sep user-only drawer-user-item" style="display:none"></div>
     <button class="drawer-item drawer-upgrade user-only drawer-user-item" onclick="closeDrawer();showUpgradeModal()" style="display:none">
       <span style="display:flex;align-items:center;gap:8px;justify-content:space-between;width:100%">
@@ -4133,6 +4142,19 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
     <div class="onb-foot">
       <div class="onb-dots" id="onb-dots"></div>
       <button class="onb-next" id="onb-next-btn" onclick="onbNext()">Siguiente →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: GUÍA DE FASES FINALES (cómo se ganan puntos) -->
+<div id="elimguide-modal" class="onb-modal" style="display:none">
+  <div class="onb-bg"></div>
+  <div class="onb-card">
+    <button class="onb-skip" onclick="closeElimGuide(true)">Saltar</button>
+    <div class="onb-body" id="elimg-body"></div>
+    <div class="onb-foot">
+      <div class="onb-dots" id="elimg-dots"></div>
+      <button class="onb-next" id="elimg-next-btn" onclick="elimNext()">Siguiente →</button>
     </div>
   </div>
 </div>
@@ -5751,9 +5773,10 @@ function boot(opts){
   setTimeout(connectOnlineCounter, 1500);
   // Notificaciones in-app
   setTimeout(startNotifLoop, 2000);
-  // Onboarding: primera vez del usuario
+  // Onboarding: primera vez del usuario · luego guía de fases finales
   setTimeout(()=>{
     if(shouldShowOnboarding()) openOnboard();
+    else if(shouldShowElimGuide()) openElimGuide();
   }, 1800);
 }
 
@@ -10226,6 +10249,126 @@ function closeOnboard(skipped){
   if(!skipped){
     toast('¡Listo! Empieza a predecir 🎯');
   }
+}
+
+// ══════════════════════════════════════════════════════
+//  GUÍA DE FASES FINALES — cómo se ganan puntos (popup único)
+// ══════════════════════════════════════════════════════
+let _elimStep = 0;
+const ELIMGUIDE_KEY_VER = 'q26_elimguide_v1';
+
+const ELIM_SLIDES = [
+  {
+    illus: '<div class="onb-emoji">🔥</div>',
+    title: '¡Arrancan las <span class="grad">fases finales</span>!',
+    body: 'Las eliminatorias cambian un poco cómo se ganan puntos. Te explicamos todo en 30 segundos para que no te queden dudas.',
+  },
+  {
+    illus: '<div class="onb-emoji">📈</div>',
+    title: 'Más puntos <span class="grad">por fase</span>',
+    body: 'Entre más avanzada la ronda, más vale acertar. Acertar el ganador suma; acertar el marcador exacto da un bonus extra encima.',
+    extra: `<div class="elimg-table">
+      <div class="elimg-row"><span class="elimg-ph">Grupos</span><span class="elimg-pts">+1 <small>· exacto +2</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">16avos</span><span class="elimg-pts">+2 <small>· exacto +4</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">Octavos</span><span class="elimg-pts">+3 <small>· exacto +6</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">Cuartos</span><span class="elimg-pts">+5 <small>· exacto +10</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">Semis</span><span class="elimg-pts">+7 <small>· exacto +14</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">3er lugar</span><span class="elimg-pts">+10 <small>· exacto +20</small></span></div>
+      <div class="elimg-row hot"><span class="elimg-ph">🏆 Final</span><span class="elimg-pts">+32 <small>· exacto +20</small></span></div>
+    </div>`,
+  },
+  {
+    illus: '<div class="onb-emoji">🎯</div>',
+    title: 'Lo que importa es <span class="grad">quién gana</span>',
+    body: 'Cada partido de eliminatoria tiene un número fijo (M73, M79, M104…). Importa qué <b>país</b> gana ESE partido — no contra quién. Si en tu bracket lo tenías contra otro rival pero le atinas al país que gana el M79, igual sumas.',
+    extra: `<div class="onb-demo-card" style="flex-direction:column;gap:8px;text-align:center">
+      <div style="font-size:.66rem;font-weight:800;letter-spacing:1px;color:var(--ink3)">PARTIDO M79</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;font-weight:800;color:var(--ink)">
+        <span>🇫🇷 Francia</span><span style="color:var(--green)">✓ gana</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--ink3)">Le atinaste al ganador del M79 → sumas, sin importar el rival</div>
+    </div>`,
+  },
+  {
+    illus: '<div class="onb-emoji">🎰</div>',
+    title: 'Marcador exacto, <span class="grad">sin importar el orden</span>',
+    body: 'Si además del ganador le atinas al marcador exacto, ganas el bonus. Y no importa si pusiste al equipo como local o visitante: <b>“Francia 2-1” cuenta igual</b> lo hayas anotado en cualquier orden.',
+    extra: `<div class="onb-demo-card" style="flex-direction:column;gap:6px;text-align:center">
+      <div style="display:flex;gap:10px;justify-content:center;align-items:center">
+        <span style="font-weight:800">Tú: 🇫🇷 2 - 1 🇲🇦</span>
+        <span style="color:var(--ink3)">=</span>
+        <span style="font-weight:800">Real: 🇲🇦 1 - 2 🇫🇷</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--green);font-weight:800">✓ Cuenta como exacto</div>
+    </div>`,
+  },
+  {
+    illus: '<div class="onb-emoji">🎫</div>',
+    title: 'Bono por <span class="grad">clasificados</span>',
+    body: 'Aparte de los puntos por partido, ganas un bono por cada país que predigas que <b>avanza</b> a cada ronda — ¡aunque falles el cruce exacto! Si dijiste que un equipo llegaba a cuartos y llegó, sumas el bono aunque hayas errado contra quién.',
+    extra: `<div class="elimg-table">
+      <div class="elimg-row"><span class="elimg-ph">Llega a 16avos</span><span class="elimg-pts">+1 <small>x equipo</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">Llega a Octavos</span><span class="elimg-pts">+2 <small>x equipo</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">Llega a Cuartos</span><span class="elimg-pts">+4 <small>x equipo</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">Llega a Semis</span><span class="elimg-pts">+8 <small>x equipo</small></span></div>
+      <div class="elimg-row"><span class="elimg-ph">Llega a la Final</span><span class="elimg-pts">+16 <small>x equipo</small></span></div>
+      <div class="elimg-row hot"><span class="elimg-ph">Cada ronda</span><span class="elimg-pts">hasta +32 <small>· 160 total</small></span></div>
+    </div>`,
+  },
+  {
+    illus: '<div class="onb-emoji">🏆</div>',
+    title: 'Revisa tu <span class="grad">desglose</span>',
+    body: 'En tu perfil ves tu desglose por fase: Grupos, Bracket y Clasificados. Toca la casilla de “Clasificados 🎫” para ver equipo por equipo. ¡Mucha suerte en las finales!',
+  },
+];
+
+function shouldShowElimGuide(){
+  if(!CU) return false;
+  if(CU.admin) return false;
+  return !localStorage.getItem(`${ELIMGUIDE_KEY_VER}_${CU.u}`);
+}
+function markElimGuideSeen(){
+  if(!CU) return;
+  localStorage.setItem(`${ELIMGUIDE_KEY_VER}_${CU.u}`, '1');
+}
+function openElimGuide(){
+  _elimStep = 0;
+  renderElimSlide();
+  const m = document.getElementById('elimguide-modal');
+  if(m){ m.style.display = 'flex'; document.body.style.overflow = 'hidden'; }
+}
+function renderElimSlide(){
+  const s = ELIM_SLIDES[_elimStep];
+  if(!s) return;
+  const body = document.getElementById('elimg-body');
+  const dots = document.getElementById('elimg-dots');
+  const nextBtn = document.getElementById('elimg-next-btn');
+  if(!body || !dots || !nextBtn) return;
+  body.innerHTML = `<div class="onb-slide">
+    <div class="onb-illus">${s.illus}</div>
+    <h2 class="onb-h">${s.title}</h2>
+    <p class="onb-p">${s.body}</p>
+    ${s.extra || ''}
+  </div>`;
+  dots.innerHTML = ELIM_SLIDES.map((_, i)=>
+    `<button class="onb-dot ${i===_elimStep?'on':''}" onclick="elimGo(${i})" aria-label="Slide ${i+1}"></button>`
+  ).join('');
+  const isLast = _elimStep === ELIM_SLIDES.length - 1;
+  nextBtn.textContent = isLast ? '¡Entendido! 🏆' : 'Siguiente →';
+}
+function elimNext(){
+  if(_elimStep < ELIM_SLIDES.length - 1){ _elimStep++; renderElimSlide(); }
+  else { closeElimGuide(false); }
+}
+function elimGo(i){
+  if(i < 0 || i >= ELIM_SLIDES.length) return;
+  _elimStep = i; renderElimSlide();
+}
+function closeElimGuide(skipped){
+  markElimGuideSeen();
+  const m = document.getElementById('elimguide-modal');
+  if(m) m.style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 // ══════════════════════════════════════════════════════
