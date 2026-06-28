@@ -9695,6 +9695,8 @@ function getProfileStats(username){
     username: u,
     grupos: sc.grupos,
     bracket: sc.bracket,
+    bracketWins: sc.bracket - (sc.clasificados||0),  // puntos puros del bracket (sin bonus)
+    clasificados: sc.clasificados||0,                 // bonus de avance por ronda
     total: sc.total,
     position, rankSize,
     grpPredCount, grpHits, grpExacts, grpJudged,
@@ -9709,8 +9711,11 @@ function profileInitials(u){
   return (u || '?').slice(0,2).toUpperCase();
 }
 
-function openProfile(username){
+async function openProfile(username){
   if(!username) return;
+  // Refrescar clasificados oficiales para que el total cuadre con el ranking del server
+  // (evita que un cache viejo deje el bonus en 0 y muestre 71 en vez de 99).
+  try { const q = await api('GET','/api/qualifiers'); if(q) oficiales = q; } catch(_){}
   const s = getProfileStats(username);
   const isMe = username === CU?.u;
 
@@ -9765,8 +9770,13 @@ function openProfile(username){
         </div>
         <div class="prof-bd-item">
           <div class="prof-bd-icon">📈</div>
-          <div class="prof-bd-pts">${s.bracket}</div>
+          <div class="prof-bd-pts">${s.bracketWins}</div>
           <div class="prof-bd-lbl">Bracket · ${s.brHits}/${s.brJudged||'?'}</div>
+        </div>
+        <div class="prof-bd-item">
+          <div class="prof-bd-icon">🎫</div>
+          <div class="prof-bd-pts">${s.clasificados}</div>
+          <div class="prof-bd-lbl">Clasificados</div>
         </div>
       </div>
 
