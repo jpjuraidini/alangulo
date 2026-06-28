@@ -8254,6 +8254,18 @@ function officialResult(matchId){
 }
 // Usuarios que le pegaron al marcador EXACTO.
 function exactHittersOf(matchId, off){
+  const isBracket = String(matchId).includes('_');
+  if(isBracket){
+    // En bracket, "exacto" cuenta IGUAL que en el scoring real:
+    // ganador ya confirmado + usuario le atinó al ganador + marcador exacto (cualquier orientación).
+    if(!off || !off.winner) return [];
+    return Object.keys(picks).filter(u=>{
+      if(isAdminUser(u)) return false;
+      if(picks[u]?.br?.[matchId] !== off.winner) return false;
+      return brExact(picks[u]?.sc?.[matchId], off);
+    });
+  }
+  // Grupos: marcador posicional (la orientación es fija para todos).
   return Object.keys(picks).filter(u=>{
     if(isAdminUser(u)) return false;
     const s = picks[u]?.sc?.[matchId];
@@ -8357,6 +8369,8 @@ function renderResultados(){
           <div class="res-chips-people" id="${eid}" style="display:none">` +
           hitters.map(u=>`<span class="res-person" onclick="openProfile('${u.replace(/'/g,"\\'")}')">${ava(u)}${escHtml(u)}</span>`).join('') +
           `</div>`;
+      } else if(m.stage==='elim' && !winner){
+        html += `<div class="res-exact-none">⏳ Falta definir quién avanzó para contar los exactos</div>`;
       } else {
         html += `<div class="res-exact-none">😬 Nadie le atinó al marcador exacto</div>`;
       }
