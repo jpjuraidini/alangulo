@@ -6661,6 +6661,13 @@ document.getElementById('br-score-modal').addEventListener('click',e=>{
 // ══════════════════════════════════════════════════════
 //  RANKING — real users + simulated demo table
 // ══════════════════════════════════════════════════════
+// Marcador exacto de bracket, INDEPENDIENTE de local/visitante.
+// Se usa solo cuando el ganador ya se validó como correcto, así que aceptar
+// cualquiera de las dos orientaciones del mismo marcador real es seguro.
+function brExact(ms, rr){
+  if(!ms || !rr || rr.h==null || rr.a==null || ms.h==null || ms.a==null) return false;
+  return (+ms.h===+rr.h && +ms.a===+rr.a) || (+ms.h===+rr.a && +ms.a===+rr.h);
+}
 function calcScore(u){
   let gr=0, br=0;
   const up=picks[u]; if(!up) return{grupos:0,bracket:0,total:0};
@@ -6694,7 +6701,7 @@ function calcScore(u){
       if(mw===rr.winner){
         br+=winPts;
         const ms=up.sc?.[id];
-        if(ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a) br+=exactBonus;
+        if(brExact(ms,rr)) br+=exactBonus;
       }
     });
   }
@@ -9651,7 +9658,7 @@ function getProfileStats(username){
       if(mw === rr.winner){
         brHits++;
         const ms = up.sc?.[id];
-        if(ms && rr.h!=null && +ms.h===rr.h && +ms.a===rr.a) brExacts++;
+        if(brExact(ms,rr)) brExacts++;
       }
     });
   }
@@ -9832,7 +9839,7 @@ function brPickStatus(id, br, sc){
   if(!mw) return 'pendiente';
   if(mw !== rr.winner) return 'fallo';
   const ms = sc?.[id];
-  if(ms && rr.h != null && +ms.h === rr.h && +ms.a === rr.a) return 'exacto';
+  if(brExact(ms,rr)) return 'exacto';
   return 'acierto';
 }
 let _ubrUser=null, _ubrFase='todos', _ubrGrupo='todos', _ubrDia='todos';
@@ -10866,7 +10873,7 @@ function renderMiQuiniela(){
         if (myWinner === rr.winner){
           pts = winPts;
           const ms = up.sc?.[id];
-          if (ms && +ms.h===rr.h && +ms.a===rr.a){ status='exact'; pts+=exactBonus; }
+          if (brExact(ms,rr)){ status='exact'; pts+=exactBonus; }
           else status='correct';
         } else status='wrong';
       }
