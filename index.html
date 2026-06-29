@@ -371,6 +371,10 @@ body.dark .prof-btn-bracket{background:#006838;color:#fff}
 .res-person .res-ava{width:21px;height:21px;border-radius:50%;background:var(--grad-tri);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.62rem;font-weight:800;flex-shrink:0}
 .res-winners{margin-top:9px;font-size:.74rem;color:var(--ink3)}
 .res-winners b{color:#006838;font-weight:800}
+.res-win-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.76rem;font-weight:800;color:#006838;background:linear-gradient(135deg,rgba(0,104,56,.12),rgba(0,168,89,.08));border:1px solid rgba(0,104,56,.3);border-radius:9px;padding:8px 12px;cursor:pointer;transition:background .15s;margin-top:9px}
+.res-win-toggle:hover{background:linear-gradient(135deg,rgba(0,104,56,.2),rgba(0,168,89,.14))}
+.res-person.green{background:linear-gradient(135deg,rgba(0,104,56,.16),rgba(0,168,89,.1));border-color:rgba(0,104,56,.35)}
+.res-person.green .res-ava{background:linear-gradient(135deg,#006838,#00a859)}
 .res-empty{text-align:center;padding:3rem 2rem;color:var(--ink3)}
 
 /* ── Visor de bracket de otro usuario (solo lectura, con resultados) ── */
@@ -8387,7 +8391,18 @@ function renderResultados(){
       }
       if(m.stage==='elim' && winner){
         const wHit = winnerHittersOf(m.id, off);
-        html += `<div class="res-winners">✅ Acertaron el resultado de los 90: <b>${wHit.length}</b></div>`;
+        if(wHit.length){
+          const wid = 'rwin_'+m.id;
+          html += `<button class="res-win-toggle" id="${wid}_btn" onclick="toggleResExact('${wid}')">
+              <span>✅ Acertaron el resultado de los 90 · ${wHit.length}</span>
+              <span class="res-exact-caret">▾</span>
+            </button>
+            <div class="res-chips-people" id="${wid}" style="display:none">` +
+            wHit.map(u=>`<span class="res-person green" onclick="openProfile('${u.replace(/'/g,"\\'")}')">${ava(u)}${escHtml(u)}</span>`).join('') +
+            `</div>`;
+        } else {
+          html += `<div class="res-exact-none">😬 Nadie acertó el resultado de los 90</div>`;
+        }
       }
       html += `</div>`;
     }
