@@ -7021,7 +7021,8 @@ function renderAdmin(){
   });
   let cargados = 0;
   allMatchIds.forEach(id => {
-    const r = results.sc?.[id];
+    const isBracket = String(id).includes('_');
+    const r = isBracket ? results.bracket?.[id] : results.sc?.[id];
     if(r && r.h != null && r.a != null) cargados++;
   });
   const pctCargados = Math.round(100 * cargados / TOTAL_MATCHES);
