@@ -7264,6 +7264,8 @@ function renderAdmin(){
       const savedH=rr.teamH||'';
       const savedA=rr.teamA||'';
       const savedW=rr.winner||'';
+      // El ganador se guarda como CÓDIGO de equipo; lo mapeamos al slot para pre-seleccionar el dropdown.
+      const savedWSlot = savedW && savedW===savedH ? '__h' : (savedW && savedW===savedA ? '__a' : '');
       const savedHg=rr.h!=null?rr.h:'';
       const savedAg=rr.a!=null?rr.a:'';
       const teamOpts=Object.entries(NM).map(([code,name])=>`<option value="${code}" ${savedH===code||savedA===code?'':''}>` + (FL[code]||'') + ' ' + name + '</option>').join('');
@@ -7286,11 +7288,11 @@ function renderAdmin(){
             ${teamOptsA}
           </select>
         </div>
-        <div style="font-size:.72rem;color:var(--ink3)">Ganador:
+        <div style="font-size:.72rem;color:var(--ink3)">Quién avanza <span style="opacity:.65">(solo si empatan a los 90)</span>:
           <select id="br_${mid}_w" style="margin-left:4px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font-family:'Plus Jakarta Sans',sans-serif;font-size:.78rem">
-            <option value="">— Sin resultado —</option>
-            <option value="__h" ${savedW==='__h'?'selected':''}>🏠 Local${savedH?' ('+NM[savedH]||savedH+')':''}</option>
-            <option value="__a" ${savedW==='__a'?'selected':''}>✈️ Visitante${savedA?' ('+NM[savedA]||savedA+')':''}</option>
+            <option value="">— Auto según marcador —</option>
+            <option value="__h" ${savedWSlot==='__h'?'selected':''}>🏠 Local${savedH?' ('+(NM[savedH]||savedH)+')':''}</option>
+            <option value="__a" ${savedWSlot==='__a'?'selected':''}>✈️ Visitante${savedA?' ('+(NM[savedA]||savedA)+')':''}</option>
           </select>
         </div>
       </div>`;
@@ -7934,16 +7936,17 @@ function saveBrRes(roundKey){
     const th=document.getElementById(`br_${mid}_th`)?.value; // team code
     const ta=document.getElementById(`br_${mid}_ta`)?.value; // team code
     if(th && ta){
-      // Permitir cargar el partido solo con equipos (sin ganador ni marcador aún).
-      // El ganador queda null hasta que se juegue; el marcador también.
-      const winner = wv ? (wv==='__h' ? th : wv==='__a' ? ta : wv) : null;
-      results.bracket[mid]={
-        teamH: th,
-        teamA: ta,
-        h: (hv!==''&&hv!=null) ? +hv : null,
-        a: (av!==''&&av!=null) ? +av : null,
-        winner
-      };
+      // El marcador es el de los 90 min. Si es decisivo, el que avanza se pone SOLO
+      // (el que metió más goles). Solo si hay empate a los 90 se usa el dropdown (penales/prórroga).
+      const hh = (hv!==''&&hv!=null) ? +hv : null;
+      const aa = (av!==''&&av!=null) ? +av : null;
+      let winner = null;
+      if(hh!=null && aa!=null){
+        if(hh > aa) winner = th;           // gana local a los 90 → avanza
+        else if(aa > hh) winner = ta;      // gana visitante a los 90 → avanza
+        else winner = wv ? (wv==='__h' ? th : wv==='__a' ? ta : wv) : null;  // empate → admin decide
+      }
+      results.bracket[mid]={ teamH: th, teamA: ta, h: hh, a: aa, winner };
     }
   }
   _savingBrRes=true;
