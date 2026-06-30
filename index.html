@@ -199,6 +199,13 @@ body.dark .onb-feat{background:#161a2e}
 .hp-greeting{padding:24px 4px 10px;max-width:760px;margin:0 auto}
 .hp-hi{font-size:.78rem;color:var(--ink3);font-weight:600;margin-bottom:4px;letter-spacing:.2px;animation:hpFade .6s cubic-bezier(.22,1,.36,1) both}
 .hp-name{font-size:clamp(1.55rem,5.5vw,2rem);font-weight:800;letter-spacing:-.6px;line-height:1.1;color:var(--ink);animation:hpFadeUp .7s cubic-bezier(.22,1,.36,1) .12s both}
+.hp-name-btn{display:inline-flex;align-items:center;gap:9px;background:none;border:none;padding:0;cursor:pointer;text-align:left}
+.hp-name-btn .hp-name-ico{font-size:.95rem;opacity:0;transform:translateX(-6px);transition:opacity .18s,transform .18s;background:var(--bg);border:1px solid var(--border);border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center}
+.hp-name-btn:hover .hp-name-ico,.hp-name-btn:focus-visible .hp-name-ico{opacity:1;transform:translateX(0)}
+.hp-name-btn:active{transform:scale(.99)}
+.nav-greet-btn{background:none;border:none;padding:4px 10px;border-radius:9px;cursor:pointer;font-size:inherit;color:var(--ink3);font-weight:600;transition:background .15s,color .15s}
+.nav-greet-btn b{color:var(--ink);font-weight:800}
+.nav-greet-btn:hover{background:var(--bg);color:var(--ink)}
 .hp-name .grad{background:var(--grad-tri);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 @keyframes hpFade{from{opacity:0}to{opacity:1}}
 @keyframes hpFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
@@ -3769,7 +3776,7 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
         </svg>
         <span class="bell-badge" id="bell-badge" style="display:none">0</span>
       </button>
-      Hola, <b id="nav-u"></b>
+      <button class="nav-greet-btn" onclick="if(typeof CU!=='undefined'&&CU)openProfile(CU.u)" title="Ver mi perfil">Hola, <b id="nav-u"></b></button>
     </div>
   </nav>
 
@@ -3788,7 +3795,10 @@ html.dark-pre .splash-pbar,body.dark .splash-pbar{background:rgba(255,255,255,.0
   <div class="page on" id="page-inicio">
     <div class="hp-greeting">
       <div class="hp-hi" id="hp-hi">Bienvenido de vuelta 👋</div>
-      <div class="hp-name" id="hp-name">Cargando…</div>
+      <button class="hp-name-btn" onclick="if(typeof CU!=='undefined'&&CU)openProfile(CU.u)" title="Ver mi perfil">
+        <span class="hp-name" id="hp-name">Cargando…</span>
+        <span class="hp-name-ico">👤</span>
+      </button>
     </div>
 
     <div class="hp-body" id="hp-body">
