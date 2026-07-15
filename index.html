@@ -4443,7 +4443,8 @@ const PTS={
   qf:  [5,  10],  // Cuartos
   sf:  [7,  14],  // Semis
   tp:  [10, 20],  // 3er lugar
-  f:   [32, 20],  // Final — pegarle al campeón vale 32, + 20 si pegas marcador exacto (máx 52)
+  f:   [10, 20],  // Final — resultado a los 90 +10, marcador exacto +20
+  champion: 32,   // Bono de CAMPEÓN: +32 por atinarle a quién levanta la copa (estilo clasificados)
 };
 
 // ── BONUS DE CLASIFICACIÓN POR RONDA ──
@@ -6095,20 +6096,29 @@ function getUserPredictedQualifiers(username, round){
 // Recibe los "clasificados oficiales" (lista del admin) y devuelve el desglose
 function calcClasificadosBonus(username, oficiales){
   // oficiales = { r32: ['MEX','FRA',...], r16: [...], qf: [...], sf: [...], f: [...] }
-  const breakdown = { r32:0, r16:0, qf:0, sf:0, f:0, total:0 };
-  if(!oficiales) return breakdown;
-  Object.keys(PTS_CLASIFICADOS).forEach(round => {
-    const realList = oficiales[round];
-    if(!Array.isArray(realList) || realList.length === 0) return;
-    const userPredicted = getUserPredictedQualifiers(username, round);
-    let hits = 0;
-    realList.forEach(team => {
-      if(userPredicted.has(team)) hits++;
+  const breakdown = { r32:0, r16:0, qf:0, sf:0, f:0, champion:0, total:0 };
+  if(oficiales){
+    Object.keys(PTS_CLASIFICADOS).forEach(round => {
+      const realList = oficiales[round];
+      if(!Array.isArray(realList) || realList.length === 0) return;
+      const userPredicted = getUserPredictedQualifiers(username, round);
+      let hits = 0;
+      realList.forEach(team => {
+        if(userPredicted.has(team)) hits++;
+      });
+      const bonus = hits * PTS_CLASIFICADOS[round].pts;
+      breakdown[round] = bonus;
+      breakdown.total += bonus;
     });
-    const bonus = hits * PTS_CLASIFICADOS[round].pts;
-    breakdown[round] = bonus;
-    breakdown.total += bonus;
-  });
+  }
+  // Bono de CAMPEÓN: +32 si el campeón que puso el usuario es el que ganó la final
+  // (independiente del marcador de los 90 — estilo clasificados).
+  const champPick = picks[username]?.br?.f_0;
+  const champActual = (typeof results!=='undefined') ? results?.bracket?.f_0?.winner : null;
+  if(champPick && champActual && champPick === champActual){
+    breakdown.champion = PTS.champion;
+    breakdown.total += PTS.champion;
+  }
   return breakdown;
 }
 
@@ -10323,7 +10333,7 @@ const ELIM_SLIDES = [
       <div class="elimg-row"><span class="elimg-ph">Cuartos</span><span class="elimg-pts">+5 <small>· exacto +10</small></span></div>
       <div class="elimg-row"><span class="elimg-ph">Semis</span><span class="elimg-pts">+7 <small>· exacto +14</small></span></div>
       <div class="elimg-row"><span class="elimg-ph">3er lugar</span><span class="elimg-pts">+10 <small>· exacto +20</small></span></div>
-      <div class="elimg-row hot"><span class="elimg-ph">🏆 Final</span><span class="elimg-pts">+32 <small>· exacto +20</small></span></div>
+      <div class="elimg-row hot"><span class="elimg-ph">🏆 Final</span><span class="elimg-pts">+10 <small>· exacto +20</small></span></div>
     </div>`,
   },
   {
@@ -10361,6 +10371,7 @@ const ELIM_SLIDES = [
       <div class="elimg-row"><span class="elimg-ph">Llega a Cuartos</span><span class="elimg-pts">+4 <small>x equipo</small></span></div>
       <div class="elimg-row"><span class="elimg-ph">Llega a Semis</span><span class="elimg-pts">+8 <small>x equipo</small></span></div>
       <div class="elimg-row"><span class="elimg-ph">Llega a la Final</span><span class="elimg-pts">+16 <small>x equipo</small></span></div>
+      <div class="elimg-row hot"><span class="elimg-ph">🏆 Campeón</span><span class="elimg-pts">+32 <small>quien gana la copa</small></span></div>
       <div class="elimg-row hot"><span class="elimg-ph">Cada ronda</span><span class="elimg-pts">hasta +32 <small>· 160 total</small></span></div>
     </div>`,
   },
@@ -12654,7 +12665,7 @@ function renderQpasaInto(wrap, username, isMe){
   api('GET', `/api/qualifiers/breakdown/${encodeURIComponent(username)}`).then(data=>{
     const order = ['r32','r16','qf','sf','f'];
     const totalBonus = data.totalBonus || 0;
-    const maxBonus = order.reduce((s,r)=>s + PTS_CLASIFICADOS[r].pts * PTS_CLASIFICADOS[r].total, 0);
+    const maxBonus = order.reduce((s,r)=>s + PTS_CLASIFICADOS[r].pts * PTS_CLASIFICADOS[r].total, 0) + (PTS.champion||0);
     const poss = username===CU.u ? 'tu' : 'su';
 
     let html = `<div class="mq-qpasa-intro">
@@ -12720,6 +12731,37 @@ function renderQpasaInto(wrap, username, isMe){
       }
       html += `</div></div>`;
     });
+
+    // Tarjeta de CAMPEÓN
+    const ch = data.champion;
+    if(ch){
+      const known = !!ch.actual;
+      const stateColor = known ? (ch.hit ? 'var(--green)' : 'var(--r)') : 'var(--ink3)';
+      const stateText = known ? (ch.hit ? `+${ch.bonus} pts` : 'Falló') : 'Pendiente';
+      html += `<div class="tp-round-card">
+        <div class="tp-round-head">
+          <div class="tp-round-title">
+            <span class="tp-round-name">🏆 Campeón</span>
+            <span class="tp-round-meta">${ch.pts||32} pts · quien levanta la copa</span>
+          </div>
+          <div class="tp-round-state" style="color:${stateColor}">${stateText}</div>
+        </div>
+        <div class="tp-teams-grid">`;
+      if(ch.pick){
+        let cls, ico;
+        if(!known){ cls='pending'; ico='⏳'; }
+        else if(ch.hit){ cls='hit'; ico='✓'; }
+        else { cls='miss'; ico='✕'; }
+        html += `<div class="tp-team tp-${cls}">
+          <span class="tp-team-flag">${FL[ch.pick]||'🏳'}</span>
+          <span class="tp-team-name">${NM[ch.pick]||ch.pick}</span>
+          <span class="tp-team-ico">${ico}</span>
+        </div>`;
+      } else {
+        html += `<div class="tp-empty">Sin campeón elegido.</div>`;
+      }
+      html += `</div></div>`;
+    }
 
     html += `<div class="ref-disclaimer" style="margin-top:14px">
       💡 Estos puntos son <b>adicionales</b> a los del bracket. Aunque falle un partido, si el ganador real estaba en la predicción de "quién pasa", igual suma.
